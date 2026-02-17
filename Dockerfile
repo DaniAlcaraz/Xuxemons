@@ -1,5 +1,5 @@
 #LARAVEL
-FROM php:8.2-fpm
+FROM php:8.2-fpm AS backend
 
 WORKDIR /var/www
 
@@ -13,29 +13,27 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY . .
+COPY backend/ .
 
 RUN composer install --optimize-autoloader --no-dev
 
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-EXPOSE 9000
-CMD ["php-fpm"]
-
 #ANGULAR
-# Etapa 1: build
-FROM node:20-alpine AS build
+# Build
+FROM node:20-alpine AS frontend-build
 
-WORKDIR /app
-COPY package*.json ./
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
 RUN npm install
-COPY . .
+COPY frontend/ .
 RUN npm run build --prod
 
-# Etapa 2: servidor nginx con el build
+# NGINX PARA LAS RUTAS
 FROM nginx:alpine
-COPY --from=build /app/dist/nombre-de-tu-app /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=frontend-build /app/frontend/dist/nombre-de-tu-app /usr/share/nginx/html
+COPY --from=backend /var/www /var/www
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
