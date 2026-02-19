@@ -1,59 +1,61 @@
-version: '3.8'
-
 services:
-#Levanta laravel
-  app:
+  #Frontend
+  frontend:
+    image: node:20-alpine
+    container_name: xuxemons_angular
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4200:4200"
+    command: sh -c "cd /app && npm install && npm start -- --host 0.0.0.0"  #Este comando mantiene el contenedor vivo para que podamos instalar Angular primero
+    networks:
+      - app-network
+
+  # Backend
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: xuxemons_laravel
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
     ports:
-      - "80:80"
+      - "8000:80"
     environment:
-      - APP_ENV=
-      - DB_CONNECTION=
-      - DB_HOST=
-      - DB_PORT=3306
-      - DB_DATABASE=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: xuxemons_db
+      DB_USERNAME: xuxemons_user
+      DB_PASSWORD: 1234
+    networks:
+      - app-network
     depends_on:
       - db
-    networks:
-      - app_network
-    
-#Levanta la base de datos
+
+  #Base de datos
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: xuxemons_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: xuxemons_db
+      MYSQL_USER: xuxemons_user
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 4321
+    volumes:
+      - mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
-    environment:
-      - MYSQL_DATABASE=
-      - MYSQL_USER=
-      - MYSQL_PASSWORD=
-      - MYSQL_ROOT_PASSWORD=
-    volumes:
-      - mysql_data:/var/lib/mysql
     networks:
-      - app_network
-
-volumes:
-  mysql_data:
+      - app-network
 
 networks:
-  app_network:
+  app-network:
     driver: bridge
 
-# Levanta angular
-frontend:
-    build:
-      context: ./frontend
-    container_name: frontend
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./frontend:/app
-    command: npm start
-    networks:
-      - app_network
+volumes:
+  mysql-data:
+    driver: local
