@@ -1,11 +1,104 @@
 import { Component } from '@angular/core';
+import { NgClass, NgFor } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+/* ─── Interfaces ─────────────────────────────────────────────────── */
+
+interface UserProfile {
+  name: string;
+  since: string;
+  location: string;
+  level: number;
+  xp: number;
+  xpMax: number;
+}
+
+interface Stat {
+  xuxemons: number;
+  batallas: number;
+  victorias: number;
+  derrotas: number;
+  amigos: number;
+  dias: number;
+}
+
+interface Logro {
+  icon: string;
+  name: string;
+  unlocked: boolean;
+}
+
+interface Xuxemon {
+  name: string;
+  type: string;
+  level: number;
+  hp: number;
+  img: string;
+}
+
+interface NavItem {
+  icon: string;
+  label: string;
+  route: string;
+}
+
+/* ─── Componente ─────────────────────────────────────────────────── */
 
 @Component({
   selector: 'app-perfil',
-  imports: [],
+  standalone: true,
+  imports: [NgClass, NgFor, RouterModule],
   templateUrl: './perfil.html',
-  styleUrl: './perfil.css',
+  styleUrls: ['./perfil.css']
 })
 export class Perfil {
 
+  /* Datos del usuario */
+  user: UserProfile = {
+    name: 'Daniel',
+    since: 'Febrero 2025',
+    location: 'Cataluña, España',
+    level: 18,
+    xp: 4111,
+    xpMax: 5000
+  };
+
+  /* Estadísticas generales */
+  stats: Stat = {
+    xuxemons: 5,
+    batallas: 15,
+    victorias: 12,
+    derrotas: 3,
+    amigos: 5,
+    dias: 40
+  };
+
+  /* Logros — unlocked: true = desbloqueado, false = bloqueado */
+  logros: Logro[] = [
+    { icon: '🦀', name: 'Primer Xuxemon',  unlocked: true  },
+    { icon: '⚔️', name: '100 batallas',    unlocked: true  },
+    { icon: '🗺️', name: 'Explorador',      unlocked: true  },
+    { icon: '👥', name: 'Amigo sociable',  unlocked: false },
+    { icon: '🎓', name: 'Maestro',         unlocked: false },
+    { icon: '🏆', name: 'Leyenda',         unlocked: false }
+  ];
+
+  /* Xuxemons del usuario — mismos datos que el dashboard */
+  xuxemons: Xuxemon[] = [
+    { name: 'Elconchudo', type: 'Agua',   level: 15, hp: 100, img: 'https://em-content.zobj.net/source/apple/354/crab_1f980.png'    },
+    { name: 'Oreo',       type: 'Tierra', level: 12, hp: 50,  img: 'https://em-content.zobj.net/source/apple/354/cow_1f404.png'      },
+    { name: 'Beeboo',     type: 'Aire',   level: 10, hp: 78,  img: 'https://em-content.zobj.net/source/apple/354/honeybee_1f41d.png' }
+  ];
+
+  /* Navegación inferior — misma que el dashboard, activo: /perfil */
+  navItems: NavItem[] = [
+    { icon: '🏠', label: 'Inicio',    route: '/dashboard' },
+    { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
+    { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
+    { icon: '👥', label: 'Amigos',   route: '/amigos'    },
+    { icon: '⚔️', label: 'Batallas', route: '/batallas'  },
+    { icon: '💬', label: 'Chat',     route: '/chat'      },
+    { icon: '👤', label: 'Perfil',   route: '/perfil'    },
+    { icon: '🛡️', label: 'Admin',   route: '/admin'     }
+  ];
 }
