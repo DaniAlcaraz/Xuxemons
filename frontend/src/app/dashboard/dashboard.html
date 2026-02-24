@@ -1,1 +1,142 @@
-<p>dashboard works!</p>
+<div class="dashboard-wrapper">
+  <!-- Contenedor principal del dashboard -->
+
+  <!-- Cabecera superior -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <!-- Título principal -->
+      <h1>Dashboard</h1>
+      <!-- Mensaje de bienvenida -->
+      <p>¡Bienvenido, entrenador!</p>
+    </div>
+  </header>
+
+  <!-- Contenido principal de la página -->
+  <main class="dashboard-main">
+
+    <!-- Sección de tarjetas estadísticas -->
+    <section class="stats-grid">
+
+      <!-- Tarjeta: Xuxemons capturados -->
+      <div class="stat-card">
+        <span class="stat-icon">🏆</span> <!-- Icono -->
+        <div class="stat-info">
+          <span class="stat-number">3</span> <!-- Número -->
+          <span class="stat-label">Xuxemons capturados</span> <!-- Descripción -->
+        </div>
+      </div>
+
+      <!-- Tarjeta: Batallas ganadas -->
+      <div class="stat-card">
+        <span class="stat-icon">⚡</span>
+        <div class="stat-info">
+          <span class="stat-number">3</span>
+          <span class="stat-label">Batallas ganadas</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta: Amigos -->
+      <div class="stat-card">
+        <span class="stat-icon">💗</span>
+        <div class="stat-info">
+          <span class="stat-number">3</span>
+          <span class="stat-label">Amigos</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Sección: Lista de Xuxemons del usuario -->
+    <section class="card">
+      <h2 class="section-title">Els meus xuxemons</h2>
+
+      <!-- Contenedor en forma de grid -->
+      <div class="xuxemon-grid">
+
+        <!-- Bucle Angular que recorre el array xuxemons -->
+        @for (x of xuxemons; track x.name) {
+
+          <!-- Tarjeta individual de cada xuxemon -->
+          <div class="xuxemon-card">
+
+            <!-- Imagen dinámica -->
+            <img [src]="x.img" [alt]="x.name" class="xuxemon-img" />
+
+            <!-- Nombre del xuxemon -->
+            <p class="xuxemon-name">{{ x.name }}</p>
+
+            <!-- Tipo con clase dinámica según su tipo -->
+            <span class="badge" [ngClass]="x.type.toLowerCase()">
+              {{ x.type }}
+            </span>
+
+            <!-- Estadísticas del xuxemon -->
+            <div class="xuxemon-stats">
+
+              <!-- Nivel -->
+              <div class="stat-row">
+                <span>Nivel</span>
+                <span class="val">{{ x.level }}</span>
+              </div>
+
+              <!-- Vida -->
+              <div class="stat-row">
+                <span>Vida</span>
+                <span class="val">{{ x.hp }}%</span>
+              </div>
+
+              <!-- Barra visual de vida -->
+              <div class="hp-bar">
+                <!-- El ancho depende del porcentaje de vida -->
+                <div class="hp-fill" [style.width.%]="x.hp"></div>
+              </div>
+
+            </div>
+          </div>
+
+        }
+
+      </div>
+    </section>
+
+    <!-- Sección de notificaciones -->
+    <section class="card">
+      <h2 class="section-title">Notificaciones</h2>
+
+      <!-- Notificación azul -->
+      <div class="notif notif-blue">
+        <p class="notif-title">Nuevo Xuxemon disponible</p>
+        <p class="notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
+      </div>
+
+      <!-- Notificación rosa -->
+      <div class="notif notif-pink">
+        <p class="notif-title">Desafío recibido</p>
+        <p class="notif-body">Marc te desafía a una batalla</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navegación inferior -->
+  <nav class="bottom-nav">
+
+    <!-- Bucle Angular para los elementos del menú -->
+    @for (item of navItems; track item.label) {
+
+      <!-- Enlace con ruta dinámica -->
+      <a class="nav-item"
+         [class.active]="item.route === '/dashboard'"
+         [routerLink]="item.route">
+
+        <!-- Icono del menú -->
+        <span class="nav-icon">{{ item.icon }}</span>
+
+        <!-- Texto del menú -->
+        <span>{{ item.label }}</span>
+
+      </a>
+    }
+
+  </nav>
+</div>
