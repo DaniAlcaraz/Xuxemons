@@ -4,26 +4,21 @@
    Prefijo único: perfil- para evitar conflictos globales
    ================================================================ */
 
-/* ─── Import de fuente ─────────────────────────────────────────── */
+/* Import de fuente */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
-/* ─── Wrapper principal ───────────────────────────────────────── */
+/* Wrapper principal */
 .perfil-wrapper {
-    font-family: 'Nunito', sans-serif;
-    /* Fuente principal */
-    min-height: 100vh;
-    /* Ocupa toda la altura de la pantalla */
-    background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
-    /* Fondo degradado azul-lila suave */
-    padding-bottom: 84px;
-    /* Espacio inferior para el nav fijo */
+    font-family: 'Nunito', sans-serif; /* Fuente principal */
+    min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+    background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%); /* Fondo degradado */
+    padding-bottom: 84px; /* Espacio inferior para el nav fijo */
     box-sizing: border-box;
 }
 
-/* ─── Header ─────────────────────────────────────────────────── */
+/* Header*/
 .perfil-header {
-    background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
-    /* Mismo gradiente morado que dashboard */
+    background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%); /* Gradiente morado */
     padding: 36px 24px 28px;
 }
 
@@ -42,7 +37,7 @@
     font-weight: 700;
 }
 
-/* ─── Main ───────────────────────────────────────────────────── */
+/* Main*/
 .perfil-main {
     padding: 22px 18px 20px;
     display: flex;
@@ -52,12 +47,12 @@
     margin: 0 auto;
 }
 
-/* ─── Card base ───────────────────────────────────────────────── */
+/* Card base */
 .perfil-card {
     background: #ffffff;
     border-radius: 22px;
     padding: 22px 20px;
-    box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
+    box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10); /* Sombra suave */
     border: 1px solid rgba(200, 210, 240, 0.6);
 }
 
@@ -69,31 +64,29 @@
     margin: 0 0 16px;
 }
 
-/* ─── Tarjeta de usuario ──────────────────────────────────────── */
+/* Tarjeta de usuario */
 .perfil-user-card {
-    padding: 0;
-    /* Se quita padding para dejar espacio al banner */
+    padding: 0; /* Se quita padding para el banner */
     overflow: hidden;
 }
 
-/* Banner degradado en la parte superior de la tarjeta */
+/* Banner superior */
 .perfil-user-banner {
     height: 90px;
     background: linear-gradient(135deg, #ff9f43 0%, #ee5a24 40%, #fd79a8 100%);
     border-radius: 22px 22px 0 0;
 }
 
-/* Zona del avatar y la info del usuario */
+/* Cuerpo de la tarjeta de usuario */
 .perfil-user-body {
     display: flex;
     align-items: flex-start;
     gap: 16px;
     padding: 0 20px;
-    margin-top: -36px;
-    /* Avatar subido sobre el banner */
+    margin-top: -36px; /* Sube el avatar sobre el banner */
 }
 
-/* Avatar circular */
+/* Avatar */
 .perfil-avatar {
     width: 72px;
     height: 72px;
@@ -106,17 +99,16 @@
     box-shadow: 0 4px 16px rgba(100, 120, 200, 0.18);
 }
 
-/* Info del usuario: nombre, ubicación, desde cuándo */
+/* Info del usuario */
 .perfil-user-info {
     flex: 1;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding-top: 42px;
-    /* Ajuste por el banner */
+    padding-top: 42px; /* Ajuste por el banner */
 }
 
-/* Botón editar perfil */
+/* Botón editar */
 .perfil-edit-btn {
     font-size: 12px;
     font-weight: 800;
@@ -134,7 +126,7 @@
     transform: translateY(-1px);
 }
 
-/* ─── Barra de experiencia (XP) ───────────────────────────────── */
+/* Barra de experiencia (XP) */
 .perfil-xp-section {
     display: flex;
     justify-content: space-between;
@@ -158,29 +150,32 @@
     box-shadow: 0 2px 8px rgba(255, 159, 67, 0.45);
 }
 
-/* ─── Grid de estadísticas y logros ───────────────────────────── */
+/* Grid General (2 columnas) */
 .perfil-two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
 }
 
+
+   /*NUEVO ESTILO: GRID DE ESTADÍSTICAS*/
+  
 .perfil-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 14px; /* Separación adaptada a la imagen */
 }
 
-/* Cada estadística individual */
+/* Caja base de cada estadística */
 .perfil-stat-item {
-    background: #f8f9fe;
-    border: 1px solid #e8eaf6;
-    border-radius: 14px;
-    padding: 14px 12px;
+    background: #f4f5f9; /* Fondo gris muy claro, sin bordes duros */
+    border-radius: 16px; /* Bordes un poco más redondeados */
+    padding: 20px 10px; /* Más espacio vertical para estilizar */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 6px;
     text-align: center;
     transition: transform 0.18s;
 }
@@ -189,14 +184,29 @@
     transform: translateY(-2px);
 }
 
-/* ─── Grid de logros ──────────────────────────────────────────── */
+/* Número grande (dorado/naranja) */
+.perfil-stat-big {
+    font-size: 28px;
+    font-weight: 900;
+    color: #e2a637; /* Color dorado extraído de tu imagen */
+    line-height: 1;
+}
+
+/* Texto de la estadística (gris claro) */
+.perfil-stat-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8b8b9a; /* Color de texto gris suave */
+    line-height: 1.2;
+}
+
+/* Grid de logros */
 .perfil-logros-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
-/* Cada logro */
 .perfil-logro-item {
     background: #f8f9fe;
     border: 1.5px solid #e8eaf6;
@@ -212,7 +222,6 @@
     transition: transform 0.18s, box-shadow 0.18s;
 }
 
-/* Logro desbloqueado */
 .perfil-logro-unlocked {
     opacity: 1;
     filter: none;
@@ -226,7 +235,7 @@
     box-shadow: 0 6px 20px rgba(249, 202, 36, 0.3);
 }
 
-/* ─── Grid de Xuxemons (copiado del dashboard) ────────────────── */
+/* Grid de Xuxemons*/
 .perfil-card-header {
     display: flex;
     justify-content: space-between;
@@ -302,21 +311,10 @@
     color: #fff;
 }
 
-.perfil-badge.agua {
-    background: linear-gradient(90deg, #4a9eff, #0984e3);
-}
-
-.perfil-badge.tierra {
-    background: linear-gradient(90deg, #5cba2e, #27ae60);
-}
-
-.perfil-badge.aire {
-    background: linear-gradient(90deg, #22c4cc, #00b8c4);
-}
-
-.perfil-badge.fuego {
-    background: linear-gradient(90deg, #ff6535, #e84118);
-}
+.perfil-badge.agua { background: linear-gradient(90deg, #4a9eff, #0984e3); }
+.perfil-badge.tierra { background: linear-gradient(90deg, #5cba2e, #27ae60); }
+.perfil-badge.aire { background: linear-gradient(90deg, #22c4cc, #00b8c4); }
+.perfil-badge.fuego { background: linear-gradient(90deg, #ff6535, #e84118); }
 
 .perfil-xuxemon-stats {
     width: 100%;
@@ -328,7 +326,7 @@
 .perfil-stat-row {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     color: #aaaacc;
     margin-bottom: 4px;
@@ -339,7 +337,7 @@
     font-weight: 900;
 }
 
-/* Barra HP de cada Xuxemon */
+/* Barra HP */
 .perfil-hp-bar {
     position: relative;
     height: 10px;
@@ -358,7 +356,7 @@
     box-shadow: 0 2px 8px rgba(67, 233, 123, 0.45);
 }
 
-/* ─── Notificaciones / Actividad reciente ─────────────────────── */
+/* Notificaciones / Actividad*/
 .perfil-notif {
     border-radius: 14px;
     padding: 13px 16px;
@@ -373,16 +371,6 @@
 
 .perfil-notif:hover {
     transform: translateX(2px);
-}
-
-.perfil-notif::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    border-radius: 4px 0 0 4px;
 }
 
 .perfil-notif-title {
@@ -407,7 +395,7 @@
     display: block;
 }
 
-/* ─── Navegación inferior ─────────────────────────────────────── */
+/* Navegación inferior */
 .perfil-bottom-nav {
     position: fixed;
     bottom: 0;
