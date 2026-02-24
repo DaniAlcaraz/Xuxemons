@@ -9,27 +9,29 @@
       <p class="subtitle">Inicia sesión para continuar tu aventura</p>
     </div>
 
-    <form class="login-form">
+    <form [formGroup]="form" class="login-form">
       <div class="field-group">
         <label class="field-label" for="correo">Correo electrónico</label>
-        <div class="input-wrapper">
+        <div class="input-wrapper" [class.error]="isInvalid('correo')">
           <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
             <polyline points="22,6 12,13 2,6"/>
           </svg>
-          <input id="correo" type="email" class="field-input" placeholder="entrenador@xuxemons.com" />
+          <input id="correo" type="email" class="field-input" placeholder="entrenador@xuxemons.com" formControlName="correo" />
         </div>
+        <span class="error-msg" *ngIf="isInvalid('correo')">Este campo es obligatorio</span>
       </div>
 
       <div class="field-group">
         <label class="field-label" for="contrasena">Contraseña</label>
-        <div class="input-wrapper">
+        <div class="input-wrapper" [class.error]="isInvalid('contrasena')">
           <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          <input id="contrasena" type="password" class="field-input" placeholder="••••••••" />
+          <input id="contrasena" type="password" class="field-input" placeholder="••••••••" formControlName="contrasena" />
         </div>
+        <span class="error-msg" *ngIf="isInvalid('contrasena')">Este campo es obligatorio</span>
       </div>
 
       <div class="register-link">
@@ -37,9 +39,7 @@
         <a routerLink="/registro" class="link-btn">Regístrate aquí</a>
       </div>
 
-      <button type="submit" class="submit-btn">
-        Iniciar sesión →
-      </button>
+      <button type="submit" class="submit-btn">Iniciar sesión →</button>
     </form>
   </div>
 </div>

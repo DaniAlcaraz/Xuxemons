@@ -166,3 +166,42 @@
   color: var(--purple-end);
   text-decoration: underline;
 }
+
+.input-wrapper.error .field-input {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.04);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.error-msg {
+  font-size: 16px;
+  color: #ef4444;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.field-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 22px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  color: var(--text-dark);
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.field-input::placeholder {
+  color: #c4c4d8;
+  font-weight: 400;
+}
+
+.field-input:focus {
+  border-color: var(--blue-mid);
+  background: rgba(74, 144, 217, 0.06);
+  box-shadow: 0 0 0 4px rgba(106, 111, 212, 0.1);
+}
