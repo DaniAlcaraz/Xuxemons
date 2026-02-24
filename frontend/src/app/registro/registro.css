@@ -1,114 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+
+:host {
+  --blue-start: #4a90d9;
+  --blue-mid: #6a6fd4;
+  --purple-end: #9b59b6;
+  --accent-orange: #f97316;
+  --accent-yellow: #f59e0b;
+  --text-dark: #1a1a2e;
+  --text-mid: #4a4a6a;
+  --text-light: #8888aa;
+  --input-bg: #f7f7fb;
+  display: block;
+  font-family: 'Nunito', sans-serif;
+}
+
 .registro-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #6B8CFF, #A855F7);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, var(--blue-start) 0%, var(--blue-mid) 50%, var(--purple-end) 100%);
+  position: relative;
+  overflow: hidden;
   padding: 24px;
+  font-family: 'Nunito', sans-serif;
 }
 
 .card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 32px;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  padding: 48px 56px;
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
+  box-shadow: 0 32px 80px rgba(74, 59, 140, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  position: relative;
+  z-index: 10;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 24px; right: 24px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-orange), var(--accent-yellow), var(--blue-mid), var(--purple-end));
+  border-radius: 0 0 4px 4px;
+  opacity: 0.8;
 }
 
 .card-header {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .logo {
-  font-size: 14px;
-  font-weight: 600;
-  color: #6B8CFF;
+  font-family: 'Baloo 2', cursive;
+  font-size: 33px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--blue-mid), var(--purple-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .card-header h1 {
-  font-size: 28px;
-  font-weight: bold;
-  color: #1E1E1E;
-  margin: 8px 0 4px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 10px 0 6px;
+  letter-spacing: -0.5px;
 }
 
 .card-header p {
-  font-size: 14px;
-  color: #666666;
+  font-size: 30px;
+  color: var(--text-light);
   margin: 0;
+  font-weight: 500;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .field label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1E1E1E;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-mid);
+  letter-spacing: 0.3px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .field input {
-  background: #ffffff;
-  border: 1px solid #dddddd;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #1E1E1E;
+  width: 100%;
+  background: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 22px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  color: var(--text-dark);
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .field input::placeholder {
-  color: #999999;
+  color: #c4c4d8;
+  font-weight: 400;
 }
 
 .field input:focus {
-  border-color: #6B8CFF;
-  box-shadow: 0 0 0 3px rgba(107, 140, 255, 0.15);
+  border-color: var(--blue-mid);
+  background: rgba(74, 144, 217, 0.06);
+  box-shadow: 0 0 0 4px rgba(106, 111, 212, 0.1);
 }
 
 .btn-primary {
-  background: #1E1E1E;
-  color: #ffffff;
+  margin-top: 4px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--blue-mid) 0%, var(--purple-end) 100%);
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 14px 24px;
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: 14px;
+  padding: 16px 24px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
   cursor: pointer;
-  margin-top: 8px;
-  transition: box-shadow 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 24px rgba(106, 111, 212, 0.35);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(106, 111, 212, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .login-link {
   text-align: center;
-  font-size: 14px;
-  color: #666666;
+  font-size: 22px;
+  color: var(--text-light);
   margin: 0;
 }
 
 .login-link a {
-  color: #6B8CFF;
+  color: var(--blue-mid);
+  font-weight: 700;
   text-decoration: none;
-  font-weight: 600;
+  transition: color 0.2s;
 }
 
 .login-link a:hover {
+  color: var(--purple-end);
   text-decoration: underline;
 }
