@@ -1,1 +1,90 @@
-<p>dashboard works!</p>
+<div class="dboard-wrapper">
+
+  <!-- Cabecera -->
+  <header class="dboard-header">
+    <div class="dboard-header-content">
+      <h1>Dashboard</h1>
+      <p>¡Bienvenido, entrenador!</p>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="dboard-main">
+
+    <!-- Tarjetas estadísticas -->
+    <section class="dboard-stats-grid">
+      <div class="dboard-stat-card">
+        <span class="dboard-stat-icon">🏆</span>
+        <div class="dboard-stat-info">
+          <span class="dboard-stat-number">3</span>
+          <span class="dboard-stat-label">Xuxemons capturados</span>
+        </div>
+      </div>
+      <div class="dboard-stat-card">
+        <span class="dboard-stat-icon">⚡</span>
+        <div class="dboard-stat-info">
+          <span class="dboard-stat-number">3</span>
+          <span class="dboard-stat-label">Batallas ganadas</span>
+        </div>
+      </div>
+      <div class="dboard-stat-card">
+        <span class="dboard-stat-icon">💗</span>
+        <div class="dboard-stat-info">
+          <span class="dboard-stat-number">3</span>
+          <span class="dboard-stat-label">Amigos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Xuxemons del usuario -->
+    <section class="dboard-card">
+      <h2 class="dboard-section-title">Els meus xuxemons</h2>
+      <div class="dboard-xuxemon-grid">
+        <div *ngFor="let x of xuxemons" class="dboard-xuxemon-card">
+          <img [src]="x.img" [alt]="x.name" class="dboard-xuxemon-img" />
+          <p class="dboard-xuxemon-name">{{ x.name }}</p>
+          <span class="dboard-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
+          <div class="dboard-xuxemon-stats">
+            <div class="dboard-stat-row">
+              <span>Nivel</span>
+              <span class="dboard-val">{{ x.level }}</span>
+            </div>
+            <div class="dboard-stat-row">
+              <span>Vida</span>
+              <span class="dboard-val">{{ x.hp }}%</span>
+            </div>
+            <div class="dboard-hp-bar">
+              <div class="dboard-hp-fill" [style.width.%]="x.hp"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notificaciones -->
+    <section class="dboard-card">
+      <h2 class="dboard-section-title">Notificaciones</h2>
+      <div class="dboard-notif dboard-notif-blue">
+        <p class="dboard-notif-title">Nuevo Xuxemon disponible</p>
+        <p class="dboard-notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
+      </div>
+      <div class="dboard-notif dboard-notif-pink">
+        <p class="dboard-notif-title">Desafío recibido</p>
+        <p class="dboard-notif-body">Marc te desafía a una batalla</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navegación inferior -->
+  <nav class="dboard-bottom-nav">
+    <a *ngFor="let item of navItems"
+       class="dboard-nav-item"
+       [class.active]="item.route === '/dashboard'"
+       [routerLink]="item.route">
+      <span class="dboard-nav-icon">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+</div>
