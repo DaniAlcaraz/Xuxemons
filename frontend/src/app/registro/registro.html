@@ -6,39 +6,64 @@
       <p>Únete a la aventura</p>
     </div>
 
-    <form class="form">
+    <form [formGroup]="form" class="form">
+
       <div class="field">
         <label>Nombre</label>
-        <input type="text" placeholder="Tu nombre de entrenador" />
+        <div class="input-wrapper" [class.error]="getError('nombre')">
+          <input type="text" class="field-input" placeholder="Tu nombre de entrenador" formControlName="nombre" />
+        </div>
+        @if (getError('nombre')) {
+          <span class="error-msg">{{ getError('nombre') }}</span>
+        }
       </div>
 
       <div class="field">
         <label>Correo electrónico</label>
-        <input type="email" placeholder="entrenador@xuxemons.com" />
+        <div class="input-wrapper" [class.error]="getError('correo')">
+          <input type="email" class="field-input" placeholder="entrenador@xuxemons.com" formControlName="correo" />
+        </div>
+        @if (getError('correo')) {
+          <span class="error-msg">{{ getError('correo') }}</span>
+        }
       </div>
 
       <div class="field">
         <label>DNI / NIE</label>
-        <input type="text" placeholder="12345678A" />
+        <div class="input-wrapper" [class.error]="getError('dni')">
+          <input type="text" class="field-input" placeholder="12345678A" formControlName="dni" />
+        </div>
+        @if (getError('dni')) {
+          <span class="error-msg">{{ getError('dni') }}</span>
+        }
       </div>
 
       <div class="field">
         <label>Contraseña</label>
-        <input type="password" placeholder="••••••••" />
+        <div class="input-wrapper" [class.error]="getError('contrasena')">
+          <input type="password" class="field-input" placeholder="••••••••" formControlName="contrasena" />
+        </div>
+        @if (getError('contrasena')) {
+          <span class="error-msg">{{ getError('contrasena') }}</span>
+        }
       </div>
 
       <div class="field">
         <label>Repetir contraseña</label>
-        <input type="password" placeholder="••••••••" />
+        <div class="input-wrapper" [class.error]="getError('repetirContrasena')">
+          <input type="password" class="field-input" placeholder="••••••••" formControlName="repetirContrasena" />
+        </div>
+        @if (getError('repetirContrasena')) {
+          <span class="error-msg">{{ getError('repetirContrasena') }}</span>
+        }
       </div>
 
-      <button type="button" class="btn-primary">Crear cuenta</button>
+      <button type="submit" class="btn-primary">Crear cuenta</button>
 
       <p class="login-link">
         ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
       </p>
 
-      
     </form>
   </div>
 </div>
