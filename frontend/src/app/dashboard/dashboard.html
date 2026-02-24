@@ -1,142 +1,90 @@
-<div class="dashboard-wrapper">
-  <!-- Contenedor principal del dashboard -->
+<div class="dboard-wrapper">
 
-  <!-- Cabecera superior -->
-  <header class="dashboard-header">
-    <div class="header-content">
-      <!-- Título principal -->
+  <!-- Cabecera -->
+  <header class="dboard-header">
+    <div class="dboard-header-content">
       <h1>Dashboard</h1>
-      <!-- Mensaje de bienvenida -->
       <p>¡Bienvenido, entrenador!</p>
     </div>
   </header>
 
-  <!-- Contenido principal de la página -->
-  <main class="dashboard-main">
+  <!-- Contenido principal -->
+  <main class="dboard-main">
 
-    <!-- Sección de tarjetas estadísticas -->
-    <section class="stats-grid">
-
-      <!-- Tarjeta: Xuxemons capturados -->
-      <div class="stat-card">
-        <span class="stat-icon">🏆</span> <!-- Icono -->
-        <div class="stat-info">
-          <span class="stat-number">3</span> <!-- Número -->
-          <span class="stat-label">Xuxemons capturados</span> <!-- Descripción -->
+    <!-- Tarjetas estadísticas -->
+    <section class="dboard-stats-grid">
+      <div class="dboard-stat-card">
+        <span class="dboard-stat-icon">🏆</span>
+        <div class="dboard-stat-info">
+          <span class="dboard-stat-number">3</span>
+          <span class="dboard-stat-label">Xuxemons capturados</span>
         </div>
       </div>
-
-      <!-- Tarjeta: Batallas ganadas -->
-      <div class="stat-card">
-        <span class="stat-icon">⚡</span>
-        <div class="stat-info">
-          <span class="stat-number">3</span>
-          <span class="stat-label">Batallas ganadas</span>
+      <div class="dboard-stat-card">
+        <span class="dboard-stat-icon">⚡</span>
+        <div class="dboard-stat-info">
+          <span class="dboard-stat-number">3</span>
+          <span class="dboard-stat-label">Batallas ganadas</span>
         </div>
       </div>
-
-      <!-- Tarjeta: Amigos -->
-      <div class="stat-card">
-        <span class="stat-icon">💗</span>
-        <div class="stat-info">
-          <span class="stat-number">3</span>
-          <span class="stat-label">Amigos</span>
+      <div class="dboard-stat-card">
+        <span class="dboard-stat-icon">💗</span>
+        <div class="dboard-stat-info">
+          <span class="dboard-stat-number">3</span>
+          <span class="dboard-stat-label">Amigos</span>
         </div>
       </div>
-
     </section>
 
-    <!-- Sección: Lista de Xuxemons del usuario -->
-    <section class="card">
-      <h2 class="section-title">Els meus xuxemons</h2>
-
-      <!-- Contenedor en forma de grid -->
-      <div class="xuxemon-grid">
-
-        <!-- Bucle Angular que recorre el array xuxemons -->
-        @for (x of xuxemons; track x.name) {
-
-          <!-- Tarjeta individual de cada xuxemon -->
-          <div class="xuxemon-card">
-
-            <!-- Imagen dinámica -->
-            <img [src]="x.img" [alt]="x.name" class="xuxemon-img" />
-
-            <!-- Nombre del xuxemon -->
-            <p class="xuxemon-name">{{ x.name }}</p>
-
-            <!-- Tipo con clase dinámica según su tipo -->
-            <span class="badge" [ngClass]="x.type.toLowerCase()">
-              {{ x.type }}
-            </span>
-
-            <!-- Estadísticas del xuxemon -->
-            <div class="xuxemon-stats">
-
-              <!-- Nivel -->
-              <div class="stat-row">
-                <span>Nivel</span>
-                <span class="val">{{ x.level }}</span>
-              </div>
-
-              <!-- Vida -->
-              <div class="stat-row">
-                <span>Vida</span>
-                <span class="val">{{ x.hp }}%</span>
-              </div>
-
-              <!-- Barra visual de vida -->
-              <div class="hp-bar">
-                <!-- El ancho depende del porcentaje de vida -->
-                <div class="hp-fill" [style.width.%]="x.hp"></div>
-              </div>
-
+    <!-- Xuxemons del usuario -->
+    <section class="dboard-card">
+      <h2 class="dboard-section-title">Els meus xuxemons</h2>
+      <div class="dboard-xuxemon-grid">
+        <div *ngFor="let x of xuxemons" class="dboard-xuxemon-card">
+          <img [src]="x.img" [alt]="x.name" class="dboard-xuxemon-img" />
+          <p class="dboard-xuxemon-name">{{ x.name }}</p>
+          <span class="dboard-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
+          <div class="dboard-xuxemon-stats">
+            <div class="dboard-stat-row">
+              <span>Nivel</span>
+              <span class="dboard-val">{{ x.level }}</span>
+            </div>
+            <div class="dboard-stat-row">
+              <span>Vida</span>
+              <span class="dboard-val">{{ x.hp }}%</span>
+            </div>
+            <div class="dboard-hp-bar">
+              <div class="dboard-hp-fill" [style.width.%]="x.hp"></div>
             </div>
           </div>
-
-        }
-
+        </div>
       </div>
     </section>
 
-    <!-- Sección de notificaciones -->
-    <section class="card">
-      <h2 class="section-title">Notificaciones</h2>
-
-      <!-- Notificación azul -->
-      <div class="notif notif-blue">
-        <p class="notif-title">Nuevo Xuxemon disponible</p>
-        <p class="notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
+    <!-- Notificaciones -->
+    <section class="dboard-card">
+      <h2 class="dboard-section-title">Notificaciones</h2>
+      <div class="dboard-notif dboard-notif-blue">
+        <p class="dboard-notif-title">Nuevo Xuxemon disponible</p>
+        <p class="dboard-notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
       </div>
-
-      <!-- Notificación rosa -->
-      <div class="notif notif-pink">
-        <p class="notif-title">Desafío recibido</p>
-        <p class="notif-body">Marc te desafía a una batalla</p>
+      <div class="dboard-notif dboard-notif-pink">
+        <p class="dboard-notif-title">Desafío recibido</p>
+        <p class="dboard-notif-body">Marc te desafía a una batalla</p>
       </div>
     </section>
 
   </main>
 
   <!-- Navegación inferior -->
-  <nav class="bottom-nav">
-
-    <!-- Bucle Angular para los elementos del menú -->
-    @for (item of navItems; track item.label) {
-
-      <!-- Enlace con ruta dinámica -->
-      <a class="nav-item"
-         [class.active]="item.route === '/dashboard'"
-         [routerLink]="item.route">
-
-        <!-- Icono del menú -->
-        <span class="nav-icon">{{ item.icon }}</span>
-
-        <!-- Texto del menú -->
-        <span>{{ item.label }}</span>
-
-      </a>
-    }
-
+  <nav class="dboard-bottom-nav">
+    <a *ngFor="let item of navItems"
+       class="dboard-nav-item"
+       [class.active]="item.route === '/dashboard'"
+       [routerLink]="item.route">
+      <span class="dboard-nav-icon">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
   </nav>
+
 </div>
