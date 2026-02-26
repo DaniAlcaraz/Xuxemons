@@ -22,6 +22,8 @@ class AuthController extends Controller
         $nombreLimpio = str_replace(' ', '', $request->nombre);
         $idMascara = '#' . $nombreLimpio . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
 
+        //Para que el primer usuario sea admin
+        $esAdmin = User::count() === 0;
         
         //Registra los campos con los nuevos datos a la BD
         $user = User::create([
