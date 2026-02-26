@@ -116,7 +116,7 @@
   background: var(--input-bg);
   border: 2px solid transparent;
   border-radius: 12px;
-  padding: 16px 50px 16px 50px;
+  padding: 16px 20px 16px 50px;
   font-size: 22px;
   font-family: 'Nunito', sans-serif;
   font-weight: 500;
@@ -195,6 +195,7 @@
   margin-top: 2px;
 }
 
+/*Ver ojo*/
 .password-toggle {
   position: absolute;
   right: 14px;
