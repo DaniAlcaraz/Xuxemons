@@ -7,10 +7,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsuarioController;
 
 // Sin middleware por ahora para pruebas
-Route::post('/login',   [AuthController::class, 'loginUsuario']);
-Route::post('/usuario', [AuthController::class, 'registroUsuario']);
-Route::post('/logout',  [AuthController::class, 'logoutUsuario']);
-
-Route::get('/usuario/{id}',    [UsuarioController::class, 'listarInfo']);
-Route::put('/usuario/{id}',    [UsuarioController::class, 'actualizarUsuario']);
-Route::delete('/usuario/{id}', [UsuarioController::class, 'borrarUsuario']);
+// Rutas abiertas para pruebas
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+//Finalmente tendra que ir dentro de un middleawre, pero ahora esta asi para probar que funcionen las rutas
+//Route::get('/me', [AuthController::class, 'me']);      
+Route::post('/logout', [AuthController::class, 'logout']); 
