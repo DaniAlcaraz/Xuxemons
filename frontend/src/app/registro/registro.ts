@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, CommonModule],
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
 export class Registro {
   form: FormGroup;
+  mostrarPassword = false;
+  mostrarRepetirPassword = false;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({

@@ -1,0 +1,358 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* Wrapper principal */
+.editarperfil-wrapper {
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
+  padding-bottom: 84px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.editarperfil-header {
+  background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
+  padding: 36px 24px 28px;
+}
+
+.editarperfil-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.editarperfil-header-content h1 {
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.editarperfil-header-content p {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+}
+
+/* Botón volver */
+.editarperfil-back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+  flex-shrink: 0;
+}
+
+.editarperfil-back-btn:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateX(-2px);
+}
+
+/* Main */
+.editarperfil-main {
+  padding: 22px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Card base */
+.editarperfil-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 22px 20px;
+  box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
+  border: 1px solid rgba(200, 210, 240, 0.6);
+}
+
+/* Título de sección */
+.editarperfil-section-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #1a1a3a;
+  margin: 0 0 20px;
+}
+
+/* ─── TARJETA AVATAR ─────────────────────────── */
+.editarperfil-avatar-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.editarperfil-avatar-banner {
+  height: 80px;
+  background: linear-gradient(135deg, #ff9f43 0%, #ee5a24 40%, #fd79a8 100%);
+  border-radius: 22px 22px 0 0;
+}
+
+.editarperfil-avatar-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px 20px;
+  margin-top: -36px;
+}
+
+.editarperfil-avatar-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.editarperfil-avatar {
+  width: 72px;
+  height: 72px;
+  background: #f0f1fa;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(100, 120, 200, 0.18);
+  font-size: 32px;
+}
+
+.editarperfil-avatar-change-btn {
+  position: absolute;
+  bottom: 0;
+  right: -4px;
+  background: #6c7fe8;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+}
+
+.editarperfil-avatar-change-btn:hover {
+  background: #5a6fd6;
+  transform: scale(1.1);
+}
+
+.editarperfil-avatar-hint {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #aaaacc;
+}
+
+/* ─── FORMULARIO ────────────────────────────── */
+.editarperfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Fila de 2 columnas */
+.editarperfil-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 520px) {
+  .editarperfil-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editarperfil-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.editarperfil-form-group-full {
+  width: 50%;
+}
+
+@media (max-width: 520px) {
+  .editarperfil-form-group-full {
+    width: 100%;
+  }
+}
+
+/* Label */
+.editarperfil-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a1a3a;
+}
+
+/* Input base */
+.editarperfil-input {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a3a;
+  background: #f8f9fe;
+  border: 1.5px solid #e2e6f8;
+  border-radius: 12px;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.editarperfil-input::placeholder {
+  color: #b0b3cc;
+  font-weight: 600;
+}
+
+.editarperfil-input:focus {
+  border-color: #6c7fe8;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(108, 127, 232, 0.12);
+}
+
+/* Input contraseña con ojo */
+.editarperfil-input-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.editarperfil-input-password {
+  padding-right: 48px;
+}
+
+.editarperfil-password-toggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+  transition: transform 0.15s;
+}
+
+.editarperfil-password-toggle:hover {
+  transform: scale(1.15);
+}
+
+/* ─── BOTONES DE ACCIÓN ──────────────────────── */
+.editarperfil-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.editarperfil-btn-guardar {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(67, 233, 123, 0.35);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.editarperfil-btn-guardar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(67, 233, 123, 0.45);
+}
+
+.editarperfil-btn-cerrar {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1a1a3a;
+  background: #f0f2fd;
+  border: 1.5px solid rgba(108, 127, 232, 0.25);
+  border-radius: 12px;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+}
+
+.editarperfil-btn-cerrar:hover {
+  background: #e4e8fb;
+  transform: translateY(-1px);
+}
+
+.editarperfil-btn-eliminar {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #e84118;
+  background: transparent;
+  border: 1.5px solid rgba(232, 65, 24, 0.25);
+  border-radius: 12px;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s, border-color 0.18s;
+}
+
+.editarperfil-btn-eliminar:hover {
+  background: rgba(232, 65, 24, 0.06);
+  border-color: rgba(232, 65, 24, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ─── NAVEGACIÓN INFERIOR ────────────────────── */
+.editarperfil-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #e8eaf6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 2px 14px;
+  box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
+  z-index: 100;
+}
+
+.editarperfil-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
+  color: #aaaacc;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 5px 7px;
+  border-radius: 10px;
+  transition: color 0.18s, background 0.18s;
+}
+
+.editarperfil-nav-item:hover,
+.editarperfil-nav-item.active {
+  color: #6c7fe8;
+  background: rgba(108, 127, 232, 0.08);
+}
+
+.editarperfil-nav-icon {
+  font-size: 20px;
+  line-height: 1;
+}
