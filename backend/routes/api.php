@@ -3,14 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UsuarioController;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// Sin middleware por ahora para pruebas
+Route::post('/login',   [AuthController::class, 'loginUsuario']);
+Route::post('/usuario', [AuthController::class, 'registroUsuario']);
+Route::post('/logout',  [AuthController::class, 'logoutUsuario']);
 
-Route::middleware('auth:sanctum')->group(function() { //Para que haga uso de middleware. Basicamente las rutas dentro de est solamente se puedne acceder is el usuario  esta logueado
-    Route::post('/logout', [AuthController::class, 'logout']); //Permite la usuario salir de la aplciacion
-    Route::post('/user', [AuthController::class, 'me']); //Define el URL al que angular debe llamar para obtener los datos del usuario logueado
-});
+Route::get('/usuario/{id}',    [UsuarioController::class, 'listarInfo']);
+Route::put('/usuario/{id}',    [UsuarioController::class, 'actualizarUsuario']);
+Route::delete('/usuario/{id}', [UsuarioController::class, 'borrarUsuario']);
