@@ -18,6 +18,11 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed', //obligatorio, minimo 8 caracteres
         ]);
 
+        //Añadir mascara #NombreXXXX
+        $nombreLimpio = str_replace(' ', '', $request->nombre);
+        $idMascara = '#' . $nombreLimpio . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+
+        
         //Registra los campos con los nuevos datos a la BD
         $user = User::create([
             'nombre' => $validated['nombre'], //Sube el nombre validado
