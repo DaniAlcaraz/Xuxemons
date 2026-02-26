@@ -40,7 +40,7 @@
             <p class="perfil-user-since">Unido desde {{ user.since }}</p>
             <p class="perfil-user-location">{{ user.location }}</p>
           </div>
-          <button class="perfil-edit-btn">Editar perfil</button>
+          <button class="perfil-edit-btn" routerLink="/editar/perfil">Editar perfil</button>
         </div>
 
       </div>
@@ -165,9 +165,7 @@
 
   </main>
 
-  <!-- ══════════════════════════════════════════
-       NAVEGACIÓN INFERIOR — idéntica al dashboard
-       ══════════════════════════════════════════ -->
+ 
   <nav class="perfil-bottom-nav">
     <a *ngFor="let item of navItems"
        class="perfil-nav-item"
