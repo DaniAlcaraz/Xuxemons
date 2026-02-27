@@ -12,7 +12,6 @@
 
     <form [formGroup]="form" class="login-form" (ngSubmit)="onSubmit()" novalidate aria-describedby="login-desc">
 
-      <!-- Resumen de errores al enviar -->
       <div
         role="alert"
         aria-live="polite"
@@ -24,43 +23,41 @@
         Por favor, revisa los campos marcados antes de continuar.
       </div>
 
-      <!-- Correo -->
       <div class="field-group">
-        <label class="field-label" for="correo">
-          Correo electrónico
+        <label class="field-label" for="id">
+          ID
           <span class="required-mark" aria-hidden="true">*</span>
           <span class="visually-hidden">campo obligatorio</span>
         </label>
-        <div class="input-wrapper" [class.error]="isInvalid('correo')">
+        <div class="input-wrapper" [class.error]="isInvalid('id')">
           <svg class="input-icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
           </svg>
           <input
-            id="correo"
-            type="email"
+            id="id"
+            type="text"
             class="field-input"
-            placeholder="entrenador@xuxemons.com"
-            formControlName="correo"
-            autocomplete="email"
+            placeholder="Tu ID de entrenador"
+            formControlName="id"
+            autocomplete="username"
             aria-required="true"
-            [attr.aria-invalid]="isInvalid('correo') ? 'true' : 'false'"
-            aria-describedby="correo-error"
+            [attr.aria-invalid]="isInvalid('id') ? 'true' : 'false'"
+            aria-describedby="id-error"
           />
         </div>
         <span
-          id="correo-error"
+          id="id-error"
           class="error-msg"
           role="alert"
           aria-live="polite"
-          *ngIf="isInvalid('correo')"
+          *ngIf="isInvalid('id')"
         >
           <span class="error-icon" aria-hidden="true">✕</span>
           Este campo es obligatorio
         </span>
       </div>
 
-      <!-- Contraseña -->
       <div class="field-group">
         <label class="field-label" for="contrasena">
           Contraseña
