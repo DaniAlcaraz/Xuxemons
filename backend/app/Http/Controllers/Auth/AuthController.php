@@ -12,11 +12,13 @@ class AuthController extends Controller
 {
     public function register(Request $request) { //Si el usuario se registra
         $validated = $request->validate([
-            'nombre' => 'requred|string|max:255', //obligatorio, tipo texto, maximo 255 caracteres
-            'apellidos' => 'requred|string|max:255',
+            'nombre' => 'required|string|max:255', //obligatorio, tipo texto, maximo 255 caracteres
+            'apellidos' => 'required|string|max:255',
             'email' => 'required|email|unique:users', //obligatorio, tipo email, que no se repita
             'password' => 'required|string|min:8|confirmed', //obligatorio, minimo 8 caracteres
         ]);
+
+        $role = User::count() === 0 ? 'admin' : 'jugador';
 
         //Registra los campos con los nuevos datos a la BD
         $user = User::create([
@@ -24,6 +26,7 @@ class AuthController extends Controller
             'apellidos' => $validated['apellidos'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']), //Cifra la contraseña y sube el registro validado
+            'role' => $role,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken; //Permite identificar al usuario sin usar su contraseña. Esto genera un codigo temporal que angular guardará. Así, cada vez que angular le pida algo a laravel, le enseñará ese código para demostrar quién es de forma segura.
