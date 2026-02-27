@@ -3,8 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\Auth\AuthController;
+// use App\Http\Controllers\UsuarioController;
 
 // Sin middleware por ahora para pruebas
 // Rutas abiertas para pruebas

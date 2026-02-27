@@ -1,6 +1,6 @@
 <div class="dboard-wrapper">
 
-  <!-- Cabecera -->
+  <!-- Cabecera semántica -->
   <header class="dboard-header">
     <div class="dboard-header-content">
       <h1>Dashboard</h1>
@@ -9,42 +9,54 @@
   </header>
 
   <!-- Contenido principal -->
-  <main class="dboard-main">
+  <main class="dboard-main" id="main-content">
 
-    <!-- Tarjetas estadísticas -->
-    <section class="dboard-stats-grid">
-      <div class="dboard-stat-card">
-        <span class="dboard-stat-icon">🏆</span>
-        <div class="dboard-stat-info">
-          <span class="dboard-stat-number">3</span>
-          <span class="dboard-stat-label">Xuxemons capturados</span>
-        </div>
-      </div>
-      <div class="dboard-stat-card">
-        <span class="dboard-stat-icon">⚡</span>
-        <div class="dboard-stat-info">
-          <span class="dboard-stat-number">3</span>
-          <span class="dboard-stat-label">Batallas ganadas</span>
-        </div>
-      </div>
-      <div class="dboard-stat-card">
-        <span class="dboard-stat-icon">💗</span>
-        <div class="dboard-stat-info">
-          <span class="dboard-stat-number">3</span>
-          <span class="dboard-stat-label">Amigos</span>
-        </div>
+    <!-- Estadísticas -->
+    <section class="dboard-stats-section" aria-labelledby="stats-heading">
+      <h2 id="stats-heading" class="visually-hidden">Tus estadísticas</h2>
+      <div class="dboard-stats-grid">
+
+        <article class="dboard-stat-card">
+          <span class="dboard-stat-icon" aria-hidden="true">🏆</span>
+          <div class="dboard-stat-info">
+            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-label">Xuxemons capturados</span>
+          </div>
+        </article>
+
+        <article class="dboard-stat-card">
+          <span class="dboard-stat-icon" aria-hidden="true">⚡</span>
+          <div class="dboard-stat-info">
+            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-label">Batallas ganadas</span>
+          </div>
+        </article>
+
+        <article class="dboard-stat-card">
+          <span class="dboard-stat-icon" aria-hidden="true">💗</span>
+          <div class="dboard-stat-info">
+            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-label">Amigos</span>
+          </div>
+        </article>
+
       </div>
     </section>
 
     <!-- Xuxemons del usuario -->
-    <section class="dboard-card">
-      <h2 class="dboard-section-title">Els meus xuxemons</h2>
-      <div class="dboard-xuxemon-grid">
-        <div *ngFor="let x of xuxemons" class="dboard-xuxemon-card">
+    <section class="dboard-card" aria-labelledby="xuxemons-heading">
+      <h2 id="xuxemons-heading" class="dboard-section-title">Els meus xuxemons</h2>
+      <ul class="dboard-xuxemon-grid" role="list">
+        <li
+          *ngFor="let x of xuxemons"
+          class="dboard-xuxemon-card"
+          tabindex="0"
+          [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'"
+        >
           <img [src]="x.img" [alt]="x.name" class="dboard-xuxemon-img" />
           <p class="dboard-xuxemon-name">{{ x.name }}</p>
           <span class="dboard-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
-          <div class="dboard-xuxemon-stats">
+          <div class="dboard-xuxemon-stats" aria-hidden="true">
             <div class="dboard-stat-row">
               <span>Nivel</span>
               <span class="dboard-val">{{ x.level }}</span>
@@ -53,36 +65,55 @@
               <span>Vida</span>
               <span class="dboard-val">{{ x.hp }}%</span>
             </div>
-            <div class="dboard-hp-bar">
+            <div
+              class="dboard-hp-bar"
+              role="progressbar"
+              [attr.aria-valuenow]="x.hp"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'"
+            >
               <div class="dboard-hp-fill" [style.width.%]="x.hp"></div>
             </div>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </section>
 
     <!-- Notificaciones -->
-    <section class="dboard-card">
-      <h2 class="dboard-section-title">Notificaciones</h2>
-      <div class="dboard-notif dboard-notif-blue">
+    <section class="dboard-card" aria-labelledby="notif-heading">
+      <h2 id="notif-heading" class="dboard-section-title">Notificaciones</h2>
+
+      <article class="dboard-notif dboard-notif-blue">
         <p class="dboard-notif-title">Nuevo Xuxemon disponible</p>
         <p class="dboard-notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
-      </div>
-      <div class="dboard-notif dboard-notif-pink">
+      </article>
+
+      <article class="dboard-notif dboard-notif-pink">
         <p class="dboard-notif-title">Desafío recibido</p>
         <p class="dboard-notif-body">Marc te desafía a una batalla</p>
-      </div>
+      </article>
+
     </section>
 
   </main>
 
+  <!-- Footer -->
+  <footer class="dboard-footer">
+    <p>&copy; 2026 Xuxemons</p>
+  </footer>
+
   <!-- Navegación inferior -->
-  <nav class="dboard-bottom-nav">
-    <a *ngFor="let item of navItems"
-       class="dboard-nav-item"
-       [class.active]="item.route === '/dashboard'"
-       [routerLink]="item.route">
-      <span class="dboard-nav-icon">{{ item.icon }}</span>
+  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
+    <a
+      *ngFor="let item of navItems"
+      class="dboard-nav-item"
+      [class.active]="item.route === '/dashboard'"
+      [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/dashboard' ? 'page' : null"
+      [attr.aria-label]="item.label"
+    >
+      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
       <span>{{ item.label }}</span>
     </a>
   </nav>
