@@ -8,13 +8,12 @@
   --accent-yellow: #f59e0b;
   --text-dark: #1a1a2e;
   --text-mid: #4a4a6a;
-  --text-light: #505070; /* Oscurecido: #8888aa era 2.9:1 — ahora 7.2:1 ✓ */
+  --text-light: #505070;
   --input-bg: #f7f7fb;
   display: block;
   font-family: 'Nunito', sans-serif;
 }
 
-/* ── Utilidad accesibilidad ── */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -61,13 +60,11 @@
   margin-bottom: 20px;
 }
 
-/* brand-name: gradiente de texto no cumple WCAG (no se puede medir contraste)
-   → se añade color sólido de fallback accesible */
 .brand-name {
   font-family: 'Baloo 2', cursive;
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 800;
-  color: #2a2a7a; /* Contraste 9.5:1 ✓ — fallback visible si gradiente no soportado */
+  color: #2a2a7a;
   background: linear-gradient(135deg, var(--blue-mid), var(--purple-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -80,7 +77,7 @@
 
 .title {
   font-family: 'Baloo 2', cursive;
-  font-size: 42px;
+  font-size: 52px;
   font-weight: 800;
   color: var(--text-dark);
   margin: 0 0 6px;
@@ -88,8 +85,8 @@
 }
 
 .subtitle {
-  font-size: 18px; /* Mínimo 16px ✓ — original 30px era excesivo */
-  color: var(--text-light); /* #505070 — 7.2:1 ✓ */
+  font-size: 22px;
+  color: var(--text-light);
   margin: 0;
   font-weight: 600;
 }
@@ -100,15 +97,14 @@
   gap: 20px;
 }
 
-/* ── Error summary al enviar ── */
 .form-error-summary {
   background: #fef2f2;
   border: 2px solid #b91c1c;
   border-radius: 10px;
   padding: 12px 16px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  color: #7f1d1d; /* 9:1 ✓ */
+  color: #7f1d1d;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -121,9 +117,9 @@
 }
 
 .field-label {
-  font-size: 16px; /* Mínimo 16px ✓ — original 20px mantenido */
+  font-size: 20px;
   font-weight: 700;
-  color: var(--text-mid); /* #4a4a6a — 8.6:1 ✓ */
+  color: var(--text-mid);
   letter-spacing: 0.3px;
   text-transform: uppercase;
   display: flex;
@@ -133,7 +129,7 @@
 
 .required-mark {
   color: #b91c1c;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1;
 }
 
@@ -153,10 +149,10 @@
 .field-input {
   width: 100%;
   background: var(--input-bg);
-  border: 2px solid #9999bb; /* Borde visible siempre — el original era transparent */
+  border: 2px solid #9999bb;
   border-radius: 12px;
-  padding: 16px 50px 16px 50px;
-  font-size: 18px; /* Mínimo 16px ✓ */
+  padding: 18px 52px 18px 52px;
+  font-size: 22px;
   font-family: 'Nunito', sans-serif;
   font-weight: 500;
   color: var(--text-dark);
@@ -170,7 +166,6 @@
   font-weight: 400;
 }
 
-/* Focus visible — NUNCA eliminar el outline */
 .field-input:focus {
   border-color: #2563eb;
   background: rgba(74, 144, 217, 0.06);
@@ -183,12 +178,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 17px; /* Mínimo 16px ✓ */
+  font-size: 20px;
   color: var(--text-light);
 }
 
 .link-btn {
-  color: #1d3fa8; /* Contraste > 7:1 sobre blanco ✓ */
+  color: #1d3fa8;
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -212,14 +207,14 @@
   color: #fff;
   border: none;
   border-radius: 14px;
-  padding: 16px 24px;
+  padding: 20px 24px;
   font-family: 'Nunito', sans-serif;
-  font-size: 20px; /* Mínimo 16px ✓ */
+  font-size: 26px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 8px 24px rgba(106, 111, 212, 0.35);
-  min-height: 54px;
+  min-height: 64px;
 }
 
 .submit-btn:hover {
@@ -231,30 +226,27 @@
   transform: translateY(0);
 }
 
-/* Focus visible en botón principal */
 .submit-btn:focus-visible {
   outline: 3px solid #ffffff;
   outline-offset: 2px;
   box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.5);
 }
 
-/* Error — borde + fondo + icono, no solo color */
 .input-wrapper.error .field-input {
   border-color: #b91c1c;
   background: rgba(239, 68, 68, 0.04);
   box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15);
 }
 
-/* Mensaje de error con icono + fondo, no solo color */
 .error-msg {
-  font-size: 16px; /* Mínimo 16px ✓ */
-  color: #7f1d1d; /* Contraste 9:1 ✓ — original #ef4444 era solo 3.1:1 ✗ */
+  font-size: 18px;
+  color: #7f1d1d;
   font-weight: 700;
   margin-top: 2px;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: #fef2f2;
   border-radius: 8px;
   border-left: 4px solid #b91c1c;
@@ -264,12 +256,12 @@
   background: #b91c1c;
   color: #ffffff;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   flex-shrink: 0;
 }
@@ -292,7 +284,6 @@
   transform: scale(1.15);
 }
 
-/* Focus visible en botón ojo */
 .password-toggle:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;

@@ -1,8 +1,6 @@
-<div class="perfil-wrapper">
+¡<div class="perfil-wrapper">
 
-  <!-- ══════════════════════════════════════════
-       CABECERA — mismo gradiente que el dashboard
-       ══════════════════════════════════════════ -->
+  <!-- Cabecera semántica -->
   <header class="perfil-header">
     <div class="perfil-header-content">
       <h1>Perfil</h1>
@@ -10,119 +8,120 @@
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       CONTENIDO PRINCIPAL
-       ══════════════════════════════════════════ -->
-  <main class="perfil-main">
+  <!-- Contenido principal -->
+  <main class="perfil-main" id="main-content">
 
-    <!-- ──────────────────────────────────────
-         TARJETA DE USUARIO — avatar + nombre + nivel + barra XP
-         ────────────────────────────────────── -->
-    <section class="perfil-card perfil-user-card">
+    <!-- Tarjeta de usuario -->
+    <section class="perfil-card perfil-user-card" aria-labelledby="user-name-heading">
 
-      <!-- Banner degradado naranja/rosa de fondo -->
-      <div class="perfil-user-banner"></div>
+      <div class="perfil-user-banner" role="presentation"></div>
 
-      <!-- Contenido del usuario sobre el banner -->
       <div class="perfil-user-body">
-
-        <!-- Avatar -->
         <div class="perfil-avatar-wrap">
-          <div class="perfil-avatar">
-            <span class="perfil-avatar-icon">👤</span>
+          <div class="perfil-avatar" role="img" [attr.aria-label]="'Foto de perfil de ' + user.name">
+            <span class="perfil-avatar-icon" aria-hidden="true">👤</span>
           </div>
         </div>
 
-        <!-- Info + botón editar -->
         <div class="perfil-user-info">
           <div class="perfil-user-meta">
-            <h2 class="perfil-user-name">{{ user.name }}</h2>
+            <h2 id="user-name-heading" class="perfil-user-name">{{ user.name }}</h2>
           </div>
-          <button class="perfil-edit-btn" routerLink="/editar/perfil">Editar perfil</button>
+          <button class="perfil-edit-btn" routerLink="/editar/perfil" aria-label="Editar tu perfil">
+            Editar perfil
+          </button>
         </div>
-
       </div>
 
-      <!-- Barra de nivel XP -->
+      <!-- Barra XP -->
       <div class="perfil-xp-section">
-        <span class="perfil-xp-label">Nivel {{ user.level }}</span>
-        <span class="perfil-xp-info">{{ user.xp }} / {{ user.xpMax }} EXP para nivel {{ user.level + 1 }}</span>
+        <span class="perfil-xp-label" id="xp-level">Nivel {{ user.level }}</span>
+        <span class="perfil-xp-info" id="xp-info">{{ user.xp }} / {{ user.xpMax }} EXP para nivel {{ user.level + 1 }}</span>
       </div>
-      <div class="perfil-xp-bar">
+      <div
+        class="perfil-xp-bar"
+        role="progressbar"
+        [attr.aria-valuenow]="user.xp"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="user.xpMax"
+        aria-labelledby="xp-level"
+        aria-describedby="xp-info"
+      >
         <div class="perfil-xp-fill" [style.width.%]="(user.xp / user.xpMax) * 100"></div>
       </div>
 
     </section>
 
-    <!-- ──────────────────────────────────────
-         FILA: Estadísticas + Logros (dos columnas)
-         ────────────────────────────────────── -->
+    <!-- Fila: estadísticas + logros -->
     <div class="perfil-two-col">
 
-      <!-- ESTADÍSTICAS -->
-      <section class="perfil-card">
-        <h2 class="perfil-section-title">Estadísticas</h2>
-        <div class="perfil-stats-grid">
+      <!-- Estadísticas -->
+      <section class="perfil-card" aria-labelledby="stats-heading">
+        <h2 id="stats-heading" class="perfil-section-title">Estadísticas</h2>
+        <dl class="perfil-stats-grid">
           <div class="perfil-stat-item perfil-stat-orange">
-            <span class="perfil-stat-big">{{ stats.xuxemons }}</span>
-            <span class="perfil-stat-sub">Xuxemons<br>capturados</span>
+            <dd class="perfil-stat-big">{{ stats.xuxemons }}</dd>
+            <dt class="perfil-stat-sub">Xuxemons<br>capturados</dt>
           </div>
           <div class="perfil-stat-item perfil-stat-yellow">
-            <span class="perfil-stat-big">{{ stats.batallas }}</span>
-            <span class="perfil-stat-sub">Batallas<br>en total</span>
+            <dd class="perfil-stat-big">{{ stats.batallas }}</dd>
+            <dt class="perfil-stat-sub">Batallas<br>en total</dt>
           </div>
           <div class="perfil-stat-item perfil-stat-orange">
-            <span class="perfil-stat-big">{{ stats.victorias }}</span>
-            <span class="perfil-stat-sub">Victorias</span>
+            <dd class="perfil-stat-big">{{ stats.victorias }}</dd>
+            <dt class="perfil-stat-sub">Victorias</dt>
           </div>
           <div class="perfil-stat-item perfil-stat-yellow">
-            <span class="perfil-stat-big">{{ stats.derrotas }}</span>
-            <span class="perfil-stat-sub">Derrotas</span>
+            <dd class="perfil-stat-big">{{ stats.derrotas }}</dd>
+            <dt class="perfil-stat-sub">Derrotas</dt>
           </div>
           <div class="perfil-stat-item perfil-stat-orange">
-            <span class="perfil-stat-big">{{ stats.amigos }}</span>
-            <span class="perfil-stat-sub">Amigos</span>
+            <dd class="perfil-stat-big">{{ stats.amigos }}</dd>
+            <dt class="perfil-stat-sub">Amigos</dt>
           </div>
           <div class="perfil-stat-item perfil-stat-yellow">
-            <span class="perfil-stat-big">{{ stats.dias }}</span>
-            <span class="perfil-stat-sub">Días jugando</span>
+            <dd class="perfil-stat-big">{{ stats.dias }}</dd>
+            <dt class="perfil-stat-sub">Días jugando</dt>
           </div>
-        </div>
+        </dl>
       </section>
 
-      <!-- LOGROS -->
-      <section class="perfil-card">
-        <h2 class="perfil-section-title">Logros</h2>
-        <div class="perfil-logros-grid">
-          <div *ngFor="let logro of logros"
-               class="perfil-logro-item"
-               [class.perfil-logro-unlocked]="logro.unlocked">
-            <span class="perfil-logro-icon">{{ logro.icon }}</span>
+      <!-- Logros -->
+      <section class="perfil-card" aria-labelledby="logros-heading">
+        <h2 id="logros-heading" class="perfil-section-title">Logros</h2>
+        <ul class="perfil-logros-grid" role="list">
+          <li
+            *ngFor="let logro of logros"
+            class="perfil-logro-item"
+            [class.perfil-logro-unlocked]="logro.unlocked"
+            [attr.aria-label]="logro.name + (logro.unlocked ? ' — desbloqueado' : ' — bloqueado')"
+          >
+            <span class="perfil-logro-icon" aria-hidden="true">{{ logro.icon }}</span>
             <span class="perfil-logro-name">{{ logro.name }}</span>
-          </div>
-        </div>
+          </li>
+        </ul>
       </section>
 
     </div>
 
-    <!-- ──────────────────────────────────────
-         ELS MEUS XUXEMONS — mismo grid que el dashboard
-         ────────────────────────────────────── -->
-    <section class="perfil-card">
-
-      <!-- Título + botón Ver todos -->
+    <!-- Mis Xuxemons -->
+    <section class="perfil-card" aria-labelledby="xuxemons-heading">
       <div class="perfil-card-header">
-        <h2 class="perfil-section-title">Els meus xuxemons</h2>
-        <button class="perfil-ver-todos-btn">Ver todos</button>
+        <h2 id="xuxemons-heading" class="perfil-section-title">Els meus xuxemons</h2>
+        <button class="perfil-ver-todos-btn" aria-label="Ver todos los Xuxemons">Ver todos</button>
       </div>
 
-      <!-- Grid de xuxemons (idéntico al dashboard) -->
-      <div class="perfil-xuxemon-grid">
-        <div *ngFor="let x of xuxemons" class="perfil-xuxemon-card">
+      <ul class="perfil-xuxemon-grid" role="list">
+        <li
+          *ngFor="let x of xuxemons"
+          class="perfil-xuxemon-card"
+          tabindex="0"
+          [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'"
+        >
           <img [src]="x.img" [alt]="x.name" class="perfil-xuxemon-img" />
           <p class="perfil-xuxemon-name">{{ x.name }}</p>
           <span class="perfil-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
-          <div class="perfil-xuxemon-stats">
+          <div class="perfil-xuxemon-stats" aria-hidden="true">
             <div class="perfil-stat-row">
               <span>Nivel</span>
               <span class="perfil-val">{{ x.level }}</span>
@@ -131,45 +130,57 @@
               <span>Vida</span>
               <span class="perfil-val">{{ x.hp }}%</span>
             </div>
-            <!-- Barra HP con brillo animado -->
-            <div class="perfil-hp-bar">
+            <div
+              class="perfil-hp-bar"
+              role="progressbar"
+              [attr.aria-valuenow]="x.hp"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'"
+            >
               <div class="perfil-hp-fill" [style.width.%]="x.hp"></div>
             </div>
           </div>
-        </div>
-      </div>
-
+        </li>
+      </ul>
     </section>
 
-    <!-- ──────────────────────────────────────
-         ACTIVIDAD RECIENTE — igual que notificaciones del dashboard
-         ────────────────────────────────────── -->
-    <section class="perfil-card">
-      <h2 class="perfil-section-title">Actividad reciente</h2>
+    <!-- Actividad reciente -->
+    <section class="perfil-card" aria-labelledby="actividad-heading">
+      <h2 id="actividad-heading" class="perfil-section-title">Actividad reciente</h2>
 
-      <div class="perfil-notif perfil-notif-blue">
+      <article class="perfil-notif perfil-notif-blue">
         <p class="perfil-notif-title">¡Has capturado un xuxemon!</p>
         <p class="perfil-notif-body">Elconchudo se ha unido a tu equipo</p>
-        <span class="perfil-notif-time">Hace 2 horas</span>
-      </div>
+        <time class="perfil-notif-time" datetime="PT2H">Hace 2 horas</time>
+      </article>
 
-      <div class="perfil-notif perfil-notif-green">
+      <article class="perfil-notif perfil-notif-green">
         <p class="perfil-notif-title">¡Has ganado una batalla!</p>
         <p class="perfil-notif-body">Victoria contra Marc</p>
-        <span class="perfil-notif-time">Hace 5 horas</span>
-      </div>
+        <time class="perfil-notif-time" datetime="PT5H">Hace 5 horas</time>
+      </article>
 
     </section>
 
   </main>
 
- 
-  <nav class="perfil-bottom-nav">
-    <a *ngFor="let item of navItems"
-       class="perfil-nav-item"
-       [class.active]="item.route === '/perfil'"
-       [routerLink]="item.route">
-      <span class="perfil-nav-icon">{{ item.icon }}</span>
+  <!-- Footer -->
+  <footer class="perfil-footer">
+    <p>&copy; 2026 Xuxemons</p>
+  </footer>
+
+  <!-- Navegación inferior -->
+  <nav class="perfil-bottom-nav" aria-label="Navegación principal">
+    <a
+      *ngFor="let item of navItems"
+      class="perfil-nav-item"
+      [class.active]="item.route === '/perfil'"
+      [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/perfil' ? 'page' : null"
+      [attr.aria-label]="item.label"
+    >
+      <span class="perfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
       <span>{{ item.label }}</span>
     </a>
   </nav>
