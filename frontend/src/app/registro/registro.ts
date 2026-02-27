@@ -20,7 +20,6 @@ export class Registro {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      dni: ['', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$|^[XYZxyz][0-9]{7}[A-Za-z]$/)]],
       contrasena: ['', [Validators.required, Validators.minLength(6)]],
       repetirContrasena: ['', Validators.required]
     }, { validators: this.passwordsMatch });
