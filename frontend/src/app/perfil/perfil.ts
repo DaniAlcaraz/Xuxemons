@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { NgClass, NgFor } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-/* ─── Interfaces ─────────────────────────────────────────────────── */
-
 interface UserProfile {
   name: string;
   since: string;
@@ -42,8 +40,6 @@ interface NavItem {
   route: string;
 }
 
-/* ─── Componente ─────────────────────────────────────────────────── */
-
 @Component({
   selector: 'app-perfil',
   standalone: true,
@@ -53,7 +49,6 @@ interface NavItem {
 })
 export class Perfil {
 
-  /* Datos del usuario */
   user: UserProfile = {
     name: 'Daniel',
     since: 'Febrero 2025',
@@ -63,7 +58,6 @@ export class Perfil {
     xpMax: 5000
   };
 
-  /* Estadísticas generales */
   stats: Stat = {
     xuxemons: 5,
     batallas: 15,
@@ -73,7 +67,6 @@ export class Perfil {
     dias: 40
   };
 
-  /* Logros — unlocked: true = desbloqueado, false = bloqueado */
   logros: Logro[] = [
     { icon: '🦀', name: 'Primer Xuxemon',  unlocked: true  },
     { icon: '⚔️', name: '100 batallas',    unlocked: true  },
@@ -83,14 +76,12 @@ export class Perfil {
     { icon: '🏆', name: 'Leyenda',         unlocked: false }
   ];
 
-  /* Xuxemons del usuario — mismos datos que el dashboard */
   xuxemons: Xuxemon[] = [
     { name: 'Elconchudo', type: 'Agua',   level: 15, hp: 100, img: 'https://em-content.zobj.net/source/apple/354/crab_1f980.png'    },
     { name: 'Oreo',       type: 'Tierra', level: 12, hp: 50,  img: 'https://em-content.zobj.net/source/apple/354/cow_1f404.png'      },
     { name: 'Beeboo',     type: 'Aire',   level: 10, hp: 78,  img: 'https://em-content.zobj.net/source/apple/354/honeybee_1f41d.png' }
   ];
 
-  /* Navegación inferior — misma que el dashboard, activo: /perfil */
   navItems: NavItem[] = [
     { icon: '🏠', label: 'Inicio',    route: '/dashboard' },
     { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
