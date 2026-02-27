@@ -12,18 +12,27 @@ class AuthController extends Controller
 {
     public function register(Request $request) { //Si el usuario se registra
         $validated = $request->validate([
-            'nombre' => 'requred|string|max:255', //obligatorio, tipo texto, maximo 255 caracteres
-            'apellidos' => 'requred|string|max:255',
+            'nombre' => 'required|string|max:255', //obligatorio, tipo texto, maximo 255 caracteres
+            'apellidos' => 'required|string|max:255',
             'email' => 'required|email|unique:users', //obligatorio, tipo email, que no se repita
             'password' => 'required|string|min:8|confirmed', //obligatorio, minimo 8 caracteres
         ]);
 
+        //Añadir mascara #NombreXXXX
+        $nombreLimpio = str_replace(' ', '', $validated['nombre']);
+        $idMascara = '#' . $nombreLimpio . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+
+        //Para que el primer usuario sea admin
+        $esAdmin = User::count() === 0;
+        
         //Registra los campos con los nuevos datos a la BD
         $user = User::create([
+            'identificador' => $idMascara,
             'nombre' => $validated['nombre'], //Sube el nombre validado
             'apellidos' => $validated['apellidos'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']), //Cifra la contraseña y sube el registro validado
+            'rol' => $esAdmin ? 'admin' : 'jugador', // Asignación automática
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken; //Permite identificar al usuario sin usar su contraseña. Esto genera un codigo temporal que angular guardará. Así, cada vez que angular le pida algo a laravel, le enseñará ese código para demostrar quién es de forma segura.
@@ -37,15 +46,15 @@ class AuthController extends Controller
 
     public function login(Request $request) { //Si el usuario inicia sesion
         $request->validate([ //Valida, como antes en el registro
-            'email' => 'required|email',
-            'password' => 'required,'
+            'identificador' => 'required|string',
+            'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)->first(); //Revisa si el usuario intorducido existe.
+        $user = User::where('identificador', $request->identificador)->first(); //Revisa si el usuario intorducido existe.
 
         if (!$user || !Hash::check($request->password, $user->password)) { //Si el usuario o contraseña son incorrectos...
             throw ValidationException::withMessages([
-                'email'=>['las credenciales no son correctas.'],
+                'identificador'=>['las credenciales no son correctas.'],
             ]);
         }
 
@@ -60,8 +69,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $resquest) { //Respuesta frente a la peticion del usuario de cerrar sesion
-        $request->user()->currentAccesToken()->delete();
+    public function logout(Request $request) { //Respuesta frente a la peticion del usuario de cerrar sesion
+        $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Sesión cerrada']);
     }
 
