@@ -205,3 +205,30 @@
   background: rgba(74, 144, 217, 0.06);
   box-shadow: 0 0 0 4px rgba(106, 111, 212, 0.1);
 }
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-input-password {
+  padding-right: 50px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  transition: transform 0.15s;
+}
+
+.password-toggle:hover {
+  transform: scale(1.15);
+}
