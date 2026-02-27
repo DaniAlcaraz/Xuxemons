@@ -19,7 +19,7 @@
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
   background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
-  padding-bottom: 84px;
+  padding-bottom: 96px; /* Aumentado un poco para acomodar el nav más grande */
   box-sizing: border-box;
 }
 
@@ -31,27 +31,28 @@
 
 .dboard-header-content h1 {
   font-family: 'Nunito', sans-serif;
-  font-size: 32px;
+  font-size: 52px; /* Mapeado a .title del login */
   font-weight: 900;
-  color: #ffffff; /* Contraste 21:1 sobre fondo oscuro ✓ */
+  color: #ffffff;
   margin: 0;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px; /* Ajuste de kerning para títulos grandes */
+  line-height: 1.1;
 }
 
 .dboard-header-content p {
   margin: 6px 0 0;
   font-family: 'Nunito', sans-serif;
-  font-size: 16px; /* Mínimo 16px ✓ */
-  color: rgba(255, 255, 255, 0.95); /* Contraste > 4.5:1 ✓ */
+  font-size: 22px; /* Mapeado a .subtitle del login */
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 700;
 }
 
 /* ── Main ── */
 .dboard-main {
-  padding: 22px 18px 20px;
+  padding: 24px 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px; /* Mayor espacio para respirar con letras más grandes */
   max-width: 1300px;
   margin: 0 auto;
 }
@@ -60,17 +61,17 @@
 .dboard-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 16px;
 }
 
 .dboard-stat-card {
   background: #ffffff;
   border-radius: 18px;
-  padding: 18px 16px;
+  padding: 20px 18px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   box-shadow: 0 2px 16px rgba(100, 120, 200, 0.10);
   border: 1px solid rgba(200, 210, 240, 0.6);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -82,7 +83,7 @@
 }
 
 .dboard-stat-icon {
-  font-size: 26px;
+  font-size: 36px; /* Aumentado para acompañar al nuevo tamaño de número */
   line-height: 1;
   flex-shrink: 0;
 }
@@ -90,22 +91,22 @@
 .dboard-stat-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .dboard-stat-number {
   font-family: 'Nunito', sans-serif;
-  font-size: 26px;
+  font-size: 36px; /* Mapeado a .brand-name del login */
   font-weight: 900;
-  color: #0f0f1e; /* Contraste 18:1 sobre blanco ✓ */
+  color: #0f0f1e;
   line-height: 1;
 }
 
 .dboard-stat-label {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px;
+  font-size: 18px; /* Mapeado a .error-msg del login */
   font-weight: 700;
-  color: #505070; /* Contraste 7.2:1 sobre blanco ✓ AA */
+  color: #505070;
   line-height: 1.3;
 }
 
@@ -113,24 +114,24 @@
 .dboard-card {
   background: #ffffff;
   border-radius: 22px;
-  padding: 22px 20px;
+  padding: 26px 24px;
   box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
   border: 1px solid rgba(200, 210, 240, 0.6);
 }
 
 .dboard-section-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 20px;
+  font-size: 26px; /* Mapeado a .submit-btn del login */
   font-weight: 900;
-  color: #0f0f1e; /* Contraste 18:1 ✓ */
-  margin: 0 0 16px;
+  color: #0f0f1e;
+  margin: 0 0 20px;
 }
 
 /* ── Xuxemons ── */
 .dboard-xuxemon-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 14px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -140,11 +141,11 @@
   background: #f8f9fe;
   border: 2px solid #d0d4f0;
   border-radius: 14px;
-  padding: 14px 8px 12px;
+  padding: 18px 12px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
@@ -154,7 +155,6 @@
   box-shadow: 0 6px 20px rgba(108, 127, 232, 0.15);
 }
 
-/* Focus visible — NUNCA eliminar el outline */
 .dboard-xuxemon-card:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 2px;
@@ -162,8 +162,8 @@
 }
 
 .dboard-xuxemon-img {
-  width: 64px;
-  height: 64px;
+  width: 72px; /* Aumentado ligeramente para balancear la tipografía mayor */
+  height: 72px;
   object-fit: contain;
   transition: transform 0.18s ease;
 }
@@ -174,41 +174,40 @@
 
 .dboard-xuxemon-name {
   font-family: 'Nunito', sans-serif;
-  font-size: 16px;
+  font-size: 20px; /* Mapeado a .field-label del login */
   font-weight: 800;
-  color: #0f0f1e; /* Contraste 18:1 ✓ */
+  color: #0f0f1e;
   text-align: center;
   margin: 0;
 }
 
-/* Badges — colores oscuros para contraste suficiente con texto blanco ✓ */
 .dboard-badge {
-  padding: 3px 11px;
+  padding: 4px 12px;
   border-radius: 30px;
   font-family: 'Nunito', sans-serif;
-  font-size: 13px;
+  font-size: 16px; /* Aumentado para legibilidad */
   font-weight: 800;
   color: #ffffff;
 }
 
-.dboard-badge.agua   { background: #1565c0; } /* 7.2:1 ✓ */
-.dboard-badge.tierra { background: #2e7d32; } /* 7.8:1 ✓ */
-.dboard-badge.aire   { background: #00695c; } /* 6.8:1 ✓ */
-.dboard-badge.fuego  { background: #b71c1c; } /* 8.5:1 ✓ */
+.dboard-badge.agua   { background: #1565c0; }
+.dboard-badge.tierra { background: #2e7d32; }
+.dboard-badge.aire   { background: #00695c; }
+.dboard-badge.fuego  { background: #b71c1c; }
 
 .dboard-xuxemon-stats {
   width: 100%;
-  margin-top: 3px;
+  margin-top: 6px;
 }
 
 .dboard-stat-row {
   display: flex;
   justify-content: space-between;
   font-family: 'Nunito', sans-serif;
-  font-size: 13px;
+  font-size: 16px; /* Aumentado para legibilidad */
   font-weight: 700;
-  color: #505070; /* Contraste 7.2:1 ✓ */
-  margin-bottom: 1px;
+  color: #505070;
+  margin-bottom: 2px;
 }
 
 .dboard-val {
@@ -218,16 +217,16 @@
 }
 
 .dboard-hp-bar {
-  height: 6px;
+  height: 8px; /* Un poco más gruesa */
   background: #d0d4f0;
   border-radius: 10px;
-  margin-top: 5px;
+  margin-top: 6px;
   overflow: hidden;
 }
 
 .dboard-hp-fill {
   height: 100%;
-  background: #1b7a3e; /* Verde oscuro, contraste suficiente ✓ */
+  background: #1b7a3e;
   border-radius: 10px;
   transition: width 0.5s ease;
 }
@@ -235,15 +234,14 @@
 /* ── Notificaciones ── */
 .dboard-notif {
   border-radius: 14px;
-  padding: 14px 18px;
-  margin-bottom: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
   position: relative;
   overflow: hidden;
   transition: transform 0.15s ease;
 }
 
 .dboard-notif:last-child { margin-bottom: 0; }
-
 .dboard-notif:hover { transform: translateX(2px); }
 
 .dboard-notif::before {
@@ -252,45 +250,36 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 5px;
+  width: 6px; /* Más grueso acorde al nuevo tamaño */
   border-radius: 4px 0 0 4px;
 }
 
-.dboard-notif-blue {
-  background: #eef1fb;
-}
-.dboard-notif-blue::before {
-  background: #3d4faa;
-}
-
-.dboard-notif-pink {
-  background: #fceef8;
-}
-.dboard-notif-pink::before {
-  background: #8e2468; /* Oscurecido para contraste ✓ */
-}
+.dboard-notif-blue { background: #eef1fb; }
+.dboard-notif-blue::before { background: #3d4faa; }
+.dboard-notif-pink { background: #fceef8; }
+.dboard-notif-pink::before { background: #8e2468; }
 
 .dboard-notif-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 16px; /* Mínimo 16px ✓ */
+  font-size: 20px; /* Mapeado a .field-label del login */
   font-weight: 800;
-  color: #0f0f1e; /* Contraste 18:1 ✓ */
-  margin: 0 0 4px;
+  color: #0f0f1e;
+  margin: 0 0 6px;
 }
 
 .dboard-notif-body {
   font-family: 'Nunito', sans-serif;
-  font-size: 16px; /* Mínimo 16px ✓ */
+  font-size: 18px; /* Mapeado al texto base mínimo del login */
   font-weight: 600;
-  color: #505070; /* Contraste 7.2:1 ✓ */
+  color: #505070;
   margin: 0;
 }
 
 /* ── Footer ── */
 .dboard-footer {
   text-align: center;
-  padding: 12px;
-  font-size: 13px;
+  padding: 16px;
+  font-size: 16px; /* Aumentado de 13 a 16 */
   color: #505070;
   font-weight: 600;
 }
@@ -306,7 +295,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 10px 2px 14px;
+  padding: 12px 4px 16px;
   box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
   z-index: 100;
 }
@@ -315,16 +304,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   text-decoration: none;
-  color: #505070; /* Contraste 7.2:1 ✓ */
+  color: #505070;
   font-family: 'Nunito', sans-serif;
-  font-size: 11px;
+  font-size: 16px; /* Aumentado considerablemente desde 11px */
   font-weight: 700;
-  padding: 6px 8px;
-  border-radius: 10px;
-  min-width: 44px;  /* Área mínima de toque accesible ✓ */
-  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  min-width: 54px;
+  min-height: 54px;
   justify-content: center;
   transition: color 0.18s ease, background 0.18s ease;
 }
@@ -332,18 +321,17 @@
 .dboard-nav-item:hover,
 .dboard-nav-item.active,
 .dboard-nav-item[aria-current="page"] {
-  color: #2a3a9a; /* Contraste > 7:1 ✓ */
+  color: #2a3a9a;
   background: rgba(61, 79, 170, 0.10);
   font-weight: 900;
 }
 
-/* Focus visible en navegación — NUNCA eliminar */
 .dboard-nav-item:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 2px;
 }
 
 .dboard-nav-icon {
-  font-size: 22px;
+  font-size: 28px; /* Subido de 22 a 28 para acompañar el nuevo tamaño de texto */
   line-height: 1;
 }

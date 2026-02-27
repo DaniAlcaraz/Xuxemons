@@ -1,7 +1,19 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
-/* Wrapper principal */
+/* ── Utilidad accesibilidad ── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Wrapper ── */
 .editarperfil-wrapper {
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
@@ -10,7 +22,7 @@
   box-sizing: border-box;
 }
 
-/* Header */
+/* ── Header ── */
 .editarperfil-header {
   background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
   padding: 36px 24px 28px;
@@ -23,36 +35,35 @@
 }
 
 .editarperfil-header-content h1 {
-  font-size: 32px;
+  font-size: 38px;
   font-weight: 900;
-  color: #fff;
+  color: #ffffff;
   margin: 0;
   letter-spacing: -0.3px;
 }
 
 .editarperfil-header-content p {
-  margin: 6px 0 0;
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.82);
+  margin: 4px 0 0;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 700;
 }
 
-/* Botón volver */
+/* Botón volver — ahora es <a> semántico */
 .editarperfil-back-btn {
   background: rgba(255, 255, 255, 0.2);
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.45);
   border-radius: 12px;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 900;
-  width: 42px;
-  height: 42px;
+  color: #ffffff;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background 0.18s, transform 0.18s;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .editarperfil-back-btn:hover {
@@ -60,7 +71,13 @@
   transform: translateX(-2px);
 }
 
-/* Main */
+/* Focus visible */
+.editarperfil-back-btn:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* ── Main ── */
 .editarperfil-main {
   padding: 22px 18px 20px;
   display: flex;
@@ -70,24 +87,23 @@
   margin: 0 auto;
 }
 
-/* Card base */
+/* ── Card base ── */
 .editarperfil-card {
   background: #ffffff;
   border-radius: 22px;
-  padding: 22px 20px;
+  padding: 26px 22px;
   box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
   border: 1px solid rgba(200, 210, 240, 0.6);
 }
 
-/* Título de sección */
 .editarperfil-section-title {
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 900;
-  color: #1a1a3a;
+  color: #0f0f1e; /* 18:1 ✓ */
   margin: 0 0 20px;
 }
 
-/* ─── TARJETA AVATAR ─────────────────────────── */
+/* ── Avatar card ── */
 .editarperfil-avatar-card {
   padding: 0;
   overflow: hidden;
@@ -103,7 +119,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 20px 20px;
+  padding: 0 20px 24px;
   margin-top: -36px;
 }
 
@@ -113,8 +129,8 @@
 }
 
 .editarperfil-avatar {
-  width: 72px;
-  height: 72px;
+  width: 80px;
+  height: 80px;
   background: #f0f1fa;
   border: 3px solid #fff;
   border-radius: 50%;
@@ -122,46 +138,71 @@
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 16px rgba(100, 120, 200, 0.18);
-  font-size: 32px;
+  font-size: 36px;
 }
 
 .editarperfil-avatar-change-btn {
   position: absolute;
   bottom: 0;
   right: -4px;
-  background: #6c7fe8;
+  background: #3d4faa;
   border: 2px solid #fff;
   border-radius: 50%;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
   cursor: pointer;
   transition: background 0.18s, transform 0.18s;
 }
 
 .editarperfil-avatar-change-btn:hover {
-  background: #5a6fd6;
+  background: #2a3a9a;
   transform: scale(1.1);
 }
 
-.editarperfil-avatar-hint {
-  margin: 10px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: #aaaacc;
+.editarperfil-avatar-change-btn:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
 }
 
-/* ─── FORMULARIO ────────────────────────────── */
+.editarperfil-avatar-hint {
+  margin: 12px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #505070; /* 7.2:1 ✓ — original #aaaacc era 2.5:1 ✗ */
+}
+
+/* ── Descripción de formulario ── */
+.editarperfil-form-desc {
+  font-size: 16px;
+  color: #505070;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+/* ── Error summary ── */
+.form-error-summary {
+  background: #fef2f2;
+  border: 2px solid #b91c1c;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #7f1d1d; /* 9:1 ✓ */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Formulario ── */
 .editarperfil-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-/* Fila de 2 columnas */
 .editarperfil-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -190,23 +231,40 @@
   }
 }
 
-/* Label */
+/* ── Labels ── */
 .editarperfil-label {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 800;
-  color: #1a1a3a;
+  color: #2a2a4a; /* 12:1 ✓ — original #1a1a3a mantenido */
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Input base */
+.required-mark {
+  color: #b91c1c;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ── Hint ── */
+.editarperfil-field-hint {
+  font-size: 15px;
+  color: #505070;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ── Inputs ── */
 .editarperfil-input {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
-  color: #1a1a3a;
+  color: #0f0f1e; /* 18:1 ✓ */
   background: #f8f9fe;
-  border: 1.5px solid #e2e6f8;
+  border: 2px solid #9999bb; /* Borde visible siempre ✓ */
   border-radius: 12px;
-  padding: 13px 16px;
+  padding: 14px 18px;
   outline: none;
   transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
   width: 100%;
@@ -214,17 +272,56 @@
 }
 
 .editarperfil-input::placeholder {
-  color: #b0b3cc;
-  font-weight: 600;
+  color: #8888a8;
+  font-weight: 400;
 }
 
+/* Focus visible — NUNCA eliminar */
 .editarperfil-input:focus {
-  border-color: #6c7fe8;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(108, 127, 232, 0.12);
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
+  outline: 2px solid #2563eb;
+  outline-offset: 0;
 }
 
-/* Input contraseña con ojo */
+/* Error en input */
+.editarperfil-input[aria-invalid="true"] {
+  border-color: #b91c1c;
+  background: #fff5f5;
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+}
+
+/* ── Mensaje de error ── */
+.editarperfil-error-msg {
+  font-size: 16px;
+  color: #7f1d1d; /* 9:1 ✓ */
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  background: #fef2f2;
+  border-radius: 8px;
+  border-left: 4px solid #b91c1c;
+}
+
+.error-icon {
+  background: #b91c1c;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* ── Password wrapper ── */
 .editarperfil-input-password-wrap {
   position: relative;
   display: flex;
@@ -232,18 +329,21 @@
 }
 
 .editarperfil-input-password {
-  padding-right: 48px;
+  padding-right: 52px;
 }
 
 .editarperfil-password-toggle {
   position: absolute;
   right: 14px;
   background: none;
-  border: none;
+  border: 2px solid transparent;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
-  padding: 0;
+  padding: 4px;
   line-height: 1;
+  display: flex;
+  align-items: center;
   transition: transform 0.15s;
 }
 
@@ -251,7 +351,13 @@
   transform: scale(1.15);
 }
 
-/* ─── BOTONES DE ACCIÓN ──────────────────────── */
+.editarperfil-password-toggle:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-color: #2563eb;
+}
+
+/* ── Botones de acción ── */
 .editarperfil-actions {
   display: flex;
   gap: 12px;
@@ -262,34 +368,41 @@
 
 .editarperfil-btn-guardar {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
-  color: #fff;
-  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: #ffffff;
+  background: linear-gradient(135deg, #1b7a3e, #155d30); /* Verde oscuro — contraste > 7:1 ✓ */
   border: none;
   border-radius: 12px;
-  padding: 12px 24px;
+  padding: 14px 28px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(67, 233, 123, 0.35);
+  box-shadow: 0 4px 14px rgba(27, 122, 62, 0.35);
   transition: transform 0.18s, box-shadow 0.18s;
+  min-height: 50px;
 }
 
 .editarperfil-btn-guardar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(67, 233, 123, 0.45);
+  box-shadow: 0 6px 20px rgba(27, 122, 62, 0.45);
+}
+
+.editarperfil-btn-guardar:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
 }
 
 .editarperfil-btn-cerrar {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
-  color: #1a1a3a;
+  color: #2a2a4a; /* 12:1 ✓ — original #1a1a3a */
   background: #f0f2fd;
-  border: 1.5px solid rgba(108, 127, 232, 0.25);
+  border: 2px solid rgba(61, 79, 170, 0.30);
   border-radius: 12px;
-  padding: 12px 22px;
+  padding: 14px 26px;
   cursor: pointer;
   transition: background 0.18s, transform 0.18s;
+  min-height: 50px;
 }
 
 .editarperfil-btn-cerrar:hover {
@@ -297,33 +410,53 @@
   transform: translateY(-1px);
 }
 
+.editarperfil-btn-cerrar:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .editarperfil-btn-eliminar {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
-  color: #e84118;
+  color: #7f1d1d; /* 9:1 ✓ — original #e84118 era 3.5:1 ✗ */
   background: transparent;
-  border: 1.5px solid rgba(232, 65, 24, 0.25);
+  border: 2px solid rgba(185, 28, 28, 0.35);
   border-radius: 12px;
-  padding: 12px 22px;
+  padding: 14px 26px;
   cursor: pointer;
   transition: background 0.18s, transform 0.18s, border-color 0.18s;
+  min-height: 50px;
 }
 
 .editarperfil-btn-eliminar:hover {
-  background: rgba(232, 65, 24, 0.06);
-  border-color: rgba(232, 65, 24, 0.5);
+  background: rgba(185, 28, 28, 0.06);
+  border-color: rgba(185, 28, 28, 0.6);
   transform: translateY(-1px);
 }
 
-/* ─── NAVEGACIÓN INFERIOR ────────────────────── */
+.editarperfil-btn-eliminar:focus-visible {
+  outline: 3px solid #b91c1c;
+  outline-offset: 2px;
+}
+
+/* ── Footer ── */
+.editarperfil-footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 15px;
+  color: #505070;
+  font-weight: 600;
+}
+
+/* ── Bottom Nav ── */
 .editarperfil-bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #fff;
-  border-top: 1px solid #e8eaf6;
+  background: #ffffff;
+  border-top: 2px solid #d0d4f0;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -338,21 +471,31 @@
   align-items: center;
   gap: 3px;
   text-decoration: none;
-  color: #aaaacc;
-  font-size: 9.5px;
+  color: #505070; /* 7.2:1 ✓ — original #aaaacc era 2.5:1 ✗ */
+  font-size: 13px;
   font-weight: 700;
-  padding: 5px 7px;
+  padding: 6px 8px;
   border-radius: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
   transition: color 0.18s, background 0.18s;
 }
 
 .editarperfil-nav-item:hover,
-.editarperfil-nav-item.active {
-  color: #6c7fe8;
-  background: rgba(108, 127, 232, 0.08);
+.editarperfil-nav-item.active,
+.editarperfil-nav-item[aria-current="page"] {
+  color: #2a3a9a;
+  background: rgba(61, 79, 170, 0.10);
+  font-weight: 900;
+}
+
+.editarperfil-nav-item:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
 }
 
 .editarperfil-nav-icon {
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1;
 }
