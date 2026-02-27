@@ -17,7 +17,7 @@ export class LoginComponent {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      correo: ['', [Validators.required, Validators.email]],
+      id: ['', Validators.required],
       contrasena: ['', Validators.required]
     });
   }
@@ -31,7 +31,8 @@ export class LoginComponent {
     this.formSubmitted = true;
     this.form.markAllAsTouched();
     if (this.form.valid) {
-      // lógica de login
+      console.log('Login form data:', this.form.value);
+      // Aquí iría tu lógica de conexión con el backend
     }
   }
 }

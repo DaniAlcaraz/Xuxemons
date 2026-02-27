@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('users', function (Blueprint $table) {
-        $table->id();
-        $table->string('identificador')->unique();
-        $table->string('nombre');
-        $table->string('apellidos');
-        $table->string('email')->unique();
-        $table->string('password');
-        $table->string('rol')->default('jugador');
-        $table->rememberToken();
-        $table->timestamps();
-    });
+        Schema::create('usuarios', function (Blueprint $table) {
+             $table->string('identificador')->primary(); // <- clave primaria personalizada
+            $table->string('nombre');
+            $table->string('apellidos');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('rol')->default('jugador'); 
+            $table->rememberToken();
+            $table->timestamps();
+        });
 
         /*
         Schema::create('password_reset_tokens', function (Blueprint $table) {
