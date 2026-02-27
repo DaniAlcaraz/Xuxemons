@@ -99,38 +99,6 @@
           </p>
         </div>
 
-        <!-- DNI / NIE -->
-        <div class="field">
-          <label for="dni" class="field-label">
-            DNI / NIE
-            <span class="required-mark" aria-hidden="true">*</span>
-            <span class="visually-hidden">campo obligatorio</span>
-          </label>
-          <div class="input-wrapper" [class.error]="getError('dni')">
-            <input
-              id="dni"
-              type="text"
-              class="field-input"
-              placeholder="12345678A"
-              formControlName="dni"
-              autocomplete="off"
-              aria-required="true"
-              [attr.aria-invalid]="getError('dni') ? 'true' : 'false'"
-              aria-describedby="dni-error dni-hint"
-            />
-          </div>
-          <p id="dni-hint" class="field-hint">Formato DNI: 8 dígitos y una letra (ej: 12345678A). NIE: letra, 7 dígitos, letra (ej: X1234567A)</p>
-          <p
-            id="dni-error"
-            class="error-msg"
-            role="alert"
-            aria-live="polite"
-            *ngIf="getError('dni')"
-          >
-            <span class="error-icon" aria-hidden="true">✕</span>
-            {{ getError('dni') }}
-          </p>
-        </div>
 
         <!-- Contraseña -->
         <div class="field">
@@ -245,6 +213,6 @@
   </main>
 
   <footer class="registro-footer">
-    <p>&copy; 2026 Xuxemons · Tots els drets reservats</p>
+    <p>&copy; 202 Xuxemons · Tots els drets reservats</p>
   </footer>
 </div>
