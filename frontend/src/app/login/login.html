@@ -120,3 +120,8 @@
     </form>
   </div>
 </div>
+
+<div *ngIf="errorCredenciales" role="alert" class="form-error-summary">
+  <span aria-hidden="true">⚠</span>
+  El identificador o la contraseña son incorrectos.
+</div>

@@ -66,6 +66,37 @@
           </p>
         </div>
 
+        <div class="field">
+      <label for="apellidos" class="field-label">
+        Apellidos
+        <span class="required-mark" aria-hidden="true">*</span>
+        <span class="visually-hidden">campo obligatorio</span>
+      </label>
+      <div class="input-wrapper" [class.error]="getError('apellidos')">
+        <input
+          id="apellidos"
+          type="text"
+          class="field-input"
+          placeholder="Tus apellidos"
+          formControlName="apellidos"
+          autocomplete="family-name"
+          aria-required="true"
+          [attr.aria-invalid]="getError('apellidos') ? 'true' : 'false'"
+          aria-describedby="apellidos-error"
+        />
+      </div>
+      <p
+        id="apellidos-error"
+        class="error-msg"
+        role="alert"
+        aria-live="polite"
+        *ngIf="getError('apellidos')"
+      >
+        <span class="error-icon" aria-hidden="true">✕</span>
+        {{ getError('apellidos') }}
+      </p>
+    </div>
+
         <!-- Correo -->
         <div class="field">
           <label for="correo" class="field-label">
