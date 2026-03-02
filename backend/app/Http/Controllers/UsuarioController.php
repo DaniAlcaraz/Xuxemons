@@ -30,4 +30,16 @@ class UsuarioController extends Controller
         $user->delete();
         return response()->json(['message' => 'Usuario eliminado']);
     }
+
+    public function deshabilitarCuenta(Request $request) {
+        $user = $request->user();
+        
+        // 1. Invalidamos sus tokens actuales para que lo "eche" de la app
+        $user->tokens()->delete(); 
+        
+        // 2. Marcamos la cuenta como borrada (lógicamente)
+        $user->delete(); 
+
+        return response()->json(['message' => 'Cuenta deshabilitada.']);
+    }
 }

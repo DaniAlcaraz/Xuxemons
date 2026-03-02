@@ -45,28 +45,42 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) { //Si el usuario inicia sesion
+        //Validamos solo l oque necesitamos para entrar
         $request->validate([ //Valida, como antes en el registro
             'identificador' => 'required|string',
             'password' => 'required'
         ]);
 
+        //Buscamos al usuario por su id
         $user = User::where('identificador', $request->identificador)->first(); //Revisa si el usuario intorducido existe.
 
+        //Verifica credenciales y credenciales y si la cuenta esta activa
         if (!$user || !Hash::check($request->password, $user->password)) { //Si el usuario o contraseña son incorrectos...
             throw ValidationException::withMessages([
                 'identificador'=>['las credenciales no son correctas.'],
             ]);
         }
 
+        $user = User::where('email', $request->email)->first();
+
+        //Comprueba si la cuenta está de baja
+        if ($user->trashed()) {
+            return response()->json(['message' => 'Esta cuenta ha sido dada de baja.'], 403);
+        }
+
+        //Borra sesiones anteriores (Al cerrar sesion)
         $user->tokens()->delete(); //Cierra todas las sesiones abiertas de un usuario. Por seguridad, elimina los tokens (llaves) antiguos. Es por seguridad, y osbretodo porque evita que un usuario tenga varias sesiones iniciadas.
 
+        //Genera token de acceso
         $token = $user->createToken('auth_token')->plainTextToken; //Genera un nuevo token (llave)
 
+        //Respuesta que devuelve finalmente
         return response()->json([ //Devuelve la repsuesta frente a la peticvion del usuario
             'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
         ]);
+
     }
 
     public function logout(Request $request) { //Respuesta frente a la peticion del usuario de cerrar sesion
@@ -74,7 +88,9 @@ class AuthController extends Controller
         return response()->json(['message' => 'Sesión cerrada']);
     }
 
+    /*
     public function me(Request $request) { //Devuelve los datos correspondientes del usuario logueado
         return response()->json($request->user());
     }
+    */
 }
