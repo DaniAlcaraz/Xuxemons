@@ -3,6 +3,7 @@ import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { AuthService } from '../Services/auth.service';
+
 @Component({
   selector: 'app-registro',
   standalone: true,
@@ -15,8 +16,9 @@ export class Registro {
   mostrarPassword = false;
   mostrarRepetirPassword = false;
   formSubmitted = false;
+  identificadorGenerado: string | null = null;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, public router: Router) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
@@ -57,10 +59,11 @@ export class Registro {
       this.authService.registro(datos).subscribe({
         next: (res) => {
           this.authService.guardarToken(res.access_token);
-          this.router.navigate(['/dashboard']);
+          this.identificadorGenerado = res.user.identificador; 
         },
         error: (err) => console.error('Error registro:', err)
       });
     }
   }
+
 }

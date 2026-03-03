@@ -316,3 +316,35 @@
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
 }
+
+.identificador-msg {
+  background: #f0fdf4;
+  border: 2px solid #16a34a;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #14532d;
+}
+
+.identificador-valor {
+  font-family: 'Baloo 2', cursive;
+  font-size: 32px;
+  font-weight: 800;
+  color: #15803d;
+  letter-spacing: 1px;
+  background: #dcfce7;
+  padding: 10px 20px;
+  border-radius: 10px;
+  display: block;
+}
+
+.identificador-hint {
+  font-size: 16px;
+  color: #166534;
+  margin: 0;
+}
