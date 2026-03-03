@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../Services/auth.service';
 
 interface NavItem {
   icon: string;
@@ -22,7 +23,7 @@ export class Editarperfil {
   mostrarPassword = false;
   formSubmitted = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       nombre:    ['Daniel', Validators.required],
       apellidos: ['García', Validators.required],
@@ -43,6 +44,20 @@ export class Editarperfil {
     if (this.form.valid) {
       // lógica guardar cambios
     }
+  }
+
+  cerrarSesion(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.authService.cerrarSesion();
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        // Aunque falle la llamada al backend, limpiamos el token igualmente
+        this.authService.cerrarSesion();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   navItems: NavItem[] = [

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { AuthService } from '../Services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -14,8 +14,9 @@ export class LoginComponent {
   form: FormGroup;
   mostrarPassword = false;
   formSubmitted = false;
+  errorCredenciales = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       id: ['', Validators.required],
       contrasena: ['', Validators.required]
@@ -29,10 +30,22 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.formSubmitted = true;
+    this.errorCredenciales = false;
     this.form.markAllAsTouched();
     if (this.form.valid) {
-      console.log('Login form data:', this.form.value);
-      // Aquí iría tu lógica de conexión con el backend
+      const datos = {
+        identificador: this.form.value.id,
+        password: this.form.value.contrasena
+      };
+      this.authService.login(datos).subscribe({
+        next: (res) => {
+          this.authService.guardarToken(res.access_token);
+          this.router.navigate(['/dashboard']);
+        },
+        error: () => {
+          this.errorCredenciales = true;
+        }
+      });
     }
   }
 }

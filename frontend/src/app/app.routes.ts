@@ -4,6 +4,8 @@ import { Perfil } from './perfil/perfil';
 import { Registro } from './registro/registro';
 import { Dashboard } from './dashboard/dashboard';
 import { Editarperfil } from './editarperfil/editarperfil';
+import { Xuxemons } from './xuxemons/xuxemons';
+import { Mochila } from './mochila/mochila';
 
 export const routes: Routes = [
   {
@@ -30,6 +32,14 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
+  },
+  {
+    path: 'xuxemons',
+    component: Xuxemons,
+  },
+  {
+    path: 'mochila',
+    component: Mochila,
   }
 ];
 
