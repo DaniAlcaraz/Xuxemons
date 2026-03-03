@@ -1,6 +1,5 @@
-¡<div class="perfil-wrapper">
+<div class="perfil-wrapper">
 
-  <!-- Cabecera semántica -->
   <header class="perfil-header">
     <div class="perfil-header-content">
       <h1>Perfil</h1>
@@ -8,21 +7,16 @@
     </div>
   </header>
 
-  <!-- Contenido principal -->
   <main class="perfil-main" id="main-content">
 
-    <!-- Tarjeta de usuario -->
     <section class="perfil-card perfil-user-card" aria-labelledby="user-name-heading">
-
       <div class="perfil-user-banner" role="presentation"></div>
-
       <div class="perfil-user-body">
         <div class="perfil-avatar-wrap">
           <div class="perfil-avatar" role="img" [attr.aria-label]="'Foto de perfil de ' + user.name">
             <span class="perfil-avatar-icon" aria-hidden="true">👤</span>
           </div>
         </div>
-
         <div class="perfil-user-info">
           <div class="perfil-user-meta">
             <h2 id="user-name-heading" class="perfil-user-name">{{ user.name }}</h2>
@@ -32,30 +26,19 @@
           </button>
         </div>
       </div>
-
-      <!-- Barra XP -->
       <div class="perfil-xp-section">
         <span class="perfil-xp-label" id="xp-level">Nivel {{ user.level }}</span>
         <span class="perfil-xp-info" id="xp-info">{{ user.xp }} / {{ user.xpMax }} EXP para nivel {{ user.level + 1 }}</span>
       </div>
-      <div
-        class="perfil-xp-bar"
-        role="progressbar"
-        [attr.aria-valuenow]="user.xp"
-        [attr.aria-valuemin]="0"
-        [attr.aria-valuemax]="user.xpMax"
-        aria-labelledby="xp-level"
-        aria-describedby="xp-info"
-      >
+      <div class="perfil-xp-bar" role="progressbar"
+        [attr.aria-valuenow]="user.xp" [attr.aria-valuemin]="0" [attr.aria-valuemax]="user.xpMax"
+        aria-labelledby="xp-level" aria-describedby="xp-info">
         <div class="perfil-xp-fill" [style.width.%]="(user.xp / user.xpMax) * 100"></div>
       </div>
-
     </section>
 
-    <!-- Fila: estadísticas + logros -->
     <div class="perfil-two-col">
 
-      <!-- Estadísticas -->
       <section class="perfil-card" aria-labelledby="stats-heading">
         <h2 id="stats-heading" class="perfil-section-title">Estadísticas</h2>
         <dl class="perfil-stats-grid">
@@ -86,103 +69,83 @@
         </dl>
       </section>
 
-      <!-- Logros -->
       <section class="perfil-card" aria-labelledby="logros-heading">
         <h2 id="logros-heading" class="perfil-section-title">Logros</h2>
         <ul class="perfil-logros-grid" role="list">
-          <li
-            *ngFor="let logro of logros"
-            class="perfil-logro-item"
-            [class.perfil-logro-unlocked]="logro.unlocked"
-            [attr.aria-label]="logro.name + (logro.unlocked ? ' — desbloqueado' : ' — bloqueado')"
-          >
-            <span class="perfil-logro-icon" aria-hidden="true">{{ logro.icon }}</span>
-            <span class="perfil-logro-name">{{ logro.name }}</span>
-          </li>
+          @for (logro of logros; track logro.name) {
+            <li class="perfil-logro-item" [class.perfil-logro-unlocked]="logro.unlocked"
+              [attr.aria-label]="logro.name + (logro.unlocked ? ' — desbloqueado' : ' — bloqueado')">
+              <span class="perfil-logro-icon" aria-hidden="true">{{ logro.icon }}</span>
+              <span class="perfil-logro-name">{{ logro.name }}</span>
+            </li>
+          }
         </ul>
       </section>
 
     </div>
 
-    <!-- Mis Xuxemons -->
     <section class="perfil-card" aria-labelledby="xuxemons-heading">
       <div class="perfil-card-header">
         <h2 id="xuxemons-heading" class="perfil-section-title">Els meus xuxemons</h2>
         <button class="perfil-ver-todos-btn" aria-label="Ver todos los Xuxemons">Ver todos</button>
       </div>
-
       <ul class="perfil-xuxemon-grid" role="list">
-        <li
-          *ngFor="let x of xuxemons"
-          class="perfil-xuxemon-card"
-          tabindex="0"
-          [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'"
-        >
-          <img [src]="x.img" [alt]="x.name" class="perfil-xuxemon-img" />
-          <p class="perfil-xuxemon-name">{{ x.name }}</p>
-          <span class="perfil-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
-          <div class="perfil-xuxemon-stats" aria-hidden="true">
-            <div class="perfil-stat-row">
-              <span>Nivel</span>
-              <span class="perfil-val">{{ x.level }}</span>
+        @for (x of xuxemons; track x.name) {
+          <li class="perfil-xuxemon-card" tabindex="0"
+            [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'">
+            <img [src]="x.img" [alt]="x.name" class="perfil-xuxemon-img" />
+            <p class="perfil-xuxemon-name">{{ x.name }}</p>
+            <span class="perfil-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
+            <div class="perfil-xuxemon-stats" aria-hidden="true">
+              <div class="perfil-stat-row">
+                <span>Nivel</span>
+                <span class="perfil-val">{{ x.level }}</span>
+              </div>
+              <div class="perfil-stat-row">
+                <span>Vida</span>
+                <span class="perfil-val">{{ x.hp }}%</span>
+              </div>
+              <div class="perfil-hp-bar" role="progressbar"
+                [attr.aria-valuenow]="x.hp" aria-valuemin="0" aria-valuemax="100"
+                [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'">
+                <div class="perfil-hp-fill" [style.width.%]="x.hp"></div>
+              </div>
             </div>
-            <div class="perfil-stat-row">
-              <span>Vida</span>
-              <span class="perfil-val">{{ x.hp }}%</span>
-            </div>
-            <div
-              class="perfil-hp-bar"
-              role="progressbar"
-              [attr.aria-valuenow]="x.hp"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'"
-            >
-              <div class="perfil-hp-fill" [style.width.%]="x.hp"></div>
-            </div>
-          </div>
-        </li>
+          </li>
+        }
       </ul>
     </section>
 
-    <!-- Actividad reciente -->
     <section class="perfil-card" aria-labelledby="actividad-heading">
       <h2 id="actividad-heading" class="perfil-section-title">Actividad reciente</h2>
-
       <article class="perfil-notif perfil-notif-blue">
         <p class="perfil-notif-title">¡Has capturado un xuxemon!</p>
         <p class="perfil-notif-body">Elconchudo se ha unido a tu equipo</p>
         <time class="perfil-notif-time" datetime="PT2H">Hace 2 horas</time>
       </article>
-
       <article class="perfil-notif perfil-notif-green">
         <p class="perfil-notif-title">¡Has ganado una batalla!</p>
         <p class="perfil-notif-body">Victoria contra Marc</p>
         <time class="perfil-notif-time" datetime="PT5H">Hace 5 horas</time>
       </article>
-
     </section>
 
   </main>
 
-  <!-- Footer -->
   <footer class="perfil-footer">
     <p>&copy; 2026 Xuxemons</p>
   </footer>
 
-  <!-- Navegación inferior -->
   <nav class="perfil-bottom-nav" aria-label="Navegación principal">
-    <a
-      *ngFor="let item of navItems"
-      class="perfil-nav-item"
-      [class.active]="item.route === '/perfil'"
-      [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/perfil' ? 'page' : null"
-      [attr.aria-label]="item.label"
-    >
-      <span class="perfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-      <span>{{ item.label }}</span>
-    </a>
+    @for (item of navItems; track item.route) {
+      <a class="perfil-nav-item" [class.active]="item.route === '/perfil'"
+        [routerLink]="item.route"
+        [attr.aria-current]="item.route === '/perfil' ? 'page' : null"
+        [attr.aria-label]="item.label">
+        <span class="perfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    }
   </nav>
 
 </div>
