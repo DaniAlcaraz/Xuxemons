@@ -52,18 +52,16 @@ class AuthController extends Controller
         ]);
 
         //Buscamos al usuario por su id
-        $user = User::where('identificador', $request->identificador)->first(); //Revisa si el usuario intorducido existe.
+        $user = User::withTrashed()->where('identificador', $request->identificador)->first(); //Revisa si el usuario intorducido existe.
 
         //Verifica credenciales y credenciales y si la cuenta esta activa
-        if (!$user || !Hash::check($request->password, $user->password)) { //Si el usuario o contraseña son incorrectos...
+        if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'identificador'=>['las credenciales no son correctas.'],
             ]);
         }
 
-        $user = User::where('email', $request->email)->first();
-
-        //Comprueba si la cuenta está de baja
+        //Bloquea el acceso si tiene SoftDelete (Que esté deshabilitada)
         if ($user->trashed()) {
             return response()->json(['message' => 'Esta cuenta ha sido dada de baja.'], 403);
         }
@@ -86,6 +84,29 @@ class AuthController extends Controller
     public function logout(Request $request) { //Respuesta frente a la peticion del usuario de cerrar sesion
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Sesión cerrada']);
+    }
+
+    public function baja(Request $request) {
+        //Captura el identificador del body
+        $id_usuario = $request->input('identificador');
+
+        //Busca (ponem un log para depurar si fuera necesario)
+        $user = User::where('identificador', $id_usuario)->first();
+
+        //Si no existe, avisa qué identificador falló
+        if (!$user) {
+            return response()->json([
+                'error' => 'No se encontró el usuario con identificador: ' . $id_usuario
+            ], 404);
+        }
+
+        //Si existe, borrado lógico
+        $user->delete(); 
+
+        return response()->json([
+            'message' => 'Usuario inhabilitado correctamente',
+            'identificador' => $id_usuario
+        ], 200);
     }
 
     /*
