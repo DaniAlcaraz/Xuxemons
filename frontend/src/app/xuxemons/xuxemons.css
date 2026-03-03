@@ -1,0 +1,466 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* ══════════════════════════════════════════
+   BASE — idéntico a mochila.css
+   ══════════════════════════════════════════ */
+
+.dboard-wrapper {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
+    padding-bottom: 96px;
+    box-sizing: border-box;
+}
+
+/* ── Header ── */
+.dboard-header {
+    background: linear-gradient(135deg, #3d4faa 0%, #6042a6 50%, #7b3fa0 100%);
+    padding: 36px 24px 28px;
+}
+
+.dboard-header-content h1 {
+    font-size: 52px;
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+.dboard-header-content p {
+    margin: 6px 0 0;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 700;
+}
+
+/* ── Main ── */
+.dboard-main {
+    padding: 24px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* ── Search ── */
+.mochila-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.mochila-search-icon {
+    position: absolute;
+    left: 16px;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.mochila-search-input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border-radius: 16px;
+    border: 2px solid rgba(200, 210, 240, 0.8);
+    background: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f0f1e;
+    outline: none;
+    box-sizing: border-box;
+    box-shadow: 0 2px 12px rgba(100, 120, 200, 0.08);
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.mochila-search-input:focus {
+    border-color: #3d4faa;
+    box-shadow: 0 2px 16px rgba(61, 79, 170, 0.18);
+}
+
+.mochila-search-input::placeholder {
+    color: #9090b0;
+}
+
+/* ── Card ── */
+.dboard-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 26px 24px;
+    box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
+    border: 1px solid rgba(200, 210, 240, 0.6);
+}
+
+.dboard-section-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f0f1e;
+    margin: 0 0 20px;
+}
+
+/* ── Admin Panel ── */
+.mochila-admin-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.mochila-admin-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f0f1e;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.mochila-admin-toggle:hover {
+    background: #f4f6ff;
+}
+
+.mochila-admin-chevron {
+    font-size: 16px;
+    color: #6042a6;
+}
+
+.mochila-admin-body {
+    padding: 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-top: 1px solid #e8eaf8;
+}
+
+.mochila-admin-desc {
+    font-size: 16px;
+    font-weight: 600;
+    color: #505070;
+    margin: 16px 0 0;
+    line-height: 1.5;
+}
+
+.mochila-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mochila-admin-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f4f6ff;
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.mochila-admin-img {
+    font-size: 24px;
+}
+
+.mochila-admin-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f0f1e;
+    flex: 1;
+}
+
+.mochila-admin-total {
+    font-size: 14px;
+    font-weight: 700;
+    color: #505070;
+}
+
+.mochila-admin-msg {
+    font-size: 16px;
+    font-weight: 800;
+    color: #3d4faa;
+    background: #eef1fb;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0;
+}
+
+/* ── Footer ── */
+.dboard-footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 16px;
+    color: #505070;
+    font-weight: 600;
+}
+
+/* ── Bottom Nav ── */
+.dboard-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 2px solid #d0d4f0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 4px 16px;
+    box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
+    z-index: 100;
+}
+
+.dboard-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: #505070;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 8px 10px;
+    border-radius: 12px;
+    min-width: 54px;
+    min-height: 54px;
+    justify-content: center;
+    transition: color 0.18s, background 0.18s;
+}
+
+.dboard-nav-item:hover,
+.dboard-nav-item.active,
+.dboard-nav-item[aria-current="page"] {
+    color: #2a3a9a;
+    background: rgba(61, 79, 170, 0.10);
+    font-weight: 900;
+}
+
+.dboard-nav-item:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.dboard-nav-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+/* ══════════════════════════════════════════
+   XUXEMONS — específico de esta página
+   ══════════════════════════════════════════ */
+
+/* ── Contador descubiertos ── */
+.xuxedex-counter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.xuxedex-counter-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: #505070;
+}
+
+.xuxedex-counter-badge {
+    background: linear-gradient(135deg, #3d4faa, #6042a6);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+    padding: 4px 16px;
+    border-radius: 30px;
+    letter-spacing: 0.3px;
+}
+
+/* ── Grid ── */
+.xuxedex-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Card base ── */
+.xuxedex-card {
+    border-radius: 16px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 8px;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    transition: transform 0.18s, box-shadow 0.18s;
+    cursor: default;
+}
+
+.xuxedex-card.discovered {
+    background: #f8f9fe;
+    border-color: #c8cce8;
+    border-style: solid;
+    cursor: pointer;
+}
+
+.xuxedex-card.discovered:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(108, 127, 232, 0.18);
+}
+
+.xuxedex-card.discovered:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.xuxedex-card.undiscovered {
+    background: #f0f2fa;
+    border: 2px dashed #c8cce8;
+    opacity: 0.7;
+}
+
+/* Colores por tipo */
+.xuxedex-card.type-tierra {
+    border-color: #8B6914;
+    background: #fdf8ee;
+}
+
+.xuxedex-card.type-aire {
+    border-color: #3d4faa;
+    background: #f0f4ff;
+}
+
+.xuxedex-card.type-agua {
+    border-color: #1a6faa;
+    background: #eef7ff;
+}
+
+/* ── Imagen / Lock ── */
+.xuxedex-img {
+    font-size: 42px;
+    line-height: 1;
+    transition: transform 0.18s;
+}
+
+.xuxedex-card.discovered:hover .xuxedex-img {
+    transform: scale(1.12);
+}
+
+.xuxedex-lock {
+    font-size: 32px;
+    line-height: 1;
+    filter: grayscale(1);
+    opacity: 0.5;
+}
+
+/* ── Nombre ── */
+.xuxedex-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f0f1e;
+    text-align: center;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.xuxedex-name.unknown {
+    color: #a0a4c0;
+}
+
+/* ── Badge tipo ── */
+.xuxedex-type-badge {
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 10px;
+    border-radius: 20px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.badge-tierra {
+    background: #8B6914;
+}
+
+.badge-aire {
+    background: #3d4faa;
+}
+
+.badge-agua {
+    background: #1a6faa;
+}
+
+.badge-fuego {
+    background: #c62828;
+}
+
+.badge-unknown {
+    background: #a0a4c0;
+}
+
+/* ── Sin resultados ── */
+.xuxedex-empty {
+    font-size: 18px;
+    font-weight: 700;
+    color: #9090b0;
+    text-align: center;
+    padding: 32px 0;
+    margin: 0;
+}
+
+/* ── Admin: botón añadir ── */
+.xuxedex-admin-add-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #3d4faa, #6042a6);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.18s, transform 0.12s;
+    white-space: nowrap;
+}
+
+.xuxedex-admin-add-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.88;
+}
+
+/* ── Chips xuxemons del entrenador ── */
+.xuxedex-trainer-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 6px 14px 12px 50px;
+}
+
+.xuxedex-trainer-chip {
+    background: #eef1fb;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #3d4faa;
+    border: 1px solid #d0d4f0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .xuxedex-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 380px) {
+    .xuxedex-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

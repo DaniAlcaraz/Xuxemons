@@ -47,9 +47,9 @@ const TAM_STACK = 5;
 export class Mochila {
 
   items: Item[] = [
-    { id: 1, name: 'Xuxa Roja', kind: 'apilable', quantity: 7, img: '🔴', description: 'Xuxa básica de fuego', rareza: 'común' },
-    { id: 2, name: 'Xuxa Azul', kind: 'apilable', quantity: 3, img: '🔵', description: 'Xuxa básica de agua', rareza: 'raro' },
-    { id: 3, name: 'Xuxa Dorada', kind: 'apilable', quantity: 6, img: '🟡', description: 'Xuxa especial rara', rareza: 'épico' },
+    { id: 1, name: 'Xuxe Roja', kind: 'apilable', quantity: 7, img: '🔴', description: 'Xuxe básica de fuego', rareza: 'común' },
+    { id: 2, name: 'Xuxe Azul', kind: 'apilable', quantity: 3, img: '🔵', description: 'Xuxe básica de agua', rareza: 'raro' },
+    { id: 3, name: 'Xuxe Dorada', kind: 'apilable', quantity: 6, img: '🟡', description: 'Xuxe especial rara', rareza: 'épico' },
 
     { id: 4, name: 'Vacuna Fuerza', kind: 'simple', quantity: 1, img: '💉', description: '+10 Ataque permanente', rareza: 'raro' },
     { id: 5, name: 'Vacuna Defensa', kind: 'simple', quantity: 1, img: '🛡️', description: '+10 Defensa permanente', rareza: 'raro' },
@@ -164,7 +164,7 @@ export class Mochila {
 
   navItems: NavItem[] = [
     { icon: '🏠', label: 'Inicio', route: '/dashboard' },
-    { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
+    { icon: '📖', label: 'Xuxemons', route: '/Xuxemons' },
     { icon: '🎒', label: 'Mochila', route: '/mochila' },
     { icon: '👥', label: 'Amigos', route: '/amigos' },
     { icon: '⚔️', label: 'Batallas', route: '/batallas' },
