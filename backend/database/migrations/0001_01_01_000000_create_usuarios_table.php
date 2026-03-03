@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('rol')->default('jugador'); 
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         /*
