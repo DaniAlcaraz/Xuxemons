@@ -1,1 +1,123 @@
-<p>xuxemons works!</p>
+<div class="dboard-wrapper">
+
+  <header class="dboard-header">
+    <div class="dboard-header-content">
+      <h1>Xuxedex</h1>
+      <p>Colección completa de xuxemons</p>
+    </div>
+  </header>
+
+  <main class="dboard-main" id="main-content">
+
+    <!-- Buscador -->
+    <section class="mochila-search-section" aria-label="Buscar xuxemon">
+      <div class="mochila-search-wrapper">
+        <span class="mochila-search-icon" aria-hidden="true">🔍</span>
+        <input class="mochila-search-input" type="search" placeholder="Buscar xuxemon..." [(ngModel)]="searchQuery"
+          aria-label="Buscar xuxemon" />
+      </div>
+    </section>
+
+    <!-- Contador descubiertos -->
+    <div class="xuxedex-counter-bar">
+      <span class="xuxedex-counter-label">Xuxemons Descubiertos</span>
+      <span class="xuxedex-counter-badge">
+        {{ descubiertos }} / {{ totalXuxemons }}
+      </span>
+    </div>
+
+    <!-- Grid Xuxedex -->
+    <section class="dboard-card" aria-labelledby="xuxedex-heading">
+      <h2 id="xuxedex-heading" class="dboard-section-title">Colección</h2>
+
+      <ul class="xuxedex-grid" role="list" aria-label="Colección de xuxemons">
+        @for (x of filteredXuxemons; track x.id) {
+        <li class="xuxedex-card" [class.discovered]="x.discovered" [class.undiscovered]="!x.discovered"
+          [class.type-tierra]="x.discovered && x.tipo === 'Tierra'"
+          [class.type-aire]="x.discovered && x.tipo === 'Aire'" [class.type-agua]="x.discovered && x.tipo === 'Agua'"
+          [attr.aria-label]="x.discovered ? x.nombre + ', tipo ' + x.tipo : 'Xuxemon desconocido'" tabindex="0">
+          @if (x.discovered) {
+          <div class="xuxedex-img" aria-hidden="true">{{ x.img }}</div>
+          <p class="xuxedex-name">{{ x.nombre }}</p>
+          <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
+            {{ x.tipo }}
+          </span>
+          } @else {
+          <div class="xuxedex-lock" aria-hidden="true">🔒</div>
+          <p class="xuxedex-name unknown">???</p>
+          <span class="xuxedex-type-badge badge-unknown">???</span>
+          }
+        </li>
+        }
+      </ul>
+
+      @if (filteredXuxemons.length === 0) {
+      <p class="xuxedex-empty">No se encontraron xuxemons con ese nombre.</p>
+      }
+    </section>
+
+    <!-- Panel Admin -->
+    <section class="dboard-card mochila-admin-card" aria-labelledby="admin-xuxedex-heading">
+
+      <button class="mochila-admin-toggle" (click)="isAdminOpen = !isAdminOpen" [attr.aria-expanded]="isAdminOpen"
+        id="admin-xuxedex-heading">
+        <span>🤖 Panel Admin — Añadir Xuxemon aleatorio</span>
+        <span class="mochila-admin-chevron">{{ isAdminOpen ? '▲' : '▼' }}</span>
+      </button>
+
+      @if (isAdminOpen) {
+      <div class="mochila-admin-body">
+
+        <p class="mochila-admin-desc">
+          Lista de entrenadores. Pulsa el botón para asignarles un Xuxemon aleatorio de la colección.
+        </p>
+
+        <div class="mochila-admin-list">
+          @for (trainer of trainers; track trainer.id) {
+          <div class="mochila-admin-row">
+            <span class="mochila-admin-img">🧑‍🏫</span>
+            <span class="mochila-admin-name">{{ trainer.name }}</span>
+            <span class="mochila-admin-total">
+              Xuxemons: <strong>{{ trainer.xuxemons.length }}</strong>
+            </span>
+            <button class="xuxedex-admin-add-btn" (click)="addRandomXuxemon(trainer)">
+              + Añadir aleatorio
+            </button>
+          </div>
+
+          @if (trainer.xuxemons.length > 0) {
+          <div class="xuxedex-trainer-list">
+            @for (x of trainer.xuxemons; track $index) {
+            <span class="xuxedex-trainer-chip">{{ x.img }} {{ x.nombre }}</span>
+            }
+          </div>
+          }
+          }
+        </div>
+
+        @if (adminMsg) {
+        <p class="mochila-admin-msg">{{ adminMsg }}</p>
+        }
+
+      </div>
+      }
+
+    </section>
+
+  </main>
+
+  <footer class="dboard-footer">
+    <p>&copy; 2026 Xuxemons</p>
+  </footer>
+
+  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
+    @for (item of navItems; track item.route) {
+    <a class="dboard-nav-item" [class.active]="item.route === '/xuxemons'" [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/xuxemons' ? 'page' : null" [attr.aria-label]="item.label">
+      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
+    }
+  </nav>
+
+</div>
