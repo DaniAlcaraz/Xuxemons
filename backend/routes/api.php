@@ -19,6 +19,39 @@ Route::get('/usuarios/{id}', [UsuarioController::class, 'show']); //Al probar la
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']); //Elimina usuario
 Route::post('/usuario/baja', [AuthController::class, 'baja']); //Dar de baja un usuario
 
+//Mostrar xuxemons
 Route::get('/xuxemons', function () {
     return Xuxemon::all();
+});
+
+// Ruta para mostrar un Xuxemon específico por su ID
+Route::get('/xuxemons/{id}', function ($id) {
+    // Buscamos por la clave primaria que definiste (IDxuxemon)
+    $xuxemon = Xuxemon::find($id);
+
+    // Si no existe, devolvemos un error 404 para que Postman nos avise
+    if (!$xuxemon) {
+        return response()->json(['error' => 'Xuxemon no encontrado'], 404);
+    }
+
+    return response()->json($xuxemon);
+});
+
+// Ruta para evolucionar un Xuxemon
+Route::post('/xuxemons/{id}/evolucionar', function ($id) {
+    // 1. Buscar al bicho
+    $xuxemon = Xuxemon::find($id);
+
+    if (!$xuxemon) {
+        return response()->json(['error' => 'Xuxemon no encontrado'], 404);
+    }
+
+    // 2. Ejecutar la función que creamos en el modelo
+    $xuxemon->evolucionar();
+
+    // 3. Devolver el bicho ya actualizado para ver el cambio
+    return response()->json([
+        'mensaje' => '¡El Xuxemon ha evolucionado!',
+        'xuxemon' => $xuxemon
+    ]);
 });
