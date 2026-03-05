@@ -115,13 +115,19 @@ class AuthController extends Controller
     }
 
 
-    public function update(Request $request) {
+public function update(Request $request) {
     $user = $request->user();
 
     $validated = $request->validate([
         'nombre'    => 'required|string|max:255',
         'apellidos' => 'required|string|max:255',
-        'email'     => ['required', 'email', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($user->id)],
+        'email'     => [
+            'required',
+            'email',
+            
+            \Illuminate\Validation\Rule::unique('usuarios', 'email')
+                ->ignore($user->identificador, 'identificador'),
+        ],
         'password'  => 'nullable|string|min:6',
     ]);
 
