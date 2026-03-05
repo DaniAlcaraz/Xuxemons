@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('tipo', ['Agua', 'Tierra', 'Aire']);
             $table->enum('tamano', ['Pequeño', 'Mediano', 'Grande'])->default('Pequeño');
             $table->integer('evolucion_puntos')->default(0); //Contorla la transicion
+            $table->string('archivo');
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\Xuxemon;
 
 // Sin middleware por ahora para pruebas
 // Rutas abiertas para pruebas
@@ -18,5 +19,6 @@ Route::get('/usuarios/{id}', [UsuarioController::class, 'show']); //Al probar la
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']); //Elimina usuario
 Route::post('/usuario/baja', [AuthController::class, 'baja']); //Dar de baja un usuario
 
-Route::post('/xuxemons/{id}/evolucionar', [XuxemonController::class, 'subirNivel']);
-Route::get('/xuxedex', [XuxemonController::class, 'mostrarXuxedex']);
+Route::get('/xuxemons', function () {
+    return Xuxemon::all();
+});
