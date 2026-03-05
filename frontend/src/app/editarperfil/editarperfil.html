@@ -1,6 +1,5 @@
 <div class="editarperfil-wrapper">
 
-  <!-- Cabecera semántica -->
   <header class="editarperfil-header">
     <div class="editarperfil-header-content">
       <a routerLink="/perfil" class="editarperfil-back-btn" aria-label="Volver al perfil">
@@ -15,10 +14,8 @@
     </div>
   </header>
 
-  <!-- Contenido principal -->
   <main class="editarperfil-main" id="main-content">
 
-    <!-- Tarjeta avatar -->
     <section class="editarperfil-card editarperfil-avatar-card" aria-labelledby="avatar-heading">
       <h2 id="avatar-heading" class="visually-hidden">Foto de perfil</h2>
       <div class="editarperfil-avatar-banner" role="presentation"></div>
@@ -27,11 +24,7 @@
           <div class="editarperfil-avatar" role="img" aria-label="Foto de perfil actual">
             <span aria-hidden="true">👤</span>
           </div>
-          <button
-            class="editarperfil-avatar-change-btn"
-            type="button"
-            aria-label="Cambiar foto de perfil"
-          >
+          <button class="editarperfil-avatar-change-btn" type="button" aria-label="Cambiar foto de perfil">
             <svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
               <path d="M12 20h9"/>
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
@@ -42,63 +35,37 @@
       </div>
     </section>
 
-    <!-- Formulario de datos -->
     <section class="editarperfil-card" aria-labelledby="datos-heading">
       <h2 id="datos-heading" class="editarperfil-section-title">Datos personales</h2>
 
-      <form
-        [formGroup]="form"
-        class="editarperfil-form"
-        (ngSubmit)="onSubmit()"
-        novalidate
-        aria-describedby="form-desc"
-      >
+      <form [formGroup]="form" class="editarperfil-form" (ngSubmit)="onSubmit()" novalidate aria-describedby="form-desc">
         <p id="form-desc" class="editarperfil-form-desc">
           Los campos marcados con <span aria-hidden="true">*</span><span class="visually-hidden">asterisco</span> son obligatorios.
         </p>
 
-        <!-- Resumen errores -->
-        <div
-          role="alert"
-          aria-live="polite"
-          aria-atomic="true"
-          class="form-error-summary"
-          *ngIf="formSubmitted && form.invalid"
-        >
-          <span aria-hidden="true">⚠</span>
-          Por favor, revisa los campos marcados antes de guardar.
-        </div>
+        @if (formSubmitted && form.invalid) {
+          <div role="alert" aria-live="polite" aria-atomic="true" class="form-error-summary">
+            <span aria-hidden="true">⚠</span>
+            Por favor, revisa los campos marcados antes de guardar.
+          </div>
+        }
 
-        <!-- Nombre + Apellidos -->
         <div class="editarperfil-form-row">
-
           <div class="editarperfil-form-group">
             <label for="ep-nombre" class="editarperfil-label">
               Nombre
               <span class="required-mark" aria-hidden="true">*</span>
               <span class="visually-hidden">campo obligatorio</span>
             </label>
-            <input
-              id="ep-nombre"
-              type="text"
-              class="editarperfil-input"
-              placeholder="Tu nombre"
-              formControlName="nombre"
-              autocomplete="given-name"
-              aria-required="true"
-              [attr.aria-invalid]="isInvalid('nombre') ? 'true' : 'false'"
-              aria-describedby="ep-nombre-error"
-            />
-            <p
-              id="ep-nombre-error"
-              class="editarperfil-error-msg"
-              role="alert"
-              aria-live="polite"
-              *ngIf="isInvalid('nombre')"
-            >
-              <span class="error-icon" aria-hidden="true">✕</span>
-              El nombre es obligatorio
-            </p>
+            <input id="ep-nombre" type="text" class="editarperfil-input" placeholder="Tu nombre"
+              formControlName="nombre" autocomplete="given-name" aria-required="true"
+              [attr.aria-invalid]="isInvalid('nombre') ? 'true' : 'false'" aria-describedby="ep-nombre-error"/>
+            @if (isInvalid('nombre')) {
+              <p id="ep-nombre-error" class="editarperfil-error-msg" role="alert" aria-live="polite">
+                <span class="error-icon" aria-hidden="true">✕</span>
+                El nombre es obligatorio
+              </p>
+            }
           </div>
 
           <div class="editarperfil-form-group">
@@ -107,160 +74,102 @@
               <span class="required-mark" aria-hidden="true">*</span>
               <span class="visually-hidden">campo obligatorio</span>
             </label>
-            <input
-              id="ep-apellidos"
-              type="text"
-              class="editarperfil-input"
-              placeholder="Tus apellidos"
-              formControlName="apellidos"
-              autocomplete="family-name"
-              aria-required="true"
-              [attr.aria-invalid]="isInvalid('apellidos') ? 'true' : 'false'"
-              aria-describedby="ep-apellidos-error"
-            />
-            <p
-              id="ep-apellidos-error"
-              class="editarperfil-error-msg"
-              role="alert"
-              aria-live="polite"
-              *ngIf="isInvalid('apellidos')"
-            >
-              <span class="error-icon" aria-hidden="true">✕</span>
-              Los apellidos son obligatorios
-            </p>
+            <input id="ep-apellidos" type="text" class="editarperfil-input" placeholder="Tus apellidos"
+              formControlName="apellidos" autocomplete="family-name" aria-required="true"
+              [attr.aria-invalid]="isInvalid('apellidos') ? 'true' : 'false'" aria-describedby="ep-apellidos-error"/>
+            @if (isInvalid('apellidos')) {
+              <p id="ep-apellidos-error" class="editarperfil-error-msg" role="alert" aria-live="polite">
+                <span class="error-icon" aria-hidden="true">✕</span>
+                Los apellidos son obligatorios
+              </p>
+            }
           </div>
-
         </div>
 
-        <!-- Usuario -->
+
+        @if (guardadoOk) {
+          <div role="alert" class="form-success-summary">
+            Cambios guardados correctamente.
+          </div>
+        }
+        @if (errorGuardado) {
+          <div role="alert" class="form-error-summary">
+            <span aria-hidden="true">⚠</span> Error al guardar los cambios.
+          </div>
+        }
+
+        <!-- Identificador (solo lectura) -->
         <div class="editarperfil-form-group editarperfil-form-group-full">
-          <label for="ep-usuario" class="editarperfil-label">
-            Nombre de usuario
-            <span class="required-mark" aria-hidden="true">*</span>
-            <span class="visually-hidden">campo obligatorio</span>
-          </label>
-          <input
-            id="ep-usuario"
-            type="text"
-            class="editarperfil-input"
-            placeholder="@usuario"
-            formControlName="usuario"
-            autocomplete="username"
-            aria-required="true"
-            [attr.aria-invalid]="isInvalid('usuario') ? 'true' : 'false'"
-            aria-describedby="ep-usuario-error"
-          />
-          <p
-            id="ep-usuario-error"
-            class="editarperfil-error-msg"
-            role="alert"
-            aria-live="polite"
-            *ngIf="isInvalid('usuario')"
-          >
-            <span class="error-icon" aria-hidden="true">✕</span>
-            El nombre de usuario es obligatorio
-          </p>
+          <label class="editarperfil-label">Tu identificador</label>
+          <div class="editarperfil-input-password-wrap">
+            <input type="text" class="editarperfil-input" [value]="identificador" readonly/>
+            <button type="button" class="editarperfil-password-toggle" (click)="copiarIdentificador()" aria-label="Copiar identificador">
+              
+            </button>
+          </div>
+          <p class="editarperfil-field-hint">Este es tu ID de acceso. Úsalo para iniciar sesión.</p>
         </div>
 
-        <!-- Correo -->
         <div class="editarperfil-form-group editarperfil-form-group-full">
           <label for="ep-correo" class="editarperfil-label">
             Correo electrónico
             <span class="required-mark" aria-hidden="true">*</span>
             <span class="visually-hidden">campo obligatorio</span>
           </label>
-          <input
-            id="ep-correo"
-            type="email"
-            class="editarperfil-input"
-            placeholder="entrenador@xuxemons.com"
-            formControlName="correo"
-            autocomplete="email"
-            aria-required="true"
-            [attr.aria-invalid]="isInvalid('correo') ? 'true' : 'false'"
-            aria-describedby="ep-correo-error"
-          />
-          <p
-            id="ep-correo-error"
-            class="editarperfil-error-msg"
-            role="alert"
-            aria-live="polite"
-            *ngIf="isInvalid('correo')"
-          >
-            <span class="error-icon" aria-hidden="true">✕</span>
-            Introduce un correo electrónico válido
-          </p>
+          <input id="ep-correo" type="email" class="editarperfil-input" placeholder="entrenador@xuxemons.com"
+            formControlName="correo" autocomplete="email" aria-required="true"
+            [attr.aria-invalid]="isInvalid('correo') ? 'true' : 'false'" aria-describedby="ep-correo-error"/>
+          @if (isInvalid('correo')) {
+            <p id="ep-correo-error" class="editarperfil-error-msg" role="alert" aria-live="polite">
+              <span class="error-icon" aria-hidden="true">✕</span>
+              Introduce un correo electrónico válido
+            </p>
+          }
         </div>
 
-        <!-- Contraseña -->
         <div class="editarperfil-form-group editarperfil-form-group-full">
           <label for="ep-contrasena" class="editarperfil-label">
             Nueva contraseña
             <span class="visually-hidden">(opcional)</span>
           </label>
           <div class="editarperfil-input-password-wrap">
-            <input
-              id="ep-contrasena"
-              [type]="mostrarPassword ? 'text' : 'password'"
+            <input id="ep-contrasena" [type]="mostrarPassword ? 'text' : 'password'"
               class="editarperfil-input editarperfil-input-password"
               placeholder="Dejar en blanco para no cambiar"
-              formControlName="contrasena"
-              autocomplete="new-password"
-              aria-required="false"
+              formControlName="contrasena" autocomplete="new-password" aria-required="false"
               [attr.aria-invalid]="isInvalid('contrasena') ? 'true' : 'false'"
-              aria-describedby="ep-contrasena-hint ep-contrasena-error"
-            />
-            <button
-              type="button"
-              class="editarperfil-password-toggle"
+              aria-describedby="ep-contrasena-hint ep-contrasena-error"/>
+            <button type="button" class="editarperfil-password-toggle"
               (click)="mostrarPassword = !mostrarPassword"
               [attr.aria-label]="mostrarPassword ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'"
-              [attr.aria-pressed]="mostrarPassword"
-            >
-              <svg *ngIf="!mostrarPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6a7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-              </svg>
-              <svg *ngIf="mostrarPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3d4faa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-                <line x1="1" y1="1" x2="23" y2="23"/>
-              </svg>
+              [attr.aria-pressed]="mostrarPassword">
+              @if (!mostrarPassword) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6a7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3d4faa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              }
             </button>
           </div>
           <p id="ep-contrasena-hint" class="editarperfil-field-hint">Déjalo en blanco para mantener tu contraseña actual. Mínimo 6 caracteres si lo cambias.</p>
-          <p
-            id="ep-contrasena-error"
-            class="editarperfil-error-msg"
-            role="alert"
-            aria-live="polite"
-            *ngIf="isInvalid('contrasena')"
-          >
-            <span class="error-icon" aria-hidden="true">✕</span>
-            La contraseña debe tener al menos 6 caracteres
-          </p>
+          @if (isInvalid('contrasena')) {
+            <p id="ep-contrasena-error" class="editarperfil-error-msg" role="alert" aria-live="polite">
+              <span class="error-icon" aria-hidden="true">✕</span>
+              La contraseña debe tener al menos 6 caracteres
+            </p>
+          }
         </div>
 
-        <!-- Botones de acción -->
         <div class="editarperfil-actions">
-          <button type="submit" class="editarperfil-btn-guardar">
-            Guardar cambios
-          </button>
-          <button
-            type="button"
-            class="editarperfil-btn-cerrar"
-            (click)="cerrarSesion()"
-            aria-describedby="cerrar-desc"
-          >
-            Cerrar sesión
-          </button>
+          <button type="submit" class="editarperfil-btn-guardar">Guardar cambios</button>
+          <button type="button" class="editarperfil-btn-cerrar" (click)="cerrarSesion()" aria-describedby="cerrar-desc">Cerrar sesión</button>
           <span id="cerrar-desc" class="visually-hidden">Cerrará tu sesión actual y volverás a la pantalla de inicio</span>
-          <button
-            type="button"
-            class="editarperfil-btn-eliminar"
-            aria-describedby="eliminar-desc"
-          >
-            Eliminar cuenta
-          </button>
+          <button type="button" class="editarperfil-btn-eliminar" aria-describedby="eliminar-desc">Eliminar cuenta</button>
           <span id="eliminar-desc" class="visually-hidden">Acción irreversible: eliminará permanentemente tu cuenta y todos tus datos</span>
         </div>
 
@@ -269,24 +178,20 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="editarperfil-footer">
     <p>&copy; 2026 Xuxemons</p>
   </footer>
 
-  <!-- Navegación inferior -->
   <nav class="editarperfil-bottom-nav" aria-label="Navegación principal">
-    <a
-      *ngFor="let item of navItems"
-      class="editarperfil-nav-item"
-      [class.active]="item.route === '/perfil'"
-      [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/perfil' ? 'page' : null"
-      [attr.aria-label]="item.label"
-    >
-      <span class="editarperfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-      <span>{{ item.label }}</span>
-    </a>
+    @for (item of navItems; track item.route) {
+      <a class="editarperfil-nav-item" [class.active]="item.route === '/perfil'"
+        [routerLink]="item.route"
+        [attr.aria-current]="item.route === '/perfil' ? 'page' : null"
+        [attr.aria-label]="item.label">
+        <span class="editarperfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    }
   </nav>
 
 </div>

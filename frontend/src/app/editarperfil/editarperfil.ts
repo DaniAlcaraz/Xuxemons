@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -18,19 +18,33 @@ interface NavItem {
   templateUrl: './editarperfil.html',
   styleUrls: ['./editarperfil.css']
 })
-export class Editarperfil {
+export class Editarperfil implements OnInit {
   form: FormGroup;
   mostrarPassword = false;
   formSubmitted = false;
+  guardadoOk = false;
+  errorGuardado = false;
+  identificador = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
-      nombre:    ['Daniel', Validators.required],
-      apellidos: ['García', Validators.required],
-      usuario:   ['daniel_entrenador', Validators.required],
-      correo:    ['daniel@xuxemons.com', [Validators.required, Validators.email]],
+      nombre:    ['', Validators.required],
+      apellidos: ['', Validators.required],
+      correo:    ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.minLength(6)]]
     });
+  }
+
+  ngOnInit(): void {
+    const userData = this.authService.obtenerUsuario();
+    if (userData) {
+      this.identificador = userData.identificador;
+      this.form.patchValue({
+        nombre:    userData.nombre,
+        apellidos: userData.apellidos,
+        correo:    userData.email
+      });
+    }
   }
 
   isInvalid(field: string): boolean {
@@ -38,11 +52,37 @@ export class Editarperfil {
     return !!(control?.invalid && (control?.touched || this.formSubmitted));
   }
 
+  copiarIdentificador(): void {
+    navigator.clipboard.writeText(this.identificador);
+  }
+
   onSubmit(): void {
     this.formSubmitted = true;
+    this.guardadoOk = false;
+    this.errorGuardado = false;
     this.form.markAllAsTouched();
+
     if (this.form.valid) {
-      // lógica guardar cambios
+      const datos: any = {
+        nombre:    this.form.value.nombre,
+        apellidos: this.form.value.apellidos,
+        email:     this.form.value.correo,
+      };
+      if (this.form.value.contrasena) {
+        datos.password = this.form.value.contrasena;
+      }
+
+      this.authService.actualizarPerfil(datos).subscribe({
+        next: (res) => {
+          this.authService.guardarUsuario(res.user);
+          this.guardadoOk = true;
+          this.form.patchValue({ contrasena: '' });
+          this.formSubmitted = false;
+        },
+        error: () => {
+          this.errorGuardado = true;
+        }
+      });
     }
   }
 
@@ -53,7 +93,6 @@ export class Editarperfil {
         this.router.navigate(['/login']);
       },
       error: () => {
-        // Aunque falle la llamada al backend, limpiamos el token igualmente
         this.authService.cerrarSesion();
         this.router.navigate(['/login']);
       }
