@@ -21,10 +21,29 @@
     <!-- Contador descubiertos -->
     <div class="xuxedex-counter-bar">
       <span class="xuxedex-counter-label">Xuxemons Descubiertos</span>
-      <span class="xuxedex-counter-badge">
-        {{ descubiertos }} / {{ totalXuxemons }}
-      </span>
+      <span class="xuxedex-counter-badge">{{ descubiertos }} / {{ totalXuxemons }}</span>
     </div>
+
+    <!-- Filtros tipo -->
+    <section class="mochila-categories" aria-label="Filtrar por tipo">
+      @for (f of tiposFiltro; track f) {
+      <button class="mochila-cat-btn xux-tipo-btn" [class.active]="filterTipo === f" [class.btn-tierra]="f === 'Tierra'"
+        [class.btn-aire]="f === 'Aire'" [class.btn-agua]="f === 'Agua'" (click)="filterTipo = f"
+        [attr.aria-pressed]="filterTipo === f">
+        {{ f === 'Tierra' ? '🌿' : f === 'Aire' ? '💨' : f === 'Agua' ? '💧' : '🌐' }} {{ f }}
+      </button>
+      }
+    </section>
+
+    <!-- Filtros tamaño -->
+    <section class="mochila-categories" aria-label="Filtrar por tamaño">
+      @for (t of tamanosFiltro; track t) {
+      <button class="mochila-cat-btn" [class.active]="filterTamano === t" (click)="filterTamano = t"
+        [attr.aria-pressed]="filterTamano === t">
+        {{ t === 'Pequeño' ? '🥚' : t === 'Mediano' ? '🌿' : t === 'Grande' ? '⭐' : '📏' }} {{ t }}
+      </button>
+      }
+    </section>
 
     <!-- Grid Xuxedex -->
     <section class="dboard-card" aria-labelledby="xuxedex-heading">
@@ -35,13 +54,35 @@
         <li class="xuxedex-card" [class.discovered]="x.discovered" [class.undiscovered]="!x.discovered"
           [class.type-tierra]="x.discovered && x.tipo === 'Tierra'"
           [class.type-aire]="x.discovered && x.tipo === 'Aire'" [class.type-agua]="x.discovered && x.tipo === 'Agua'"
-          [attr.aria-label]="x.discovered ? x.nombre + ', tipo ' + x.tipo : 'Xuxemon desconocido'" tabindex="0">
+          [attr.aria-label]="x.discovered ? x.nombre + ', tipo ' + x.tipo + ', ' + x.tamano : 'Xuxemon desconocido'"
+          tabindex="0">
+
           @if (x.discovered) {
-          <div class="xuxedex-img" aria-hidden="true">{{ x.img }}</div>
+          <!-- Badge tamaño -->
+          <span class="xuxedex-tamano-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
+            [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
+            {{ tamanoLabel(x.tamano) }}
+          </span>
+
+          <div class="xuxedex-img" aria-hidden="true" [class.size-pequeno]="x.tamano === 'Pequeño'"
+            [class.size-mediano]="x.tamano === 'Mediano'" [class.size-grande]="x.tamano === 'Grande'">
+            {{ x.img }}
+          </div>
+
           <p class="xuxedex-name">{{ x.nombre }}</p>
+
           <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
             {{ x.tipo }}
           </span>
+
+          @if (canEvolve(x)) {
+          <button class="xuxedex-evolve-btn" (click)="evolucionar(x)" [attr.aria-label]="'Evolucionar ' + x.nombre">
+            ✨ Evolucionar
+          </button>
+          } @else {
+          <span class="xuxedex-max-badge">⭐ Máximo</span>
+          }
+
           } @else {
           <div class="xuxedex-lock" aria-hidden="true">🔒</div>
           <p class="xuxedex-name unknown">???</p>
@@ -52,56 +93,8 @@
       </ul>
 
       @if (filteredXuxemons.length === 0) {
-      <p class="xuxedex-empty">No se encontraron xuxemons con ese nombre.</p>
+      <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
       }
-    </section>
-
-    <!-- Panel Admin -->
-    <section class="dboard-card mochila-admin-card" aria-labelledby="admin-xuxedex-heading">
-
-      <button class="mochila-admin-toggle" (click)="isAdminOpen = !isAdminOpen" [attr.aria-expanded]="isAdminOpen"
-        id="admin-xuxedex-heading">
-        <span>🤖 Panel Admin — Añadir Xuxemon aleatorio</span>
-        <span class="mochila-admin-chevron">{{ isAdminOpen ? '▲' : '▼' }}</span>
-      </button>
-
-      @if (isAdminOpen) {
-      <div class="mochila-admin-body">
-
-        <p class="mochila-admin-desc">
-          Lista de entrenadores. Pulsa el botón para asignarles un Xuxemon aleatorio de la colección.
-        </p>
-
-        <div class="mochila-admin-list">
-          @for (trainer of trainers; track trainer.id) {
-          <div class="mochila-admin-row">
-            <span class="mochila-admin-img">🧑‍🏫</span>
-            <span class="mochila-admin-name">{{ trainer.name }}</span>
-            <span class="mochila-admin-total">
-              Xuxemons: <strong>{{ trainer.xuxemons.length }}</strong>
-            </span>
-            <button class="xuxedex-admin-add-btn" (click)="addRandomXuxemon(trainer)">
-              + Añadir aleatorio
-            </button>
-          </div>
-
-          @if (trainer.xuxemons.length > 0) {
-          <div class="xuxedex-trainer-list">
-            @for (x of trainer.xuxemons; track $index) {
-            <span class="xuxedex-trainer-chip">{{ x.img }} {{ x.nombre }}</span>
-            }
-          </div>
-          }
-          }
-        </div>
-
-        @if (adminMsg) {
-        <p class="mochila-admin-msg">{{ adminMsg }}</p>
-        }
-
-      </div>
-      }
-
     </section>
 
   </main>

@@ -6,6 +6,7 @@ import { Dashboard } from './dashboard/dashboard';
 import { Editarperfil } from './editarperfil/editarperfil';
 import { Xuxemons } from './xuxemons/xuxemons';
 import { Mochila } from './mochila/mochila';
+import { Admin } from './admin/admin';
 
 export const routes: Routes = [
   {
@@ -40,6 +41,10 @@ export const routes: Routes = [
   {
     path: 'mochila',
     component: Mochila,
+  },
+  {
+    path: 'admin',
+    component: Admin,
   }
 ];
 
