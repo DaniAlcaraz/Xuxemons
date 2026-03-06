@@ -99,6 +99,30 @@ export class Editarperfil implements OnInit {
     });
   }
 
+  eliminarCuenta() {
+    //Mensaje de confirmacion
+    if (confirm('¿Estás totalmente seguro de que quieres eliminar tu cuenta?')) {
+      
+      //Llama al servicio
+      this.authService.eliminarCuenta().subscribe({
+        next: (response) => {
+          //Si Laravel responde OK (200), hace lo siguiente:
+          alert('Tu cuenta ha sido eliminada correctamente.');
+          
+          //Limpia sesion y redirige
+          this.authService.cerrarSesion();
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          //Si algo falla en el backend
+          console.error('Error al intentar eliminar:', error);
+          alert('Hubo un error al procesar tu baja. Inténtalo de nuevo más tarde.');
+        }
+      });
+    }
+
+  }
+
   navItems: NavItem[] = [
     { icon: '🏠', label: 'Inicio',    route: '/dashboard' },
     { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },

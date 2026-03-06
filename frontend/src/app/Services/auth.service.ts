@@ -64,8 +64,13 @@ export class AuthService {
 
   actualizarPerfil(datos: any): Observable<any> {
   return this.http.put(`${this.apiUrl}/usuario`, datos, {
-    headers: this.getAuthHeaders()
-  });
-}
+      headers: this.getAuthHeaders()
+    });
+  }
 
+  eliminarCuenta(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuario/baja`, {}, {
+      headers: this.getAuthHeaders()
+    });
+  }
 }
