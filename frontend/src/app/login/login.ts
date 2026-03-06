@@ -28,24 +28,25 @@ export class LoginComponent {
     return !!(control?.invalid && (control?.touched || this.formSubmitted));
   }
 
-  onSubmit(): void {
-    this.formSubmitted = true;
-    this.errorCredenciales = false;
-    this.form.markAllAsTouched();
-    if (this.form.valid) {
-      const datos = {
-        identificador: this.form.value.id,
-        password: this.form.value.contrasena
-      };
-      this.authService.login(datos).subscribe({
-        next: (res) => {
-          this.authService.guardarToken(res.access_token);
-          this.router.navigate(['/dashboard']);
-        },
-        error: () => {
-          this.errorCredenciales = true;
-        }
-      });
-    }
+onSubmit(): void {
+  this.formSubmitted = true;
+  this.errorCredenciales = false;
+  this.form.markAllAsTouched();
+  if (this.form.valid) {
+    const datos = {
+      identificador: this.form.value.id,
+      password: this.form.value.contrasena
+    };
+    this.authService.login(datos).subscribe({
+      next: (res) => {
+        this.authService.guardarToken(res.access_token);
+        this.authService.guardarUsuario(res.user); // 👈 guarda el usuario
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.errorCredenciales = true;
+      }
+    });
   }
+}
 }

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { NgClass, NgFor } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../Services/auth.service';
+import { OnInit } from '@angular/core';
+
 
 interface UserProfile {
   name: string;
@@ -47,16 +50,27 @@ interface NavItem {
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.css']
 })
-export class Perfil {
+export class Perfil implements OnInit {
 
   user: UserProfile = {
-    name: 'Daniel',
-    since: 'Febrero 2025',
-    location: 'Cataluña, España',
+    name: '',
+    since: '',
+    location: '',
     level: 18,
     xp: 4111,
     xpMax: 5000
   };
+
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    const userData = this.authService.obtenerUsuario();
+    if (userData) {
+      this.user.name = userData.nombre;
+    }
+  }
+
 
   stats: Stat = {
     xuxemons: 5,

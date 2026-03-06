@@ -6,22 +6,22 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UsuarioController;
 use App\Models\Xuxemon;
 
-// Sin middleware por ahora para pruebas
-// Rutas abiertas para pruebas
-Route::post('/register', [AuthController::class, 'register']); //Crea un usuario (Lo registra)
+// Rutas públicas
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-//Finalmente tendra que ir dentro de un middleawre, pero ahora esta asi para probar que funcionen las rutas
-//Route::get('/me', [AuthController::class, 'me']);      
-//Route::post('/logout', [AuthController::class, 'logout']); 
 
-// Rutas PROTEGIDAS (Necesitan token/sesión)
-Route::middleware(['auth:sanctum'])->group(function () {
-    
-    // Rutas de Usuario
-    Route::get('/usuarios', [UsuarioController::class, 'index']);
-    Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
-    Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
+// Rutas protegidas con Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/usuario', [AuthController::class, 'update']);
     Route::post('/usuario/baja', [AuthController::class, 'baja']);
+});
+
+// Rutas de gestión de usuarios
+Route::get('/usuarios', [UsuarioController::class, 'index']);
+Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
+Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
 
     // Rutas de Xuxemons
     Route::get('/xuxemons', function () {
@@ -40,4 +40,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
         $xuxemon->evolucionar();
         return response()->json(['mensaje' => '¡Evolucionado!', 'xuxemon' => $xuxemon]);
     });
-});

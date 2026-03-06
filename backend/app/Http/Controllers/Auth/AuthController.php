@@ -109,9 +109,39 @@ class AuthController extends Controller
         ], 200);
     }
 
-    /*
+    
     public function me(Request $request) { //Devuelve los datos correspondientes del usuario logueado
         return response()->json($request->user());
     }
-    */
+
+
+public function update(Request $request) {
+    $user = $request->user();
+
+    $validated = $request->validate([
+        'nombre'    => 'required|string|max:255',
+        'apellidos' => 'required|string|max:255',
+        'email'     => [
+            'required',
+            'email',
+            
+            \Illuminate\Validation\Rule::unique('usuarios', 'email')
+                ->ignore($user->identificador, 'identificador'),
+        ],
+        'password'  => 'nullable|string|min:6',
+    ]);
+
+    $user->nombre    = $validated['nombre'];
+    $user->apellidos = $validated['apellidos'];
+    $user->email     = $validated['email'];
+
+    if (!empty($validated['password'])) {
+        $user->password = Hash::make($validated['password']);
+    }
+
+    $user->save();
+
+    return response()->json(['user' => $user]);
+}
+
 }
