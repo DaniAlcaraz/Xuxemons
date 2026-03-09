@@ -60,4 +60,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function mochila() {
+    return $this->hasMany(Mochila::class, 'user_identificador', 'identificador');
+}
+
 }
