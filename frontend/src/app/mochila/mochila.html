@@ -2,86 +2,103 @@
 
   <header class="dboard-header">
     <div class="dboard-header-content">
-      <h1>Mochila</h1>
-      <p>Tu inventario</p>
+      <h1>🎒 Mi Xuxedex</h1>
+      <p>Tu colección personal de Xuxemons</p>
     </div>
   </header>
 
   <main class="dboard-main" id="main-content">
 
-    <!-- Buscador de objetos -->
-    <section class="mochila-search-section" aria-label="Buscar objetos">
+    <!-- Botón añadir aleatorio -->
+    <section class="mochila-add-section">
+      <button class="mochila-add-btn" (click)="anadirAleatorio()" [disabled]="anadiendo">
+        {{ anadiendo ? '⏳ Añadiendo...' : '🎲 Añadir Xuxemon aleatorio' }}
+      </button>
+
+      @if (mensajeExito) {
+        <p class="mochila-msg success">✅ {{ mensajeExito }}</p>
+      }
+      @if (mensajeError) {
+        <p class="mochila-msg error">❌ {{ mensajeError }}</p>
+      }
+    </section>
+
+    <!-- Contador -->
+    <div class="xuxedex-counter-bar">
+      <span class="xuxedex-counter-label">Xuxemons en tu colección</span>
+      <span class="xuxedex-counter-badge">{{ total }}</span>
+    </div>
+
+    <!-- Buscador -->
+    <section class="mochila-search-section" aria-label="Buscar xuxemon">
       <div class="mochila-search-wrapper">
         <span class="mochila-search-icon" aria-hidden="true">🔍</span>
-        <input class="mochila-search-input" type="search" placeholder="Buscar objeto..." [(ngModel)]="searchQuery"
-          aria-label="Buscar objeto" />
+        <input class="mochila-search-input" type="search" placeholder="Buscar xuxemon..."
+          [(ngModel)]="searchQuery" aria-label="Buscar xuxemon" />
       </div>
     </section>
 
-    <!-- Barra de espacios usados -->
-    <div class="mochila-slots-bar">
-      <div class="mochila-slots-info">
-        <span class="mochila-slots-label">Espacios ocupados</span>
-        <span class="mochila-slots-count" [class.full]="mochilaLlena">
-          {{ espaciosUsados }} / 20
-        </span>
-      </div>
-      <div class="mochila-slots-track" role="progressbar" [attr.aria-valuenow]="espaciosUsados" aria-valuemin="0"
-        aria-valuemax="20" aria-label="Espacios de mochila ocupados">
-        <div class="mochila-slots-fill" [style.width.%]="(espaciosUsados / 20) * 100" [class.full]="mochilaLlena">
-        </div>
-      </div>
-      @if (mochilaLlena) {
-      <p class="mochila-full-msg">⚠️ ¡Mochila llena!</p>
-      }
-    </div>
-
-    <!-- Leyenda -->
-    <div class="mochila-legend">
-      <span class="mochila-legend-item">
-        <span class="mochila-legend-dot stackable"></span>
-        Xuxes <em>(apilables, máx. 5/espacio)</em>
-      </span>
-      <span class="mochila-legend-item">
-        <span class="mochila-legend-dot single"></span>
-        Vacunas <em>(no apilables, 1/espacio)</em>
-      </span>
-    </div>
-
-    <!-- Filtros -->
-    <section class="mochila-categories" aria-label="Filtrar por categoría">
-      @for (f of filters; track f) {
-      <button class="mochila-cat-btn" [class.active]="selectedFilter === f" (click)="selectedFilter = f"
-        [attr.aria-pressed]="selectedFilter === f">{{ f }}</button>
+    <!-- Filtros tipo -->
+    <section class="mochila-categories" aria-label="Filtrar por tipo">
+      @for (f of tiposFiltro; track f) {
+        <button class="mochila-cat-btn xux-tipo-btn"
+          [class.active]="filterTipo === f"
+          [class.btn-tierra]="f === 'Tierra'"
+          [class.btn-aire]="f === 'Aire'"
+          [class.btn-agua]="f === 'Agua'"
+          (click)="filterTipo = f"
+          [attr.aria-pressed]="filterTipo === f">
+          {{ tipoEmoji(f) }} {{ f }}
+        </button>
       }
     </section>
 
-    <!-- Grid Inventario -->
-    <section class="dboard-card" aria-labelledby="inv-heading">
-      <h2 id="inv-heading" class="dboard-section-title">Inventario</h2>
-      <ul class="mochila-grid" role="list" aria-label="Espacios de la mochila">
-        @for (slot of displaySlots; track $index) {
-        <li class="mochila-slot" [class.occupied]="slot !== null" [class.stackable]="slot?.item?.kind === 'apilable'"
-          [class.single]="slot?.item?.kind === 'simple'" [class.rarity-raro]="slot?.item?.rareza === 'raro'"
-          [class.rarity-epico]="slot?.item?.rareza === 'épico'"
-          [class.rarity-legendario]="slot?.item?.rareza === 'legendario'"
-          [attr.aria-label]="slot ? slot.item.name + ' x' + slot.cantidad : 'Espacio vacío'" tabindex="0">
-          @if (slot !== null) {
-          <div class="mochila-slot-img" aria-hidden="true">{{ slot.item.img }}</div>
-          <p class="mochila-slot-name">{{ slot.item.name }}</p>
-          @if (slot.item.kind === 'apilable') {
-          <span class="mochila-slot-qty">{{ slot.cantidad }}/5</span>
+    <!-- Lista colección -->
+    <section class="dboard-card" aria-labelledby="coleccion-heading">
+      <h2 id="coleccion-heading" class="dboard-section-title">Colección</h2>
+
+      @if (cargando) {
+        <p class="xuxedex-empty">Cargando tu colección...</p>
+      } @else if (coleccionFiltrada.length === 0) {
+        <p class="xuxedex-empty">
+          {{ total === 0 ? '¡Tu colección está vacía! Pulsa el botón para añadir tu primer Xuxemon 🎲' : 'No se encontraron xuxemons con ese filtro.' }}
+        </p>
+      } @else {
+        <ul class="xuxedex-grid" role="list" aria-label="Tu colección de xuxemons">
+          @for (entrada of coleccionFiltrada; track entrada.coleccion_id) {
+            <li class="xuxedex-card discovered"
+              [class.type-tierra]="entrada.xuxemon.tipo === 'Tierra'"
+              [class.type-aire]="entrada.xuxemon.tipo === 'Aire'"
+              [class.type-agua]="entrada.xuxemon.tipo === 'Agua'"
+              [attr.aria-label]="entrada.xuxemon.nombre + ', tipo ' + entrada.xuxemon.tipo"
+              tabindex="0">
+
+              <!-- Badge tamaño -->
+              <span class="xuxedex-tamano-badge"
+                [class.tamano-pequeno]="entrada.xuxemon.tamano === 'Pequeño'"
+                [class.tamano-mediano]="entrada.xuxemon.tamano === 'Mediano'"
+                [class.tamano-grande]="entrada.xuxemon.tamano === 'Grande'">
+                {{ tamanoEmoji(entrada.xuxemon.tamano) }} {{ entrada.xuxemon.tamano }}
+              </span>
+
+              <!-- Imagen (archivo del xuxemon) -->
+              <div class="xuxedex-img" aria-hidden="true"
+                [class.size-pequeno]="entrada.xuxemon.tamano === 'Pequeño'"
+                [class.size-mediano]="entrada.xuxemon.tamano === 'Mediano'"
+                [class.size-grande]="entrada.xuxemon.tamano === 'Grande'">
+                {{ entrada.xuxemon.archivo }}
+              </div>
+
+              <p class="xuxedex-name">{{ entrada.xuxemon.nombre }}</p>
+
+              <span class="xuxedex-type-badge" [class]="'badge-' + entrada.xuxemon.tipo.toLowerCase()">
+                {{ tipoEmoji(entrada.xuxemon.tipo) }} {{ entrada.xuxemon.tipo }}
+              </span>
+
+            </li>
           }
-          <span class="mochila-slot-kind" [class.kind-stackable]="slot.item.kind === 'apilable'"
-            [class.kind-single]="slot.item.kind === 'simple'">
-            {{ slot.item.kind === 'apilable' ? 'xuxe' : 'Vacuna' }}
-          </span>
-          } @else {
-          <span class="mochila-slot-empty" aria-hidden="true">—</span>
-          }
-        </li>
-        }
-      </ul>
+        </ul>
+      }
     </section>
 
   </main>
@@ -92,11 +109,13 @@
 
   <nav class="dboard-bottom-nav" aria-label="Navegación principal">
     @for (item of navItems; track item.route) {
-    <a class="dboard-nav-item" [class.active]="item.route === '/mochila'" [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/mochila' ? 'page' : null" [attr.aria-label]="item.label">
-      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-      <span>{{ item.label }}</span>
-    </a>
+      <a class="dboard-nav-item" [class.active]="item.route === '/mochila'"
+        [routerLink]="item.route"
+        [attr.aria-current]="item.route === '/mochila' ? 'page' : null"
+        [attr.aria-label]="item.label">
+        <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
     }
   </nav>
 

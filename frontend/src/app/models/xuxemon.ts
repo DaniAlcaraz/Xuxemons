@@ -1,7 +1,18 @@
 export interface Xuxemon {
-  id: number;
+  IDxuxemon: number;
   nombre: string;
-  tipo: 'Aigua' | 'Terra' | 'Aire';  // Coincide con el ENUM de Laravel
-  tamano: 'Petit' | 'Mitjà' | 'Gran'; // Coincide con el ENUM de Laravel
-  imagen?: string;
+  tipo: 'Agua' | 'Tierra' | 'Aire';
+  tamano: 'Pequeño' | 'Mediano' | 'Grande';
+  archivo: string;
+  evolucion_puntos: number;
+}
+
+export interface EntradaColeccion {
+  coleccion_id: number;
+  xuxemon: Xuxemon;
+}
+
+export interface ColeccionResponse {
+  total: number;
+  coleccion: EntradaColeccion[];
 }
