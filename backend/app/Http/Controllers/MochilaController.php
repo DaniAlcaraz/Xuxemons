@@ -18,6 +18,8 @@ class MochilaController extends Controller {
         return response()->json($mochila);
     }
 
+
+    
     // GET /items — catálogo de ítems (para que el admin los vea)
     public function catalogoItems() {
         return response()->json(Item::all());
@@ -98,4 +100,6 @@ class MochilaController extends Controller {
 
         return response()->json(['message' => 'Quitados ' . $quitados, 'quitados' => $quitados]);
     }
+
+    
 }

@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MochilaService } from '../Services/mochila';
+import { AuthService } from '../Services/auth.service';
 
 export type Rareza = 'común' | 'raro' | 'épico' | 'legendario';
 
@@ -19,28 +22,54 @@ interface NavItem { icon: string; label: string; route: string; }
 const MAX_ESPACIOS = 20;
 const TAM_STACK = 5;
 
+const EMOJIS: Record<string, string> = {
+  'Xuxe Roja':           '🔴',
+  'Xuxe Azul':           '🔵',
+  'Xuxe Dorada':         '🟡',
+  'Chocolatina':         '🍫',
+  'Mermelada de frutas': '🍓',
+  'Insulina':            '💉',
+};
+
 @Component({
   selector: 'app-mochila',
   standalone: true,
-  imports: [RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule, CommonModule],
   templateUrl: './mochila.html',
   styleUrls: ['./mochila.css']
 })
-export class Mochila {
+export class Mochila implements OnInit {
 
-  items: Item[] = [
-    { id: 1, name: 'Xuxe Roja', kind: 'apilable', quantity: 7, img: '🔴', description: 'Xuxe básica de fuego', rareza: 'común' },
-    { id: 2, name: 'Xuxe Azul', kind: 'apilable', quantity: 3, img: '🔵', description: 'Xuxe básica de agua', rareza: 'raro' },
-    { id: 3, name: 'Xuxe Dorada', kind: 'apilable', quantity: 6, img: '🟡', description: 'Xuxe especial rara', rareza: 'épico' },
-    { id: 4, name: 'Vacuna Fuerza', kind: 'simple', quantity: 1, img: '💉', description: '+10 Ataque permanente', rareza: 'raro' },
-    { id: 5, name: 'Vacuna Defensa', kind: 'simple', quantity: 1, img: '🛡️', description: '+10 Defensa permanente', rareza: 'raro' },
-    { id: 6, name: 'Vacuna Mágica', kind: 'simple', quantity: 1, img: '✨', description: '+10 Magia permanente', rareza: 'épico' },
-    { id: 7, name: 'Vacuna Maestra', kind: 'simple', quantity: 1, img: '👑', description: '+20 a todo permanente', rareza: 'legendario' },
-  ];
-
+  items: Item[] = [];
+  cargando = true;
   searchQuery = '';
   selectedFilter = 'Todos';
   filters = ['Todos', 'Xuxes', 'Vacunas'];
+
+  constructor(private mochilaService: MochilaService, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.cargarMochila();
+  }
+
+  cargarMochila(): void {
+    this.cargando = true;
+    this.mochilaService.getMochila().subscribe({
+      next: (datos) => {
+        this.items = datos.map(entry => ({
+          id: entry.item.id,
+          name: entry.item.nombre,
+          kind: entry.item.tipo === 'xuxe' ? 'apilable' : 'simple',
+          quantity: entry.cantidad,
+          img: EMOJIS[entry.item.nombre] ?? '📦',
+          description: entry.item.descripcion,
+          rareza: entry.item.rareza as Rareza,
+        }));
+        this.cargando = false;
+      },
+      error: () => { this.cargando = false; }
+    });
+  }
 
   espaciosDe(item: Item): number {
     return item.kind === 'apilable' ? Math.ceil(item.quantity / TAM_STACK) : item.quantity;
