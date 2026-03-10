@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
@@ -16,9 +16,10 @@ export class Registro {
   mostrarPassword = false;
   mostrarRepetirPassword = false;
   formSubmitted = false;
+  isSubmitting = false;
   identificadorGenerado: string | null = null;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, public router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, public router: Router, private cdr: ChangeDetectorRef) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
@@ -49,6 +50,9 @@ export class Registro {
     this.formSubmitted = true;
     this.form.markAllAsTouched();
     if (this.form.valid) {
+      this.isSubmitting = true;
+      this.cdr.detectChanges(); // Fuerza la actualización para mostrar "Creando cuenta..."
+
       const datos = {
         nombre: this.form.value.nombre,
         apellidos: this.form.value.apellidos,
@@ -58,10 +62,16 @@ export class Registro {
       };
       this.authService.registro(datos).subscribe({
         next: (res) => {
+          this.isSubmitting = false;
           this.authService.guardarToken(res.access_token);
           this.identificadorGenerado = res.user.identificador; 
+          this.cdr.detectChanges(); // Actualiza para mostrar el cartón verde con el ID
         },
-        error: (err) => console.error('Error registro:', err)
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error registro:', err);
+          this.cdr.detectChanges();
+        }
       });
     }
   }
