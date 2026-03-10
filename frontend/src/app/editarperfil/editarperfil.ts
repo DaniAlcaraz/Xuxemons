@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -22,11 +22,12 @@ export class Editarperfil implements OnInit {
   form: FormGroup;
   mostrarPassword = false;
   formSubmitted = false;
+  isSubmitting = false;
   guardadoOk = false;
   errorGuardado = false;
   identificador = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {
     this.form = this.fb.group({
       nombre:    ['', Validators.required],
       apellidos: ['', Validators.required],
@@ -63,6 +64,9 @@ export class Editarperfil implements OnInit {
     this.form.markAllAsTouched();
 
     if (this.form.valid) {
+      this.isSubmitting = true;
+      this.cdr.detectChanges(); // Mostrar estado de carga
+
       const datos: any = {
         nombre:    this.form.value.nombre,
         apellidos: this.form.value.apellidos,
@@ -74,13 +78,17 @@ export class Editarperfil implements OnInit {
 
       this.authService.actualizarPerfil(datos).subscribe({
         next: (res) => {
+          this.isSubmitting = false;
           this.authService.guardarUsuario(res.user);
           this.guardadoOk = true;
           this.form.patchValue({ contrasena: '' });
           this.formSubmitted = false;
+          this.cdr.detectChanges(); // Mostrar "Cambios guardados correctamente"
         },
         error: () => {
+          this.isSubmitting = false;
           this.errorGuardado = true;
+          this.cdr.detectChanges(); // Mostrar error
         }
       });
     }

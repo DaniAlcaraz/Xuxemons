@@ -69,8 +69,7 @@ export class AuthService {
   }
 
   eliminarCuenta(): Observable<any> {
-  // Cambia esto temporalmente para ver si el problema es la construcción de la URL
-  return this.http.post('http://localhost:8000/api/usuario/baja', {}, {
+    return this.http.post(`${this.apiUrl}/usuario/deshabilitar`, {}, {
       headers: this.getAuthHeaders()
     });
   }

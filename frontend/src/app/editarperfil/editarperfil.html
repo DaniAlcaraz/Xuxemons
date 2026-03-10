@@ -166,7 +166,13 @@
         </div>
 
         <div class="editarperfil-actions">
-          <button type="submit" class="editarperfil-btn-guardar">Guardar cambios</button>
+          <button type="submit" class="editarperfil-btn-guardar" [disabled]="isSubmitting">
+            @if (isSubmitting) {
+              Guardando...
+            } @else {
+              Guardar cambios
+            }
+          </button>
           <button type="button" class="editarperfil-btn-cerrar" (click)="cerrarSesion()" aria-describedby="cerrar-desc">Cerrar sesión</button>
           <span id="cerrar-desc" class="visually-hidden">Cerrará tu sesión actual y volverás a la pantalla de inicio</span>
           <button type="button" class="editarperfil-btn-eliminar" aria-describedby="eliminar-desc" (click)="eliminarCuenta()">Eliminar cuenta</button>
