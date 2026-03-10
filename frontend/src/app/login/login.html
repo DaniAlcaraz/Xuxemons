@@ -104,7 +104,13 @@
         <a routerLink="/registro" class="link-btn">Regístrate aquí</a>
       </div>
 
-      <button type="submit" class="submit-btn">Iniciar sesión →</button>
+      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+        @if (isSubmitting) {
+          Iniciando sesión...
+        } @else {
+          Iniciar sesión →
+        }
+      </button>
 
     </form>
   </div>

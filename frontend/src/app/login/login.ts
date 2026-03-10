@@ -16,6 +16,7 @@ export class LoginComponent {
   formSubmitted = false;
   errorCredenciales = false;
   errorCuentaBaja = false;
+  isSubmitting = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {
     this.form = this.fb.group({
@@ -35,23 +36,28 @@ onSubmit(): void {
   this.errorCuentaBaja = false;
   this.form.markAllAsTouched();
   if (this.form.valid) {
+    this.isSubmitting = true;
+    this.cdr.detectChanges(); // Fuerza vista para mostrar 'Cargando...'
+    
     const datos = {
       identificador: this.form.value.id,
       password: this.form.value.contrasena
     };
     this.authService.login(datos).subscribe({
       next: (res) => {
+        this.isSubmitting = false; // Finaliza la carga
         this.authService.guardarToken(res.access_token);
         this.authService.guardarUsuario(res.user); // 👈 guarda el usuario
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
+        this.isSubmitting = false; // Finaliza la carga incluso si hay error
         if (err.status === 403) {
           this.errorCuentaBaja = true;
         } else {
           this.errorCredenciales = true;
         }
-        // Fuerza la actualización de la vista porque no se usa Zone.js
+        // Fuerza la actualización de la vista
         this.cdr.detectChanges();
       }
     });

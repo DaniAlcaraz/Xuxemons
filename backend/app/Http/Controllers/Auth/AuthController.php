@@ -56,16 +56,24 @@ class AuthController extends Controller
         //Buscamos al usuario por su id
         $user = User::withTrashed()->where('identificador', $request->identificador)->first(); //Revisa si el usuario intorducido existe.
 
-        //Verifica credenciales y credenciales y si la cuenta esta activa
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        // Si no existe el usuario, lanzamos error inmediatamente
+        if (!$user) {
             throw ValidationException::withMessages([
                 'identificador' => ['las credenciales no son correctas.'],
             ]);
         }
 
-        //Bloquea el acceso si tiene SoftDelete (Que esté deshabilitada)
+        //Bloquea el acceso si tiene SoftDelete (Que esté deshabilitada) ANTES de comprobar la contraseña
+        // Esto optimiza el proceso, ya que Hash::check() es una operación pesada que tarda varios milisegundos
         if ($user->trashed()) {
             return response()->json(['message' => 'Esta cuenta ha sido dada de baja.'], 403);
+        }
+
+        //Verifica credenciales (contraseña)
+        if (!Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'identificador' => ['las credenciales no son correctas.'],
+            ]);
         }
 
         //Borra sesiones anteriores (Al cerrar sesion)
