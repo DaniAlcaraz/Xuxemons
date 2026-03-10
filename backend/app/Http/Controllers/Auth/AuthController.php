@@ -10,7 +10,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) { //Si el usuario se registra
+    public function register(Request $request)
+    { //Si el usuario se registra
         $validated = $request->validate([
             'nombre' => 'required|string|max:255', //obligatorio, tipo texto, maximo 255 caracteres
             'apellidos' => 'required|string|max:255',
@@ -24,7 +25,7 @@ class AuthController extends Controller
 
         //Para que el primer usuario sea admin
         $esAdmin = User::count() === 0;
-        
+
         //Registra los campos con los nuevos datos a la BD
         $user = User::create([
             'identificador' => $idMascara,
@@ -44,7 +45,8 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request) { //Si el usuario inicia sesion
+    public function login(Request $request)
+    { //Si el usuario inicia sesion
         //Validamos solo l oque necesitamos para entrar
         $request->validate([ //Valida, como antes en el registro
             'identificador' => 'required|string',
@@ -57,7 +59,7 @@ class AuthController extends Controller
         //Verifica credenciales y credenciales y si la cuenta esta activa
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'identificador'=>['las credenciales no son correctas.'],
+                'identificador' => ['las credenciales no son correctas.'],
             ]);
         }
 
@@ -81,67 +83,61 @@ class AuthController extends Controller
 
     }
 
-    public function logout(Request $request) { //Respuesta frente a la peticion del usuario de cerrar sesion
+    public function logout(Request $request)
+    { //Respuesta frente a la peticion del usuario de cerrar sesion
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Sesión cerrada']);
     }
 
-    public function baja(Request $request) {
-        //Captura el identificador del body
-        $id_usuario = $request->input('identificador');
+    public function baja(Request $request)
+    {
+        // Obtiene el usuario autenticado directamente de Sanctum
+        $user = $request->user();
 
-        //Busca (ponem un log para depurar si fuera necesario)
-        $user = User::where('identificador', $id_usuario)->first();
+        // Revoca todos los tokens (cierra sesión en el servidor)
+        $user->tokens()->delete();
 
-        //Si no existe, avisa qué identificador falló
-        if (!$user) {
-            return response()->json([
-                'error' => 'No se encontró el usuario con identificador: ' . $id_usuario
-            ], 404);
-        }
-
-        //Si existe, borrado lógico
-        $user->delete(); 
+        // Borrado lógico (SoftDelete = inhabilitar)
+        $user->delete();
 
         return response()->json([
             'message' => 'Usuario inhabilitado correctamente',
-            'identificador' => $id_usuario
         ], 200);
     }
 
-    
-    public function me(Request $request) { //Devuelve los datos correspondientes del usuario logueado
+
+    public function me(Request $request)
+    { //Devuelve los datos correspondientes del usuario logueado
         return response()->json($request->user());
     }
 
+    public function update(Request $request)
+    {
+        $user = $request->user();
 
-public function update(Request $request) {
-    $user = $request->user();
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
 
-    $validated = $request->validate([
-        'nombre'    => 'required|string|max:255',
-        'apellidos' => 'required|string|max:255',
-        'email'     => [
-            'required',
-            'email',
-            
-            \Illuminate\Validation\Rule::unique('usuarios', 'email')
+                \Illuminate\Validation\Rule::unique('usuarios', 'email')
                 ->ignore($user->identificador, 'identificador'),
-        ],
-        'password'  => 'nullable|string|min:6',
-    ]);
+            ],
+            'password' => 'nullable|string|min:6',
+        ]);
 
-    $user->nombre    = $validated['nombre'];
-    $user->apellidos = $validated['apellidos'];
-    $user->email     = $validated['email'];
+        $user->nombre = $validated['nombre'];
+        $user->apellidos = $validated['apellidos'];
+        $user->email = $validated['email'];
 
-    if (!empty($validated['password'])) {
-        $user->password = Hash::make($validated['password']);
-    }
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
 
-    $user->save();
+        $user->save();
 
-    return response()->json(['user' => $user]);
-}
+        return response()->json(['user' => $user]);    }
 
 }
