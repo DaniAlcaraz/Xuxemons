@@ -23,20 +23,20 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
 
-    // Rutas de Xuxemons
-    Route::get('/xuxemons', function () {
-        return Xuxemon::all();
-    });
+// Rutas de Xuxemons
+Route::get('/xuxemons', function () {
+    return Xuxemon::all();
+});
 
-    Route::get('/xuxemons/{id}', function ($id) {
-        $xuxemon = Xuxemon::find($id);
-        return $xuxemon ? response()->json($xuxemon) : response()->json(['error' => 'No encontrado'], 404);
-    });
+Route::get('/xuxemons/{id}', function ($id) {
+    $xuxemon = Xuxemon::find($id);
+    return $xuxemon ? response()->json($xuxemon) : response()->json(['error' => 'No encontrado'], 404);
+});
 
-    Route::post('/xuxemons/{id}/evolucionar', function ($id) {
-        $xuxemon = Xuxemon::find($id);
-        if (!$xuxemon) return response()->json(['error' => 'No encontrado'], 404);
+Route::post('/xuxemons/{id}/evolucionar', function ($id) {
+    $xuxemon = Xuxemon::find($id);
+    if (!$xuxemon) return response()->json(['error' => 'No encontrado'], 404);
         
-        $xuxemon->evolucionar();
-        return response()->json(['mensaje' => '¡Evolucionado!', 'xuxemon' => $xuxemon]);
-    });
+    $xuxemon->evolucionar();
+    return response()->json(['mensaje' => '¡Evolucionado!', 'xuxemon' => $xuxemon]);
+});
