@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -15,8 +15,9 @@ export class LoginComponent {
   mostrarPassword = false;
   formSubmitted = false;
   errorCredenciales = false;
+  errorCuentaBaja = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {
     this.form = this.fb.group({
       id: ['', Validators.required],
       contrasena: ['', Validators.required]
@@ -31,6 +32,7 @@ export class LoginComponent {
 onSubmit(): void {
   this.formSubmitted = true;
   this.errorCredenciales = false;
+  this.errorCuentaBaja = false;
   this.form.markAllAsTouched();
   if (this.form.valid) {
     const datos = {
@@ -43,8 +45,14 @@ onSubmit(): void {
         this.authService.guardarUsuario(res.user); // 👈 guarda el usuario
         this.router.navigate(['/dashboard']);
       },
-      error: () => {
-        this.errorCredenciales = true;
+      error: (err) => {
+        if (err.status === 403) {
+          this.errorCuentaBaja = true;
+        } else {
+          this.errorCredenciales = true;
+        }
+        // Fuerza la actualización de la vista porque no se usa Zone.js
+        this.cdr.detectChanges();
       }
     });
   }

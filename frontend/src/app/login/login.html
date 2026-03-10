@@ -19,6 +19,13 @@
         </div>
       }
 
+      @if (errorCuentaBaja) {
+        <div role="alert" class="form-error-summary">
+          <span aria-hidden="true">🚫</span>
+          Esta cuenta ha sido dada de baja y ya no se puede acceder.
+        </div>
+      }
+
       @if (errorCredenciales) {
         <div role="alert" class="form-error-summary">
           <span aria-hidden="true">⚠</span>
