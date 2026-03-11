@@ -1,209 +1,285 @@
 <div class="dboard-wrapper">
 
-  <header class="dboard-header">
-    <div class="dboard-header-content">
-      <h1>🛡️ Admin</h1>
-      <p>Panel de administración</p>
-    </div>
-  </header>
-
-  <main class="dboard-main" id="main-content">
-
-    <!-- Stats globales -->
-    <div class="admin-stats-row">
-      <div class="admin-stat-card">
-        <span class="admin-stat-icon">🎒</span>
-        <div class="admin-stat-info">
-          <span class="admin-stat-value" [class.full]="mochilaLlenaUsuario">{{ espaciosUsadosUsuario }}/20</span>
-          <span class="admin-stat-label">Espacios mochila</span>
+    <header class="dboard-header">
+        <div class="dboard-header-content">
+            <h1>🛡️ Admin</h1>
+            <p>Panel de administración</p>
         </div>
-        <div class="admin-stat-bar-wrap">
-          <div class="admin-stat-bar" [style.width.%]="porcentajeMochilaUsuario" [class.full]="mochilaLlenaUsuario"></div>
-        </div>
-      </div>
-      <div class="admin-stat-card">
-        <span class="admin-stat-icon">📖</span>
-        <div class="admin-stat-info">
-          <span class="admin-stat-value">{{ descubiertos }}/{{ totalXuxemons }}</span>
-          <span class="admin-stat-label">Xuxemons descubiertos</span>
-        </div>
-        <div class="admin-stat-bar-wrap">
-          <div class="admin-stat-bar discovered" [style.width.%]="porcentajeDesc"></div>
-        </div>
-      </div>
-    </div>
+    </header>
 
-    <!-- Tabs -->
-    <div class="admin-tabs" role="tablist">
-      <button class="admin-tab" [class.active]="activeTab === 'mochila'" (click)="activeTab = 'mochila'" role="tab">
-        🎒 Mochila
-      </button>
-      <button class="admin-tab" [class.active]="activeTab === 'xuxemons'" (click)="activeTab = 'xuxemons'" role="tab">
-        📖 Xuxemons
-      </button>
-    </div>
+    <main class="dboard-main" id="main-content">
 
-    <!-- ══════════ TAB MOCHILA ══════════ -->
-    @if (activeTab === 'mochila') {
-
-    <section class="dboard-card">
-      <h2 class="dboard-section-title">👤 Seleccionar usuario</h2>
-      <div class="admin-form-fields">
-        <label class="admin-label">Usuario objetivo</label>
-        <select class="admin-select" [(ngModel)]="usuarioSeleccionado" (ngModelChange)="onUsuarioChange()">
-          @for (u of usuarios; track u.identificador) {
-          <option [value]="u.identificador">{{ u.nombre }} {{ u.apellidos }} — {{ u.identificador }}</option>
-          }
-        </select>
-      </div>
-      @if (usuarioSeleccionado) {
-      <div class="admin-stat-bar-wrap" style="margin-top:12px">
-        <div class="admin-stat-bar" [style.width.%]="porcentajeMochilaUsuario" [class.full]="mochilaLlenaUsuario"></div>
-      </div>
-      <p style="font-size:14px;font-weight:700;color:#505070;margin-top:6px">
-        Espacios: {{ espaciosUsadosUsuario }}/20
-        @if (mochilaLlenaUsuario) { <span style="color:#c62828"> — ¡Mochila llena!</span> }
-      </p>
-      }
-    </section>
-
-    @if (mochilaUsuario.length > 0) {
-    <section class="dboard-card">
-      <h2 class="dboard-section-title">🎒 Mochila de {{ usuarioSeleccionado }}</h2>
-      <div class="admin-table">
-        <div class="admin-table-head">
-          <span>Ítem</span><span>Tipo</span><span>Cantidad</span><span>Espacios</span><span>Rareza</span>
+        <!-- Stats globales -->
+        <div class="admin-stats-row">
+            <div class="admin-stat-card">
+                <span class="admin-stat-icon">🎒</span>
+                <div class="admin-stat-info">
+                    <span class="admin-stat-value" [class.full]="mochilaLlena">{{ espaciosUsados }}/20</span>
+                    <span class="admin-stat-label">Espacios mochila</span>
+                </div>
+                <div class="admin-stat-bar-wrap">
+                    <div class="admin-stat-bar" [style.width.%]="porcentajeMochila" [class.full]="mochilaLlena"></div>
+                </div>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-icon">📖</span>
+                <div class="admin-stat-info">
+                    <span class="admin-stat-value">{{ descubiertos }}/{{ totalXuxemons }}</span>
+                    <span class="admin-stat-label">Xuxemons descubiertos</span>
+                </div>
+                <div class="admin-stat-bar-wrap">
+                    <div class="admin-stat-bar discovered" [style.width.%]="porcentajeDesc"></div>
+                </div>
+            </div>
         </div>
-        @for (entry of mochilaUsuario; track entry.id) {
-        <div class="admin-table-row">
-          <span class="admin-item-name"><span>{{ getEmoji(entry.item.nombre) }}</span>{{ entry.item.nombre }}</span>
-          <span><span class="kind-badge" [class.kind-apilable]="entry.item.tipo === 'xuxe'" [class.kind-simple]="entry.item.tipo === 'vacuna'">
-            {{ entry.item.tipo === 'xuxe' ? 'Xuxe' : 'Vacuna' }}
-          </span></span>
-          <span class="admin-qty">{{ entry.cantidad }}</span>
-          <span class="admin-qty">{{ entry.item.tipo === 'xuxe' ? (entry.cantidad / 5 | number:'1.0-0') : entry.cantidad }}</span>
-          <span><span class="rareza-badge" [class]="'rareza-' + entry.item.rareza">{{ entry.item.rareza }}</span></span>
+
+        <!-- Tabs -->
+        <div class="admin-tabs" role="tablist">
+            <button class="admin-tab" [class.active]="activeTab === 'mochila'" (click)="activeTab = 'mochila'"
+                role="tab" [attr.aria-selected]="activeTab === 'mochila'">
+                🎒 Mochila
+            </button>
+            <button class="admin-tab" [class.active]="activeTab === 'xuxemons'" (click)="activeTab = 'xuxemons'"
+                role="tab" [attr.aria-selected]="activeTab === 'xuxemons'">
+                📖 Xuxemons
+            </button>
+        </div>
+
+        <!-- ══════════ TAB MOCHILA ══════════ -->
+        @if (activeTab === 'mochila') {
+
+        <!-- Tabla resumen ítems -->
+        <section class="dboard-card">
+            <h2 class="dboard-section-title">Estado de la mochila</h2>
+            <div class="admin-table">
+                <div class="admin-table-head">
+                    <span>Ítem</span><span>Tipo</span><span>Cantidad</span><span>Espacios</span><span>Rareza</span>
+                </div>
+                @for (item of items; track item.id) {
+                <div class="admin-table-row" [class.rarity-raro]="item.rareza === 'raro'"
+                    [class.rarity-epico]="item.rareza === 'épico'"
+                    [class.rarity-legendario]="item.rareza === 'legendario'">
+                    <span class="admin-item-name"><span>{{ item.img }}</span>{{ item.name }}</span>
+                    <span>
+                        <span class="kind-badge" [class.kind-apilable]="item.kind === 'apilable'"
+                            [class.kind-simple]="item.kind === 'simple'">
+                            {{ item.kind === 'apilable' ? 'Xuxe' : 'Vacuna' }}
+                        </span>
+                    </span>
+                    <span class="admin-qty">{{ item.quantity }}</span>
+                    <span class="admin-qty">{{ espaciosDe(item) }}</span>
+                    <span><span class="rareza-badge" [class]="'rareza-' + item.rareza">{{ item.rareza }}</span></span>
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Formularios mochila -->
+        <div class="admin-forms-grid">
+
+            <!-- Añadir Xuxes -->
+            <section class="dboard-card admin-form-card">
+                <h2 class="dboard-section-title">➕ Añadir Xuxes</h2>
+                <p class="admin-form-desc">Xuxes apilables (máx. 5/espacio). El sobrante se descarta.</p>
+                <div class="admin-form-fields">
+                    <label class="admin-label" for="xuxe-item">Tipo de xuxe</label>
+                    <select id="xuxe-item" class="admin-select" [(ngModel)]="adminXuxeId">
+                        @for (item of itemsApilables; track item.id) {
+                        <option [value]="item.id">{{ item.img }} {{ item.name }} ({{ item.quantity }})</option>
+                        }
+                    </select>
+                    <label class="admin-label" for="xuxe-qty">Cantidad</label>
+                    <input id="xuxe-qty" class="admin-input" type="number" min="1" [(ngModel)]="adminXuxeQty" />
+                    <button class="admin-btn btn-add" (click)="anadirXuxes()" [disabled]="mochilaLlena">
+                        ✅ Añadir Xuxes
+                    </button>
+                </div>
+                @if (adminXuxeMsg) { <p class="admin-msg">{{ adminXuxeMsg }}</p> }
+            </section>
+
+            <!-- Añadir Vacunas -->
+            <section class="dboard-card admin-form-card">
+                <h2 class="dboard-section-title">💉 Añadir Vacunas</h2>
+                <p class="admin-form-desc">Cada vacuna ocupa 1 espacio, no son apilables.</p>
+                <div class="admin-form-fields">
+                    <label class="admin-label" for="vacuna-item">Tipo de vacuna</label>
+                    <select id="vacuna-item" class="admin-select" [(ngModel)]="adminVacunaId">
+                        @for (item of itemsSimples; track item.id) {
+                        <option [value]="item.id">{{ item.img }} {{ item.name }} ({{ item.quantity }})</option>
+                        }
+                    </select>
+                    <label class="admin-label" for="vacuna-qty">Cantidad</label>
+                    <input id="vacuna-qty" class="admin-input" type="number" min="1" [(ngModel)]="adminVacunaQty" />
+                    <button class="admin-btn btn-add" (click)="anadirVacuna()" [disabled]="mochilaLlena">
+                        ✅ Añadir Vacuna
+                    </button>
+                </div>
+                @if (adminVacunaMsg) { <p class="admin-msg">{{ adminVacunaMsg }}</p> }
+            </section>
+
+            <!-- Quitar ítem -->
+            <section class="dboard-card admin-form-card">
+                <h2 class="dboard-section-title">➖ Quitar ítems</h2>
+                <p class="admin-form-desc">Reduce la cantidad de cualquier ítem de la mochila.</p>
+                <div class="admin-form-fields">
+                    <label class="admin-label" for="quitar-item">Ítem</label>
+                    <select id="quitar-item" class="admin-select" [(ngModel)]="adminQuitarId">
+                        @for (item of items; track item.id) {
+                        <option [value]="item.id">{{ item.img }} {{ item.name }} ({{ item.quantity }})</option>
+                        }
+                    </select>
+                    <label class="admin-label" for="quitar-qty">Cantidad a quitar</label>
+                    <input id="quitar-qty" class="admin-input" type="number" min="1" [(ngModel)]="adminQuitarQty" />
+                    <button class="admin-btn btn-remove" (click)="quitarItem()">
+                        ❌ Quitar ítems
+                    </button>
+                </div>
+                @if (adminQuitarMsg) { <p class="admin-msg">{{ adminQuitarMsg }}</p> }
+            </section>
+
         </div>
         }
-      </div>
-    </section>
-    }
 
-    <div class="admin-forms-grid">
+        <!-- ══════════ TAB XUXEMONS ══════════ -->
+        @if (activeTab === 'xuxemons') {
 
-      <section class="dboard-card admin-form-card">
-        <h2 class="dboard-section-title">➕ Añadir Xuxes</h2>
-        <p class="admin-form-desc">Xuxes apilables (máx. 5/espacio). El sobrante se descarta.</p>
-        <div class="admin-form-fields">
-          <label class="admin-label">Tipo de xuxe</label>
-          <select class="admin-select" [(ngModel)]="adminXuxeId">
-            @for (item of itemsApilablesAPI; track item.id) {
-            <option [value]="item.id">{{ getEmoji(item.nombre) }} {{ item.nombre }}</option>
-            }
-          </select>
-          <label class="admin-label">Cantidad</label>
-          <input class="admin-input" type="number" min="1" [(ngModel)]="adminXuxeQty" />
-          <button class="admin-btn btn-add" (click)="anadirXuxes()" [disabled]="mochilaLlenaUsuario || !usuarioSeleccionado">
-            ✅ Añadir Xuxes
-          </button>
+        <!-- Colección pills -->
+        <section class="dboard-card">
+            <h2 class="dboard-section-title">Estado de la colección</h2>
+            <div class="admin-pills">
+                @for (x of xuxemons; track x.id) {
+                <span class="admin-pill" [class.pill-discovered]="x.discovered" [class.pill-hidden]="!x.discovered"
+                    [class.type-tierra]="x.discovered && x.tipo === 'Tierra'"
+                    [class.type-aire]="x.discovered && x.tipo === 'Aire'"
+                    [class.type-agua]="x.discovered && x.tipo === 'Agua'">
+                    {{ x.discovered ? x.img + ' ' + x.nombre : '🔒 ???' }}
+                </span>
+                }
+            </div>
+        </section>
+
+        <!-- Formularios xuxemons -->
+        <div class="admin-forms-grid">
+
+            <!-- Descubrir / Ocultar -->
+            <section class="dboard-card admin-form-card">
+                <h2 class="dboard-section-title">🔓 Descubrir xuxemon</h2>
+                <p class="admin-form-desc">Cambia el estado de visibilidad en el Xuxedex.</p>
+                <div class="admin-form-fields">
+                    <label class="admin-label" for="descubrir-id">Xuxemon</label>
+                    <select id="descubrir-id" class="admin-select" [(ngModel)]="adminDescubrirId">
+                        @for (x of xuxemons; track x.id) {
+                        <option [value]="x.id">{{ x.discovered ? '✅' : '🔒' }} #{{ x.id }} {{ x.nombre }}</option>
+                        }
+                    </select>
+                    <button class="admin-btn btn-add" (click)="descubrirXuxemon()" [disabled]="noDescubiertos === 0">🔓
+                        Descubrir</button>
+                    <button class="admin-btn btn-neutral" (click)="descubrirAleatorio()"
+                        [disabled]="noDescubiertos === 0">🎲 Aleatorio</button>
+                    <button class="admin-btn btn-remove" (click)="ocultarXuxemon()">🔒 Ocultar</button>
+                </div>
+                @if (adminXuxMsg) { <p class="admin-msg">{{ adminXuxMsg }}</p> }
+            </section>
+
+            <!-- Asignar a entrenador -->
+            <section class="dboard-card admin-form-card">
+                <h2 class="dboard-section-title">🧑‍🏫 Asignar a entrenador</h2>
+                <p class="admin-form-desc">Asigna un xuxemon descubierto a un entrenador.</p>
+                <div class="admin-form-fields">
+                    <label class="admin-label" for="asignar-xux">Xuxemon</label>
+                    <select id="asignar-xux" class="admin-select" [(ngModel)]="adminAsignarXuxId">
+                        @for (x of xuxDescubiertos; track x.id) {
+                        <option [value]="x.id">{{ x.img }} {{ x.nombre }}</option>
+                        }
+                    </select>
+                    <label class="admin-label" for="asignar-trainer">Entrenador</label>
+                    <select id="asignar-trainer" class="admin-select" [(ngModel)]="adminAsignarTrainerId">
+                        @for (t of trainers; track t.id) {
+                        <option [value]="t.id">🧑‍🏫 {{ t.name }}</option>
+                        }
+                    </select>
+                    <button class="admin-btn btn-add" (click)="asignarXuxemon()"
+                        [disabled]="xuxDescubiertos.length === 0">
+                        ✅ Asignar xuxemon
+                    </button>
+                </div>
+                @if (adminXuxMsg) { <p class="admin-msg">{{ adminXuxMsg }}</p> }
+            </section>
+
+            <!-- Quitar de entrenador -->
+            <section class="dboard-card admin-form-card">
+                <h2 class="dboard-section-title">❌ Quitar de entrenador</h2>
+                <p class="admin-form-desc">Elimina un xuxemon del equipo de un entrenador.</p>
+                <div class="admin-form-fields">
+                    <label class="admin-label" for="quitar-trainer">Entrenador</label>
+                    <select id="quitar-trainer" class="admin-select" [(ngModel)]="adminQuitarXuxTrainerId">
+                        @for (t of trainers; track t.id) {
+                        <option [value]="t.id">🧑‍🏫 {{ t.name }} ({{ t.xuxemons.length }})</option>
+                        }
+                    </select>
+                    <label class="admin-label" for="quitar-xux-idx">Xuxemon a quitar</label>
+                    <select id="quitar-xux-idx" class="admin-select" [(ngModel)]="adminQuitarXuxIdx">
+                        @for (opt of getTrainerXuxOptions(adminQuitarXuxTrainerId); track opt.idx) {
+                        <option [value]="opt.idx">{{ opt.label }}</option>
+                        }
+                        @if (getTrainerXuxOptions(adminQuitarXuxTrainerId).length === 0) {
+                        <option disabled value="">— Sin xuxemons —</option>
+                        }
+                    </select>
+                    <button class="admin-btn btn-remove" (click)="quitarDeEntrenador()"
+                        [disabled]="getTrainerXuxOptions(adminQuitarXuxTrainerId).length === 0">
+                        ❌ Quitar xuxemon
+                    </button>
+                </div>
+                @if (adminQuitarXuxMsg) { <p class="admin-msg">{{ adminQuitarXuxMsg }}</p> }
+            </section>
+
         </div>
-        @if (adminXuxeMsg) { <p class="admin-msg">{{ adminXuxeMsg }}</p> }
-      </section>
 
-      <section class="dboard-card admin-form-card">
-        <h2 class="dboard-section-title">🍫 Añadir Vacunas</h2>
-        <p class="admin-form-desc">Cada vacuna ocupa 1 espacio, no son apilables.</p>
-        <div class="admin-form-fields">
-          <label class="admin-label">Tipo de vacuna</label>
-          <select class="admin-select" [(ngModel)]="adminVacunaId">
-            @for (item of itemsSimplesAPI; track item.id) {
-            <option [value]="item.id">{{ getEmoji(item.nombre) }} {{ item.nombre }}</option>
-            }
-          </select>
-          <label class="admin-label">Cantidad</label>
-          <input class="admin-input" type="number" min="1" [(ngModel)]="adminVacunaQty" />
-          <button class="admin-btn btn-add" (click)="anadirVacuna()" [disabled]="mochilaLlenaUsuario || !usuarioSeleccionado">
-            ✅ Añadir Vacuna
-          </button>
-        </div>
-        @if (adminVacunaMsg) { <p class="admin-msg">{{ adminVacunaMsg }}</p> }
-      </section>
+        <!-- Lista entrenadores -->
+        <section class="dboard-card">
+            <h2 class="dboard-section-title">🧑‍🏫 Entrenadores</h2>
+            <div class="admin-trainers">
+                @for (trainer of trainers; track trainer.id) {
+                <div class="admin-trainer-row">
+                    <div class="admin-trainer-header">
+                        <span class="admin-trainer-name">🧑‍🏫 {{ trainer.name }}</span>
+                        <span class="admin-trainer-count">{{ trainer.xuxemons.length }} xuxemons</span>
+                        <button class="admin-trainer-btn" (click)="addRandomXuxemon(trainer)"
+                            [disabled]="xuxDescubiertos.length === 0">
+                            🎲 Aleatorio
+                        </button>
+                    </div>
+                    @if (trainer.xuxemons.length > 0) {
+                    <div class="admin-trainer-chips">
+                        @for (x of trainer.xuxemons; track $index) {
+                        <span class="trainer-chip">{{ x.img }} {{ x.nombre }}</span>
+                        }
+                    </div>
+                    } @else {
+                    <p class="admin-trainer-empty">Sin xuxemons asignados.</p>
+                    }
+                </div>
+                }
+            </div>
+        </section>
 
-      <section class="dboard-card admin-form-card">
-        <h2 class="dboard-section-title">➖ Quitar ítems</h2>
-        <p class="admin-form-desc">Reduce la cantidad de cualquier ítem de la mochila.</p>
-        <div class="admin-form-fields">
-          <label class="admin-label">Ítem</label>
-          <select class="admin-select" [(ngModel)]="adminQuitarItemId">
-            @for (item of itemsAPI; track item.id) {
-            <option [value]="item.id">{{ getEmoji(item.nombre) }} {{ item.nombre }}</option>
-            }
-          </select>
-          <label class="admin-label">Cantidad a quitar</label>
-          <input class="admin-input" type="number" min="1" [(ngModel)]="adminQuitarQty" />
-          <button class="admin-btn btn-remove" (click)="quitarItem()" [disabled]="!usuarioSeleccionado">
-            ❌ Quitar ítems
-          </button>
-        </div>
-        @if (adminQuitarMsg) { <p class="admin-msg">{{ adminQuitarMsg }}</p> }
-      </section>
-
-    </div>
-    }
-
-    <!-- ══════════ TAB XUXEMONS ══════════ -->
-    @if (activeTab === 'xuxemons') {
-
-    <section class="dboard-card">
-      <h2 class="dboard-section-title">Estado de la colección</h2>
-      <div class="admin-pills">
-        @for (x of xuxemons; track x.id) {
-        <span class="admin-pill" [class.pill-discovered]="x.discovered" [class.pill-hidden]="!x.discovered"
-          [class.type-tierra]="x.discovered && x.tipo === 'Tierra'"
-          [class.type-aire]="x.discovered && x.tipo === 'Aire'"
-          [class.type-agua]="x.discovered && x.tipo === 'Agua'">
-          {{ x.discovered ? x.img + ' ' + x.nombre : '🔒 ???' }}
-        </span>
         }
-      </div>
-    </section>
 
-    <div class="admin-forms-grid">
+    </main>
 
-      <section class="dboard-card admin-form-card">
-        <h2 class="dboard-section-title">🔓 Descubrir xuxemon</h2>
-        <p class="admin-form-desc">Cambia el estado de visibilidad en el Xuxedex.</p>
-        <div class="admin-form-fields">
-          <label class="admin-label">Xuxemon</label>
-          <select class="admin-select" [(ngModel)]="adminDescubrirId">
-            @for (x of xuxemons; track x.id) {
-            <option [value]="x.id">{{ x.discovered ? '✅' : '🔒' }} #{{ x.id }} {{ x.nombre }}</option>
-            }
-          </select>
-          <button class="admin-btn btn-add" (click)="descubrirXuxemon()" [disabled]="noDescubiertos === 0">🔓 Descubrir</button>
-          <button class="admin-btn btn-neutral" (click)="descubrirAleatorio()" [disabled]="noDescubiertos === 0">🎲 Aleatorio</button>
-          <button class="admin-btn btn-remove" (click)="ocultarXuxemon()">🔒 Ocultar</button>
-        </div>
-        @if (adminXuxMsg) { <p class="admin-msg">{{ adminXuxMsg }}</p> }
-      </section>
+    <footer class="dboard-footer">
+        <p>&copy; 2026 Xuxemons</p>
+    </footer>
 
-    </div>
-    }
-
-  </main>
-
-  <footer class="dboard-footer">
-    <p>&copy; 2026 Xuxemons</p>
-  </footer>
-
-  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
-    @for (item of navItems; track item.route) {
-    <a class="dboard-nav-item" [class.active]="item.route === '/admin'" [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/admin' ? 'page' : null" [attr.aria-label]="item.label">
-      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-      <span>{{ item.label }}</span>
-    </a>
-    }
-  </nav>
+    <nav class="dboard-bottom-nav" aria-label="Navegación principal">
+        @for (item of navItems; track item.route) {
+        <a class="dboard-nav-item" [class.active]="item.route === '/admin'" [routerLink]="item.route"
+            [attr.aria-current]="item.route === '/admin' ? 'page' : null" [attr.aria-label]="item.label">
+            <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+        </a>
+        }
+    </nav>
 
 </div>

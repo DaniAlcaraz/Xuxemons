@@ -7,7 +7,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Mochila;
 
 class User extends Authenticatable
 {
@@ -40,8 +39,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function mochila() {
-        return $this->hasMany(Mochila::class, 'user_identificador', 'identificador');
+    // Un usuario puede tener muchos xuxemons en su colección (con repetidos)
+    public function coleccion()
+    {
+        return $this->hasMany(Coleccion::class, 'usuario_id', 'identificador');
     }
 
+    public function xuxemons()
+    {
+        return $this->belongsToMany(
+            Xuxemon::class,
+            'coleccion',
+            'usuario_id',
+            'xuxemon_id',
+            'identificador',
+            'IDxuxemon'
+        );
+    }
 }

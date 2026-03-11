@@ -4,14 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\MochilaController;
 use App\Models\Xuxemon;
 use App\Models\Coleccion;
 
 // ── Rutas públicas ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/items', [MochilaController::class, 'catalogoItems']);
 
 // ── Rutas protegidas con Sanctum ──────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
@@ -20,20 +18,54 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/usuario', [AuthController::class, 'update']);
     Route::post('/usuario/baja', [AuthController::class, 'baja']);
 
-    // Mochila
-    Route::get('/mochila', [MochilaController::class, 'index']);
-    Route::post('/mochila/anadir', [MochilaController::class, 'anadir']);
-    Route::post('/mochila/quitar', [MochilaController::class, 'quitar']);
+    // ── Colección del usuario (Xuxedex / Mochila) ─────────────────────────────
 
-    
-    Route::get('/admin/mochila', function(\Illuminate\Http\Request $request) {
-    $id = $request->query('user');
-    $mochila = \App\Models\Mochila::where('user_identificador', $id)->with('item')->get();
-    return response()->json($mochila);
-});
+    // GET /coleccion → devuelve todos los xuxemons del usuario autenticado
+    Route::get('/coleccion', function (Request $request) {
+        $usuario = $request->user();
+
+        // Cargamos cada entrada de coleccion con su xuxemon
+        $coleccion = Coleccion::where('usuario_id', $usuario->identificador)
+            ->with('xuxemon')
+            ->get();
+
+        return response()->json([
+            'total' => $coleccion->count(),
+            'coleccion' => $coleccion->map(function ($entrada) {
+                return [
+                    'coleccion_id' => $entrada->id,
+                    'xuxemon' => $entrada->xuxemon,
+                ];
+            }),
+        ]);
+    });
+
+    // POST /coleccion/añadir-aleatorio → añade un xuxemon aleatorio a la colección
+    Route::post('/coleccion/anadir-aleatorio', function (Request $request) {
+        $usuario = $request->user();
+
+        // Seleccionamos un xuxemon aleatorio de todos los existentes
+        $xuxemon = Xuxemon::inRandomOrder()->first();
+
+        if (!$xuxemon) {
+            return response()->json(['error' => 'No hay xuxemons disponibles'], 404);
+        }
+
+        // Lo añadimos a la colección (se permiten repetidos)
+        $entrada = Coleccion::create([
+            'usuario_id' => $usuario->identificador,
+            'xuxemon_id' => $xuxemon->IDxuxemon,
+        ]);
+
+        return response()->json([
+            'mensaje' => '¡Nuevo xuxemon añadido a tu colección!',
+            'xuxemon' => $xuxemon,
+            'coleccion_id' => $entrada->id,
+        ], 201);
+    });
 });
 
-// Rutas de gestión de usuarios
+// ── Rutas de gestión de usuarios ──────────────────────────────────────────────
 Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
