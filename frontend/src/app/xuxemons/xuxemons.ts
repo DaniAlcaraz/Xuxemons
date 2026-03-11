@@ -1,25 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../Services/auth.service';
+import { CommonModule } from '@angular/common';
 
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
 export type TamanoXuxemon = 'Pequeño' | 'Mediano' | 'Grande';
 
 export interface Xuxemon {
-  id: number;
+  IDxuxemon: number;
   nombre: string;
   tipo: TipoXuxemon;
   tamano: TamanoXuxemon;
   img: string;
-  discovered: boolean;
 }
 
 interface NavItem { icon: string; label: string; route: string; }
 
+const EMOJIS: Record<string, string> = {
+  'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌', 'Beeboo': '🐝', 'Boo-hoot': '🦉',
+  'Cabrales': '🐐', 'Catua': ' Parrot', 'Catyuska': '🕊️', 'Chapapá': '🐸', 'Chopper': '🐱',
+};
+
 @Component({
   selector: 'app-xuxemons',
   standalone: true,
-  imports: [RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule, CommonModule],
   templateUrl: './xuxemons.html',
   styleUrls: ['./xuxemons.css']
 })
@@ -32,66 +39,55 @@ export class Xuxemons {
   tiposFiltro = ['Todos', 'Tierra', 'Aire', 'Agua'];
   tamanosFiltro = ['Todos', 'Pequeño', 'Mediano', 'Grande'];
 
-  xuxemons: Xuxemon[] = [
-    { id: 1, nombre: 'Apleki', tipo: 'Tierra', tamano: 'Pequeño', img: '🐌', discovered: true },
-    { id: 2, nombre: 'Avecrem', tipo: 'Aire', tamano: 'Pequeño', img: '🐔', discovered: true },
-    { id: 3, nombre: 'Bambino', tipo: 'Tierra', tamano: 'Pequeño', img: '🦌', discovered: false },
-    { id: 4, nombre: 'Beeboo', tipo: 'Aire', tamano: 'Pequeño', img: '🐝', discovered: true },
-    { id: 5, nombre: 'Boo-hoot', tipo: 'Aire', tamano: 'Mediano', img: '🦉', discovered: true },
-    { id: 6, nombre: 'Cabrales', tipo: 'Tierra', tamano: 'Mediano', img: '🐐', discovered: true },
-    { id: 7, nombre: 'Catua', tipo: 'Aire', tamano: 'Pequeño', img: '🦜', discovered: true },
-    { id: 8, nombre: 'Catyuska', tipo: 'Aire', tamano: 'Grande', img: '🕊️', discovered: true },
-    { id: 9, nombre: 'Chapapá', tipo: 'Agua', tamano: 'Pequeño', img: '🐸', discovered: true },
-    { id: 10, nombre: 'Chopper', tipo: 'Tierra', tamano: 'Grande', img: '🐱', discovered: true },
-    { id: 11, nombre: 'Cuellilargui', tipo: 'Tierra', tamano: 'Grande', img: '🦕', discovered: false },
-    { id: 12, nombre: 'Deskangoo', tipo: 'Tierra', tamano: 'Mediano', img: '🦘', discovered: false },
-    { id: 13, nombre: 'Doflamingo', tipo: 'Aire', tamano: 'Grande', img: '🦩', discovered: false },
-    { id: 14, nombre: 'Dolly', tipo: 'Tierra', tamano: 'Pequeño', img: '🐑', discovered: false },
-    { id: 15, nombre: 'Elconchudo', tipo: 'Agua', tamano: 'Mediano', img: '🦀', discovered: false },
-    { id: 16, nombre: 'Eldientes', tipo: 'Agua', tamano: 'Grande', img: '🦛', discovered: false },
-    { id: 17, nombre: 'Elgominas', tipo: 'Tierra', tamano: 'Pequeño', img: '🦔', discovered: false },
-    { id: 18, nombre: 'Flipper', tipo: 'Agua', tamano: 'Mediano', img: '🐬', discovered: false },
-    { id: 19, nombre: 'Floppi', tipo: 'Tierra', tamano: 'Pequeño', img: '🐒', discovered: false },
-    { id: 20, nombre: 'Horseluis', tipo: 'Agua', tamano: 'Grande', img: '🦄', discovered: false },
-    { id: 21, nombre: 'Krokolisko', tipo: 'Agua', tamano: 'Grande', img: '🐊', discovered: false },
-    { id: 22, nombre: 'Kurama', tipo: 'Tierra', tamano: 'Mediano', img: '🦊', discovered: false },
-    { id: 23, nombre: 'Ladybug', tipo: 'Aire', tamano: 'Pequeño', img: '🐞', discovered: false },
-    { id: 24, nombre: 'Lengualargui', tipo: 'Tierra', tamano: 'Mediano', img: '🦎', discovered: false },
-    { id: 25, nombre: 'Medusation', tipo: 'Agua', tamano: 'Mediano', img: '🪼', discovered: false },
-    { id: 26, nombre: 'Meekmeek', tipo: 'Tierra', tamano: 'Pequeño', img: '🐭', discovered: false },
-    { id: 27, nombre: 'Megalo', tipo: 'Agua', tamano: 'Grande', img: '🦈', discovered: false },
-    { id: 28, nombre: 'Mocha', tipo: 'Agua', tamano: 'Grande', img: '🐳', discovered: false },
-    { id: 29, nombre: 'Murcimurci', tipo: 'Aire', tamano: 'Pequeño', img: '🦇', discovered: false },
-    { id: 30, nombre: 'Nemo', tipo: 'Agua', tamano: 'Pequeño', img: '🐠', discovered: false },
-    { id: 31, nombre: 'Oinkcelot', tipo: 'Tierra', tamano: 'Mediano', img: '🐷', discovered: false },
-    { id: 32, nombre: 'Oreo', tipo: 'Tierra', tamano: 'Grande', img: '🐄', discovered: false },
-    { id: 33, nombre: 'Otto', tipo: 'Tierra', tamano: 'Pequeño', img: '🦦', discovered: false },
-    { id: 34, nombre: 'Pinchimott', tipo: 'Agua', tamano: 'Pequeño', img: '🦀', discovered: false },
-    { id: 35, nombre: 'Pollis', tipo: 'Aire', tamano: 'Pequeño', img: '🐣', discovered: false },
-    { id: 36, nombre: 'Posón', tipo: 'Aire', tamano: 'Mediano', img: '🦋', discovered: false },
-    { id: 37, nombre: 'Quakko', tipo: 'Agua', tamano: 'Pequeño', img: '🦆', discovered: false },
-    { id: 38, nombre: 'Rajoy', tipo: 'Aire', tamano: 'Mediano', img: '🕊️', discovered: false },
-    { id: 39, nombre: 'Rawlion', tipo: 'Tierra', tamano: 'Grande', img: '🦁', discovered: false },
-    { id: 40, nombre: 'Rexxo', tipo: 'Tierra', tamano: 'Grande', img: '🦖', discovered: false },
-    { id: 41, nombre: 'Ron', tipo: 'Tierra', tamano: 'Pequeño', img: '🐈', discovered: false },
-    { id: 42, nombre: 'Sesssi', tipo: 'Tierra', tamano: 'Mediano', img: '🐍', discovered: false },
-    { id: 43, nombre: 'Shelly', tipo: 'Agua', tamano: 'Pequeño', img: '🐢', discovered: false },
-    { id: 44, nombre: 'Sirucco', tipo: 'Aire', tamano: 'Grande', img: '🦄', discovered: false },
-    { id: 45, nombre: 'Torcas', tipo: 'Agua', tamano: 'Mediano', img: '🦫', discovered: false },
-    { id: 46, nombre: 'Trompeta', tipo: 'Aire', tamano: 'Pequeño', img: '🐦', discovered: false },
-    { id: 47, nombre: 'Trompi', tipo: 'Tierra', tamano: 'Grande', img: '🐘', discovered: false },
-    { id: 48, nombre: 'Tux', tipo: 'Agua', tamano: 'Mediano', img: '🐧', discovered: false },
-  ];
+  private apiUrl = 'http://localhost:8000/api';
+  xuxemons: Xuxemon[] = [];
+  userOwnedIds: number[] = [];
+  cargando = true;
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.cargarDatos();
+  }
+
+  cargarDatos(): void {
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.cargando = true;
+    
+    // 1. Cargar catálogo completo
+    this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
+      next: (fullList) => {
+        this.xuxemons = fullList;
+        // 2. Cargar lo que tiene el usuario
+        this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
+          next: (myList) => {
+            this.userOwnedIds = myList.map(x => x.IDxuxemon);
+            this.cargando = false;
+          },
+          error: () => this.cargando = false
+        });
+      },
+      error: () => this.cargando = false
+    });
+  }
+
+  isDiscovered(id: number): boolean {
+    return this.userOwnedIds.includes(id);
+  }
+
+  getEmoji(nombre: string): string {
+    return EMOJIS[nombre] ?? '🥚';
+  }
 
   // ── Computed ─────────────────────────────────────────────────────────────────
   get totalXuxemons(): number { return this.xuxemons.length; }
-  get descubiertos(): number { return this.xuxemons.filter(x => x.discovered).length; }
+  get descubiertos(): number { return this.userOwnedIds.length; }
 
   get filteredXuxemons(): Xuxemon[] {
     let list = this.xuxemons;
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase();
-      list = list.filter(x => x.discovered && x.nombre.toLowerCase().includes(q));
+      list = list.filter(x => this.isDiscovered(x.IDxuxemon) && x.nombre.toLowerCase().includes(q));
     }
     if (this.filterTipo !== 'Todos') list = list.filter(x => x.tipo === this.filterTipo);
     if (this.filterTamano !== 'Todos') list = list.filter(x => x.tamano === this.filterTamano);
@@ -106,12 +102,18 @@ export class Xuxemons {
   }
 
   evolucionar(xux: Xuxemon): void {
-    const next = this.nextTamano(xux.tamano);
-    if (next) xux.tamano = next;
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
+      next: (res) => {
+        console.log('Evolución exitosa:', res);
+        this.cargarDatos(); // Recargar para ver el nuevo tamaño
+      },
+      error: (err) => console.error('Error al evolucionar:', err)
+    });
   }
 
   canEvolve(xux: Xuxemon): boolean {
-    return xux.discovered && xux.tamano !== 'Grande';
+    return this.isDiscovered(xux.IDxuxemon) && xux.tamano !== 'Grande';
   }
 
   tamanoLabel(t: TamanoXuxemon): string {
