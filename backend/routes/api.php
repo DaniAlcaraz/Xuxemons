@@ -10,6 +10,7 @@ use App\Models\Xuxemon;
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/items', [MochilaController::class, 'catalogoItems']);
 
 // Rutas protegidas con Sanctum
 Route::middleware('auth:sanctum')->group(function () {
@@ -20,13 +21,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Mochila
     Route::get('/mochila', [MochilaController::class, 'index']);
-    Route::get('/items', [MochilaController::class, 'catalogoItems']);
     Route::post('/mochila/anadir', [MochilaController::class, 'anadir']);
     Route::post('/mochila/quitar', [MochilaController::class, 'quitar']);
 
     
-    Route::get('/admin/mochila/{identificador}', function(\Illuminate\Http\Request $request, $identificador) {
-    $mochila = \App\Models\Mochila::where('user_identificador', $identificador)->with('item')->get();
+    Route::get('/admin/mochila', function(\Illuminate\Http\Request $request) {
+    $id = $request->query('user');
+    $mochila = \App\Models\Mochila::where('user_identificador', $id)->with('item')->get();
     return response()->json($mochila);
 });
 });

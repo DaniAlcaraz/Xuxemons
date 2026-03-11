@@ -153,6 +153,7 @@ export class Admin implements OnInit {
     cargarItems(): void {
       this.http.get<any[]>(`${this.apiUrl}/items`, { headers: this.headers() }).subscribe({
         next: (data) => {
+          console.log('Items recibidos:', data);
           this.itemsAPI = data;
           this.itemsApilablesAPI = data.filter(i => i.tipo === 'xuxe');
           this.itemsSimplesAPI   = data.filter(i => i.tipo === 'vacuna');
@@ -170,7 +171,7 @@ export class Admin implements OnInit {
 
   cargarMochilaUsuario(): void {
     if (!this.usuarioSeleccionado) return;
-    this.http.get<any[]>(`${this.apiUrl}/admin/mochila/${this.usuarioSeleccionado}`, { headers: this.headers() }).subscribe({
+    this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${this.usuarioSeleccionado}`, { headers: this.headers() }).subscribe({
       next: (data) => {
         this.mochilaUsuario = data;
         this.calcularEspacios(data);
