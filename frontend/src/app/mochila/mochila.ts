@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,6 @@ export interface ItemSimple {
   quantity: number; img: string; description: string; rareza: Rareza;
 }
 export type Item = ItemApilable | ItemSimple;
-
 interface NavItem { icon: string; label: string; route: string; }
 
 const MAX_ESPACIOS = 20;
@@ -46,7 +45,11 @@ export class Mochila implements OnInit {
   selectedFilter = 'Todos';
   filters = ['Todos', 'Xuxes', 'Vacunas'];
 
-  constructor(private mochilaService: MochilaService, private authService: AuthService) {}
+  constructor(
+    private mochilaService: MochilaService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.cargarMochila();
@@ -66,8 +69,12 @@ export class Mochila implements OnInit {
           rareza: entry.item.rareza as Rareza,
         }));
         this.cargando = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.cargando = false; }
+      error: () => {
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -111,13 +118,13 @@ export class Mochila implements OnInit {
   }
 
   navItems: NavItem[] = [
-    { icon: '🏠', label: 'Inicio', route: '/dashboard' },
-    { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
-    { icon: '🎒', label: 'Mochila', route: '/mochila' },
-    { icon: '👥', label: 'Amigos', route: '/amigos' },
-    { icon: '⚔️', label: 'Batallas', route: '/batallas' },
-    { icon: '💬', label: 'Chat', route: '/chat' },
-    { icon: '👤', label: 'Perfil', route: '/perfil' },
-    { icon: '🛡️', label: 'Admin', route: '/admin' },
+    { icon: '🏠', label: 'Inicio',   route: '/dashboard' },
+    { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
+    { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
+    { icon: '👥', label: 'Amigos',   route: '/amigos'    },
+    { icon: '⚔️', label: 'Batallas', route: '/batallas'  },
+    { icon: '💬', label: 'Chat',     route: '/chat'      },
+    { icon: '👤', label: 'Perfil',   route: '/perfil'    },
+    { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
 }

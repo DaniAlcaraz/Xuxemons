@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MochilaService } from '../Services/mochila';
 import { AuthService } from '../Services/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 
 export type Rareza = 'común' | 'raro' | 'épico' | 'legendario';
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
@@ -36,22 +37,19 @@ export class Admin implements OnInit {
   activeTab: 'mochila' | 'xuxemons' = 'mochila';
   private apiUrl = 'http://localhost:8000/api';
 
-  // ── USUARIOS ─────────────────────────────────────────────────────────────────
   usuarios: Usuario[] = [];
   usuarioSeleccionado = '';
 
-  // ── ITEMS API ────────────────────────────────────────────────────────────────
   itemsAPI: ItemAPI[] = [];
   itemsApilablesAPI: ItemAPI[] = [];
   itemsSimplesAPI: ItemAPI[] = [];
 
-  // ── MOCHILA USUARIO SELECCIONADO ─────────────────────────────────────────────
   mochilaUsuario: any[] = [];
+  userXuxemonIds: number[] = [];
   espaciosUsadosUsuario = 0;
   porcentajeMochilaUsuario = 0;
   mochilaLlenaUsuario = false;
 
-  // ── FORM AÑADIR/QUITAR ITEMS ─────────────────────────────────────────────────
   adminXuxeId = 0;
   adminXuxeQty = 1;
   adminXuxeMsg = '';
@@ -62,13 +60,66 @@ export class Admin implements OnInit {
   adminQuitarQty = 1;
   adminQuitarMsg = '';
 
-  // ── XUXEMONS (dinámico desde DB) ─────────────────────────────────────────────
-  xuxemons: any[] = [];
-  userXuxemonIds: number[] = []; 
-  adminDescubrirId = 0;
+  xuxemons: Xuxemon[] = [
+    { id: 1,  nombre: 'Apleki',       tipo: 'Tierra', tamano: 'Pequeño', img: '🐌', discovered: true  },
+    { id: 2,  nombre: 'Avecrem',      tipo: 'Aire',   tamano: 'Pequeño', img: '🐔', discovered: true  },
+    { id: 3,  nombre: 'Bambino',      tipo: 'Tierra', tamano: 'Pequeño', img: '🦌', discovered: false },
+    { id: 4,  nombre: 'Beeboo',       tipo: 'Aire',   tamano: 'Pequeño', img: '🐝', discovered: true  },
+    { id: 5,  nombre: 'Boo-hoot',     tipo: 'Aire',   tamano: 'Mediano', img: '🦉', discovered: true  },
+    { id: 6,  nombre: 'Cabrales',     tipo: 'Tierra', tamano: 'Mediano', img: '🐐', discovered: true  },
+    { id: 7,  nombre: 'Catua',        tipo: 'Aire',   tamano: 'Pequeño', img: '🦜', discovered: true  },
+    { id: 8,  nombre: 'Catyuska',     tipo: 'Aire',   tamano: 'Grande',  img: '🕊️', discovered: true  },
+    { id: 9,  nombre: 'Chapapá',      tipo: 'Agua',   tamano: 'Pequeño', img: '🐸', discovered: true  },
+    { id: 10, nombre: 'Chopper',      tipo: 'Tierra', tamano: 'Grande',  img: '🐱', discovered: true  },
+    { id: 11, nombre: 'Cuellilargui', tipo: 'Tierra', tamano: 'Grande',  img: '🦕', discovered: false },
+    { id: 12, nombre: 'Deskangoo',    tipo: 'Tierra', tamano: 'Mediano', img: '🦘', discovered: false },
+    { id: 13, nombre: 'Doflamingo',   tipo: 'Aire',   tamano: 'Grande',  img: '🦩', discovered: false },
+    { id: 14, nombre: 'Dolly',        tipo: 'Tierra', tamano: 'Pequeño', img: '🐑', discovered: false },
+    { id: 15, nombre: 'Elconchudo',   tipo: 'Agua',   tamano: 'Mediano', img: '🦀', discovered: false },
+    { id: 16, nombre: 'Eldientes',    tipo: 'Agua',   tamano: 'Grande',  img: '🦛', discovered: false },
+    { id: 17, nombre: 'Elgominas',    tipo: 'Tierra', tamano: 'Pequeño', img: '🦔', discovered: false },
+    { id: 18, nombre: 'Flipper',      tipo: 'Agua',   tamano: 'Mediano', img: '🐬', discovered: false },
+    { id: 19, nombre: 'Floppi',       tipo: 'Tierra', tamano: 'Pequeño', img: '🐒', discovered: false },
+    { id: 20, nombre: 'Horseluis',    tipo: 'Agua',   tamano: 'Grande',  img: '🦄', discovered: false },
+    { id: 21, nombre: 'Krokolisko',   tipo: 'Agua',   tamano: 'Grande',  img: '🐊', discovered: false },
+    { id: 22, nombre: 'Kurama',       tipo: 'Tierra', tamano: 'Mediano', img: '🦊', discovered: false },
+    { id: 23, nombre: 'Ladybug',      tipo: 'Aire',   tamano: 'Pequeño', img: '🐞', discovered: false },
+    { id: 24, nombre: 'Lengualargui', tipo: 'Tierra', tamano: 'Mediano', img: '🦎', discovered: false },
+    { id: 25, nombre: 'Medusation',   tipo: 'Agua',   tamano: 'Mediano', img: '🪼', discovered: false },
+    { id: 26, nombre: 'Meekmeek',     tipo: 'Tierra', tamano: 'Pequeño', img: '🐭', discovered: false },
+    { id: 27, nombre: 'Megalo',       tipo: 'Agua',   tamano: 'Grande',  img: '🦈', discovered: false },
+    { id: 28, nombre: 'Mocha',        tipo: 'Agua',   tamano: 'Grande',  img: '🐳', discovered: false },
+    { id: 29, nombre: 'Murcimurci',   tipo: 'Aire',   tamano: 'Pequeño', img: '🦇', discovered: false },
+    { id: 30, nombre: 'Nemo',         tipo: 'Agua',   tamano: 'Pequeño', img: '🐠', discovered: false },
+    { id: 31, nombre: 'Oinkcelot',    tipo: 'Tierra', tamano: 'Mediano', img: '🐷', discovered: false },
+    { id: 32, nombre: 'Oreo',         tipo: 'Tierra', tamano: 'Grande',  img: '🐄', discovered: false },
+    { id: 33, nombre: 'Otto',         tipo: 'Tierra', tamano: 'Pequeño', img: '🦦', discovered: false },
+    { id: 34, nombre: 'Pinchimott',   tipo: 'Agua',   tamano: 'Pequeño', img: '🦀', discovered: false },
+    { id: 35, nombre: 'Pollis',       tipo: 'Aire',   tamano: 'Pequeño', img: '🐣', discovered: false },
+    { id: 36, nombre: 'Posón',        tipo: 'Aire',   tamano: 'Mediano', img: '🦋', discovered: false },
+    { id: 37, nombre: 'Quakko',       tipo: 'Agua',   tamano: 'Pequeño', img: '🦆', discovered: false },
+    { id: 38, nombre: 'Rajoy',        tipo: 'Aire',   tamano: 'Mediano', img: '🕊️', discovered: false },
+    { id: 39, nombre: 'Rawlion',      tipo: 'Tierra', tamano: 'Grande',  img: '🦁', discovered: false },
+    { id: 40, nombre: 'Rexxo',        tipo: 'Tierra', tamano: 'Grande',  img: '🦖', discovered: false },
+    { id: 41, nombre: 'Ron',          tipo: 'Tierra', tamano: 'Pequeño', img: '🐈', discovered: false },
+    { id: 42, nombre: 'Sesssi',       tipo: 'Tierra', tamano: 'Mediano', img: '🐍', discovered: false },
+    { id: 43, nombre: 'Shelly',       tipo: 'Agua',   tamano: 'Pequeño', img: '🐢', discovered: false },
+    { id: 44, nombre: 'Sirucco',      tipo: 'Aire',   tamano: 'Grande',  img: '🦄', discovered: false },
+    { id: 45, nombre: 'Torcas',       tipo: 'Agua',   tamano: 'Mediano', img: '🦫', discovered: false },
+    { id: 46, nombre: 'Trompeta',     tipo: 'Aire',   tamano: 'Pequeño', img: '🐦', discovered: false },
+    { id: 47, nombre: 'Trompi',       tipo: 'Tierra', tamano: 'Grande',  img: '🐘', discovered: false },
+    { id: 48, nombre: 'Tux',          tipo: 'Agua',   tamano: 'Mediano', img: '🐧', discovered: false },
+  ];
+
+  adminDescubrirId = 3;
   adminXuxMsg = '';
 
-  constructor(private mochilaService: MochilaService, private authService: AuthService, private http: HttpClient) {}
+  constructor(
+    private mochilaService: MochilaService,
+    private authService: AuthService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   private headers(): HttpHeaders {
     return new HttpHeaders({
@@ -92,25 +143,31 @@ export class Admin implements OnInit {
           this.usuarioSeleccionado = data[0].identificador;
           this.onUsuarioChange();
         }
+        this.cdr.detectChanges();
       }
     });
   }
-    cargarItems(): void {
-      this.http.get<any[]>(`${this.apiUrl}/items`, { headers: this.headers() }).subscribe({
-        next: (data) => {
-          console.log('Items recibidos:', data);
-          this.itemsAPI = data;
-          this.itemsApilablesAPI = data.filter(i => i.tipo === 'xuxe');
-          this.itemsSimplesAPI   = data.filter(i => i.tipo === 'vacuna');
-          if (this.itemsApilablesAPI.length) this.adminXuxeId      = this.itemsApilablesAPI[0].id;
-          if (this.itemsSimplesAPI.length)   this.adminVacunaId    = this.itemsSimplesAPI[0].id;
-          if (this.itemsAPI.length)          this.adminQuitarItemId = this.itemsAPI[0].id;
-        },
-        error: (err) => console.error('Error cargando items:', err)
-      });
-    }
+
+  cargarItems(): void {
+    this.http.get<any[]>(`${this.apiUrl}/items`, { headers: this.headers() }).subscribe({
+      next: (data) => {
+        this.itemsAPI = data;
+        this.itemsApilablesAPI = data.filter(i => i.tipo === 'xuxe');
+        this.itemsSimplesAPI   = data.filter(i => i.tipo === 'vacuna');
+        if (this.itemsApilablesAPI.length) this.adminXuxeId       = this.itemsApilablesAPI[0].id;
+        if (this.itemsSimplesAPI.length)   this.adminVacunaId     = this.itemsSimplesAPI[0].id;
+        if (this.itemsAPI.length)          this.adminQuitarItemId = this.itemsAPI[0].id;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error cargando items:', err)
+    });
+  }
 
   onUsuarioChange(): void {
+    this.refrescarTodo();
+  }
+
+  refrescarTodo(): void {
     this.cargarMochilaUsuario();
     this.cargarXuxemonsUsuario();
   }
@@ -129,33 +186,69 @@ export class Admin implements OnInit {
     this.http.get<any[]>(`${this.apiUrl}/admin/usuarios/${this.usuarioSeleccionado}/xuxemons`, { headers: this.headers() }).subscribe({
       next: (data) => {
         this.userXuxemonIds = data.map(x => x.IDxuxemon);
-      }
+      },
+      error: (err) => console.error('Error cargando xuxemons del usuario:', err)
     });
+  }
+
+    calcularEspacios(mochila: any[]): void {
+    this.espaciosUsadosUsuario = mochila.reduce((total, entry) => {
+      // Si es un xuxemon (cantidad=1, tipo=xuxemon)
+      if (entry.item.tipo === 'xuxemon') return total + 1;
+      // Si es xuxe (apilable)
+      if (entry.item.tipo === 'xuxe') return total + Math.ceil(entry.cantidad / 5);
+      // Si es vacuna (simple)
+      return total + entry.cantidad;
+    }, 0);
+    this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
+    this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
+    this.cdr.detectChanges();
   }
 
   cargarMochilaUsuario(): void {
     if (!this.usuarioSeleccionado) return;
-    this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${this.usuarioSeleccionado}`, { headers: this.headers() }).subscribe({
-      next: (data) => {
-        this.mochilaUsuario = data;
-        this.calcularEspacios(data);
+    const id = encodeURIComponent(this.usuarioSeleccionado);
+    
+    const obsMochila = this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${id}`, { headers: this.headers() });
+    const obsXuxemons = this.http.get<any[]>(`${this.apiUrl}/admin/usuarios/${this.usuarioSeleccionado}/xuxemons`, { headers: this.headers() });
+
+    forkJoin({ items: obsMochila, xuxemons: obsXuxemons }).subscribe({
+      next: (res) => {
+        const itemEntries = res.items.map(e => ({
+          id: e.id,
+          cantidad: e.cantidad,
+          item: e.item
+        }));
+        
+        const xuxEntries = res.xuxemons.map(x => ({
+          id: x.IDxuxemon,
+          cantidad: 1,
+          item: {
+            id: x.IDxuxemon,
+            nombre: x.nombre,
+            tipo: 'xuxemon',
+            rareza: 'común',
+            descripcion: `Xuxemon de tipo ${x.tipo}`
+          }
+        }));
+
+        this.mochilaUsuario = [...itemEntries, ...xuxEntries];
+        this.calcularEspacios(this.mochilaUsuario);
       },
-      error: () => { this.mochilaUsuario = []; this.espaciosUsadosUsuario = 0; }
+      error: () => {
+        this.mochilaUsuario = [];
+        this.espaciosUsadosUsuario = 0;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  calcularEspacios(mochila: any[]): void {
-    this.espaciosUsadosUsuario = mochila.reduce((total, m) => {
-      return total + (m.item.tipo === 'xuxe' ? Math.ceil(m.cantidad / 5) : m.cantidad);
-    }, 0);
-    this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
-    this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
-  }
-
   getEmoji(nombre: string): string { 
-    // Mapeo dinámico o emojis fijos para xuxemons
     const emojisXux: Record<string, string> = {
       'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌', 'Beeboo': '🐝', 'Boo-hoot': '🦉',
+      'Cabrales': '🐐', 'Catua': '🦜', 'Catyuska': '🕊️', 'Chapapá': '🐸', 'Chopper': '🐱',
+      'Nemo': '🐠', 'Flipper': '🐬', 'Megalo': '🦈', 'Tux': '🐧', 'Dolly': '🐑',
+      'Krokolisko': '🐊', 'Rawlion': '🦁', 'Rexxo': '🦖', 'Oinkcelot': '🐷',
     };
     return emojisXux[nombre] ?? (EMOJIS[nombre] ?? '📦'); 
   }
@@ -174,57 +267,87 @@ export class Admin implements OnInit {
   anadirXuxes(): void {
     this.adminXuxeMsg = '';
     this.mochilaService.anadir(this.usuarioSeleccionado, this.adminXuxeId, this.adminXuxeQty).subscribe({
-      next: (res) => { this.adminXuxeMsg = '✅ ' + res.message; this.adminXuxeQty = 1; this.cargarMochilaUsuario(); },
-      error: (err) => { this.adminXuxeMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir'); }
+      next: (res) => {
+        this.adminXuxeMsg = '✅ ' + res.message;
+        this.adminXuxeQty = 1;
+        this.cargarMochilaUsuario();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminXuxeMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
+        this.cdr.detectChanges();
+      }
     });
   }
 
   anadirVacuna(): void {
     this.adminVacunaMsg = '';
     this.mochilaService.anadir(this.usuarioSeleccionado, this.adminVacunaId, this.adminVacunaQty).subscribe({
-      next: (res) => { this.adminVacunaMsg = '✅ ' + res.message; this.adminVacunaQty = 1; this.cargarMochilaUsuario(); },
-      error: (err) => { this.adminVacunaMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir'); }
+      next: (res) => {
+        this.adminVacunaMsg = '✅ ' + res.message;
+        this.adminVacunaQty = 1;
+        this.cargarMochilaUsuario();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminVacunaMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
+        this.cdr.detectChanges();
+      }
     });
   }
 
   quitarItem(): void {
     this.adminQuitarMsg = '';
     this.mochilaService.quitar(this.usuarioSeleccionado, this.adminQuitarItemId, this.adminQuitarQty).subscribe({
-      next: (res) => { this.adminQuitarMsg = '✅ ' + res.message; this.adminQuitarQty = 1; this.cargarMochilaUsuario(); },
-      error: (err) => { this.adminQuitarMsg = '⚠️ ' + (err.error?.error ?? 'Error al quitar'); }
+      next: (res) => {
+        this.adminQuitarMsg = '✅ ' + res.message;
+        this.adminQuitarQty = 1;
+        this.cargarMochilaUsuario();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminQuitarMsg = '⚠️ ' + (err.error?.error ?? 'Error al quitar');
+        this.cdr.detectChanges();
+      }
     });
   }
 
   descubrirXuxemon(): void {
+    if (!this.usuarioSeleccionado) return;
+    this.adminXuxMsg = '⏳ Procesando...';
     const body = { user_identificador: this.usuarioSeleccionado, xuxemon_id: Number(this.adminDescubrirId) };
     this.http.post<any>(`${this.apiUrl}/admin/xuxemons/anadir`, body, { headers: this.headers() }).subscribe({
       next: (res) => {
-        this.adminXuxMsg = `✅ ` + res.message;
-        this.cargarXuxemonsUsuario();
+        this.adminXuxMsg = '✅ ' + (res.message || 'Xuxemon descubierto');
+        this.refrescarTodo();
       },
-      error: (err) => this.adminXuxMsg = `⚠️ Error: ${err.error?.message || 'Fallo'}`
+      error: (err) => this.adminXuxMsg = '⚠️ ' + (err.error?.error || 'Error al descubrir')
     });
   }
 
   descubrirAleatorio(): void {
+    if (!this.usuarioSeleccionado) return;
+    this.adminXuxMsg = '⏳ Buscando...';
     const body = { user_identificador: this.usuarioSeleccionado };
     this.http.post<any>(`${this.apiUrl}/admin/xuxemons/aleatorio`, body, { headers: this.headers() }).subscribe({
       next: (res) => {
-        this.adminXuxMsg = `✅ ` + res.message;
-        this.cargarXuxemonsUsuario();
+        this.adminXuxMsg = '🎲 ' + (res.message || '¡Nuevos xuxemon descubierto!');
+        this.refrescarTodo();
       },
-      error: (err) => this.adminXuxMsg = `⚠️ Error: ${err.error?.error || 'Fallo'}`
+      error: (err) => this.adminXuxMsg = '⚠️ ' + (err.error?.error || 'Error en aleatorio')
     });
   }
 
   ocultarXuxemon(): void {
+    if (!this.usuarioSeleccionado) return;
+    this.adminXuxMsg = '⏳ Procesando...';
     const body = { user_identificador: this.usuarioSeleccionado, xuxemon_id: Number(this.adminDescubrirId) };
     this.http.post<any>(`${this.apiUrl}/admin/xuxemons/quitar`, body, { headers: this.headers() }).subscribe({
       next: (res) => {
-        this.adminXuxMsg = `🔒 ` + res.message;
-        this.cargarXuxemonsUsuario();
+        this.adminXuxMsg = '🔒 ' + (res.message || 'Xuxemon ocultado');
+        this.refrescarTodo();
       },
-      error: (err) => this.adminXuxMsg = `⚠️ Error: ${err.error?.message || 'Fallo'}`
+      error: (err) => this.adminXuxMsg = '⚠️ ' + (err.error?.error || 'Error al ocultar')
     });
   }
 
@@ -238,5 +361,4 @@ export class Admin implements OnInit {
     { icon: '👤', label: 'Perfil',   route: '/perfil'    },
     { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
-  
 }
