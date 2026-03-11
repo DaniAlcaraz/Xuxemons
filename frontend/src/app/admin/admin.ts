@@ -170,15 +170,6 @@ export class Admin implements OnInit {
     this.cargarMochilaUsuario();
   }
 
-    calcularEspacios(mochila: any[]): void {
-    this.espaciosUsadosUsuario = mochila.reduce((total, m) => {
-      return total + (m.item.tipo === 'xuxe' ? Math.ceil(m.cantidad / 5) : m.cantidad);
-    }, 0);
-    this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
-    this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
-    this.cdr.detectChanges();
-  }
-
   cargarMochilaUsuario(): void {
     if (!this.usuarioSeleccionado) return;
     const id = encodeURIComponent(this.usuarioSeleccionado);
@@ -195,6 +186,15 @@ export class Admin implements OnInit {
     });
   }
 
+  calcularEspacios(mochila: any[]): void {
+    this.espaciosUsadosUsuario = mochila.reduce((total, m) => {
+      return total + (m.item.tipo === 'xuxe' ? Math.ceil(m.cantidad / 5) : m.cantidad);
+    }, 0);
+    this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
+    this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
+    this.cdr.detectChanges();
+  }
+
   getEmoji(nombre: string): string { return EMOJIS[nombre] ?? '📦'; }
 
   anadirXuxes(): void {
@@ -204,7 +204,6 @@ export class Admin implements OnInit {
         this.adminXuxeMsg = '✅ ' + res.message;
         this.adminXuxeQty = 1;
         this.cargarMochilaUsuario();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.adminXuxeMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
@@ -220,7 +219,6 @@ export class Admin implements OnInit {
         this.adminVacunaMsg = '✅ ' + res.message;
         this.adminVacunaQty = 1;
         this.cargarMochilaUsuario();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.adminVacunaMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
@@ -236,7 +234,6 @@ export class Admin implements OnInit {
         this.adminQuitarMsg = '✅ ' + res.message;
         this.adminQuitarQty = 1;
         this.cargarMochilaUsuario();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.adminQuitarMsg = '⚠️ ' + (err.error?.error ?? 'Error al quitar');
