@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -36,22 +36,18 @@ export class Admin implements OnInit {
   activeTab: 'mochila' | 'xuxemons' = 'mochila';
   private apiUrl = 'http://localhost:8000/api';
 
-  // ── USUARIOS ─────────────────────────────────────────────────────────────────
   usuarios: Usuario[] = [];
   usuarioSeleccionado = '';
 
-  // ── ITEMS API ────────────────────────────────────────────────────────────────
   itemsAPI: ItemAPI[] = [];
   itemsApilablesAPI: ItemAPI[] = [];
   itemsSimplesAPI: ItemAPI[] = [];
 
-  // ── MOCHILA USUARIO SELECCIONADO ─────────────────────────────────────────────
   mochilaUsuario: any[] = [];
   espaciosUsadosUsuario = 0;
   porcentajeMochilaUsuario = 0;
   mochilaLlenaUsuario = false;
 
-  // ── FORM AÑADIR/QUITAR ───────────────────────────────────────────────────────
   adminXuxeId = 0;
   adminXuxeQty = 1;
   adminXuxeMsg = '';
@@ -62,7 +58,6 @@ export class Admin implements OnInit {
   adminQuitarQty = 1;
   adminQuitarMsg = '';
 
-  // ── XUXEMONS (hardcoded por ahora) ───────────────────────────────────────────
   xuxemons: Xuxemon[] = [
     { id: 1,  nombre: 'Apleki',       tipo: 'Tierra', tamano: 'Pequeño', img: '🐌', discovered: true  },
     { id: 2,  nombre: 'Avecrem',      tipo: 'Aire',   tamano: 'Pequeño', img: '🐔', discovered: true  },
@@ -123,7 +118,12 @@ export class Admin implements OnInit {
   get xuxDescubiertos(){ return this.xuxemons.filter(x => x.discovered); }
   get xuxOcultos()     { return this.xuxemons.filter(x => !x.discovered); }
 
-  constructor(private mochilaService: MochilaService, private authService: AuthService, private http: HttpClient) {}
+  constructor(
+    private mochilaService: MochilaService,
+    private authService: AuthService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   private headers(): HttpHeaders {
     return new HttpHeaders({
@@ -133,12 +133,11 @@ export class Admin implements OnInit {
     });
   }
 
-    ngOnInit(): void {
-      console.log('TOKEN:', this.authService.obtenerToken());
-      this.cargarUsuarios();
-      this.cargarItems();
-    }
-    
+  ngOnInit(): void {
+    this.cargarUsuarios();
+    this.cargarItems();
+  }
+
   cargarUsuarios(): void {
     this.http.get<Usuario[]>(`${this.apiUrl}/usuarios`, { headers: this.headers() }).subscribe({
       next: (data) => {
@@ -147,45 +146,53 @@ export class Admin implements OnInit {
           this.usuarioSeleccionado = data[0].identificador;
           this.cargarMochilaUsuario();
         }
+        this.cdr.detectChanges();
       }
     });
   }
-    cargarItems(): void {
-      this.http.get<any[]>(`${this.apiUrl}/items`, { headers: this.headers() }).subscribe({
-        next: (data) => {
-          console.log('Items recibidos:', data);
-          this.itemsAPI = data;
-          this.itemsApilablesAPI = data.filter(i => i.tipo === 'xuxe');
-          this.itemsSimplesAPI   = data.filter(i => i.tipo === 'vacuna');
-          if (this.itemsApilablesAPI.length) this.adminXuxeId      = this.itemsApilablesAPI[0].id;
-          if (this.itemsSimplesAPI.length)   this.adminVacunaId    = this.itemsSimplesAPI[0].id;
-          if (this.itemsAPI.length)          this.adminQuitarItemId = this.itemsAPI[0].id;
-        },
-        error: (err) => console.error('Error cargando items:', err)
-      });
-    }
+
+  cargarItems(): void {
+    this.http.get<any[]>(`${this.apiUrl}/items`, { headers: this.headers() }).subscribe({
+      next: (data) => {
+        this.itemsAPI = data;
+        this.itemsApilablesAPI = data.filter(i => i.tipo === 'xuxe');
+        this.itemsSimplesAPI   = data.filter(i => i.tipo === 'vacuna');
+        if (this.itemsApilablesAPI.length) this.adminXuxeId       = this.itemsApilablesAPI[0].id;
+        if (this.itemsSimplesAPI.length)   this.adminVacunaId     = this.itemsSimplesAPI[0].id;
+        if (this.itemsAPI.length)          this.adminQuitarItemId = this.itemsAPI[0].id;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error cargando items:', err)
+    });
+  }
 
   onUsuarioChange(): void {
     this.cargarMochilaUsuario();
   }
 
-  cargarMochilaUsuario(): void {
-    if (!this.usuarioSeleccionado) return;
-    this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${this.usuarioSeleccionado}`, { headers: this.headers() }).subscribe({
-      next: (data) => {
-        this.mochilaUsuario = data;
-        this.calcularEspacios(data);
-      },
-      error: () => { this.mochilaUsuario = []; this.espaciosUsadosUsuario = 0; }
-    });
-  }
-
-  calcularEspacios(mochila: any[]): void {
+    calcularEspacios(mochila: any[]): void {
     this.espaciosUsadosUsuario = mochila.reduce((total, m) => {
       return total + (m.item.tipo === 'xuxe' ? Math.ceil(m.cantidad / 5) : m.cantidad);
     }, 0);
     this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
     this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
+    this.cdr.detectChanges();
+  }
+
+  cargarMochilaUsuario(): void {
+    if (!this.usuarioSeleccionado) return;
+    const id = encodeURIComponent(this.usuarioSeleccionado);
+    this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${id}`, { headers: this.headers() }).subscribe({
+      next: (data) => {
+        this.mochilaUsuario = data;
+        this.calcularEspacios(data);
+      },
+      error: () => {
+        this.mochilaUsuario = [];
+        this.espaciosUsadosUsuario = 0;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   getEmoji(nombre: string): string { return EMOJIS[nombre] ?? '📦'; }
@@ -193,24 +200,48 @@ export class Admin implements OnInit {
   anadirXuxes(): void {
     this.adminXuxeMsg = '';
     this.mochilaService.anadir(this.usuarioSeleccionado, this.adminXuxeId, this.adminXuxeQty).subscribe({
-      next: (res) => { this.adminXuxeMsg = '✅ ' + res.message; this.adminXuxeQty = 1; this.cargarMochilaUsuario(); },
-      error: (err) => { this.adminXuxeMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir'); }
+      next: (res) => {
+        this.adminXuxeMsg = '✅ ' + res.message;
+        this.adminXuxeQty = 1;
+        this.cargarMochilaUsuario();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminXuxeMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
+        this.cdr.detectChanges();
+      }
     });
   }
 
   anadirVacuna(): void {
     this.adminVacunaMsg = '';
     this.mochilaService.anadir(this.usuarioSeleccionado, this.adminVacunaId, this.adminVacunaQty).subscribe({
-      next: (res) => { this.adminVacunaMsg = '✅ ' + res.message; this.adminVacunaQty = 1; this.cargarMochilaUsuario(); },
-      error: (err) => { this.adminVacunaMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir'); }
+      next: (res) => {
+        this.adminVacunaMsg = '✅ ' + res.message;
+        this.adminVacunaQty = 1;
+        this.cargarMochilaUsuario();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminVacunaMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
+        this.cdr.detectChanges();
+      }
     });
   }
 
   quitarItem(): void {
     this.adminQuitarMsg = '';
     this.mochilaService.quitar(this.usuarioSeleccionado, this.adminQuitarItemId, this.adminQuitarQty).subscribe({
-      next: (res) => { this.adminQuitarMsg = '✅ ' + res.message; this.adminQuitarQty = 1; this.cargarMochilaUsuario(); },
-      error: (err) => { this.adminQuitarMsg = '⚠️ ' + (err.error?.error ?? 'Error al quitar'); }
+      next: (res) => {
+        this.adminQuitarMsg = '✅ ' + res.message;
+        this.adminQuitarQty = 1;
+        this.cargarMochilaUsuario();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminQuitarMsg = '⚠️ ' + (err.error?.error ?? 'Error al quitar');
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -219,6 +250,7 @@ export class Admin implements OnInit {
     if (!x || x.discovered) { this.adminXuxMsg = x ? `⚠️ ${x.nombre} ya descubierto.` : '⚠️ No encontrado.'; return; }
     x.discovered = true;
     this.adminXuxMsg = `✅ ¡${x.img} ${x.nombre} descubierto!`;
+    this.cdr.detectChanges();
   }
 
   descubrirAleatorio(): void {
@@ -227,6 +259,7 @@ export class Admin implements OnInit {
     const r = pool[Math.floor(Math.random() * pool.length)];
     r.discovered = true;
     this.adminXuxMsg = `✅ ¡${r.img} ${r.nombre} descubierto!`;
+    this.cdr.detectChanges();
   }
 
   ocultarXuxemon(): void {
@@ -234,6 +267,7 @@ export class Admin implements OnInit {
     if (!x || !x.discovered) { this.adminXuxMsg = x ? `⚠️ ${x.nombre} ya oculto.` : '⚠️ No encontrado.'; return; }
     x.discovered = false;
     this.adminXuxMsg = `🔒 ${x.img} ${x.nombre} ocultado.`;
+    this.cdr.detectChanges();
   }
 
   navItems: NavItem[] = [
@@ -246,5 +280,4 @@ export class Admin implements OnInit {
     { icon: '👤', label: 'Perfil',   route: '/perfil'    },
     { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
-  
 }
