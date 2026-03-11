@@ -20,14 +20,14 @@
           </div>
         </article>
         <article class="dboard-stat-card">
-          <span class="dboard-stat-icon" aria-hidden="true">⚡</span>
+          <span class="dboard-stat-icon" aria-hidden="true">🎮</span>
           <div class="dboard-stat-info">
             <span class="dboard-stat-number">3</span>
             <span class="dboard-stat-label">Batallas ganadas</span>
           </div>
         </article>
         <article class="dboard-stat-card">
-          <span class="dboard-stat-icon" aria-hidden="true">💗</span>
+          <span class="dboard-stat-icon" aria-hidden="true">👥</span>
           <div class="dboard-stat-info">
             <span class="dboard-stat-number">3</span>
             <span class="dboard-stat-label">Amigos</span>
@@ -42,7 +42,7 @@
         @for (x of xuxemons; track x.name) {
           <li class="dboard-xuxemon-card" tabindex="0"
             [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'">
-            <img [src]="x.img" [alt]="x.name" class="dboard-xuxemon-img" />
+            <span class="dboard-xuxemon-emoji" aria-hidden="true">{{ x.emoji }}</span>
             <p class="dboard-xuxemon-name">{{ x.name }}</p>
             <span class="dboard-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
             <div class="dboard-xuxemon-stats" aria-hidden="true">
