@@ -42,8 +42,7 @@ export class Mochila implements OnInit {
   items: Item[] = [];
   cargando = true;
   searchQuery = '';
-  selectedFilter = 'Todos';
-  filters = ['Todos', 'Xuxes', 'Vacunas'];
+  filterTipo = 'Todos';
 
   constructor(
     private mochilaService: MochilaService,
@@ -127,4 +126,71 @@ export class Mochila implements OnInit {
     { icon: '👤', label: 'Perfil',   route: '/perfil'    },
     { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
+
+  constructor(private xuxemonService: XuxemonService) {}
+
+  ngOnInit(): void {
+    this.cargarColeccion();
+  }
+
+  cargarColeccion(): void {
+    this.cargando = true;
+    this.xuxemonService.getColeccion().subscribe({
+      next: (res) => {
+        this.coleccion = res.coleccion;
+        this.total = res.total;
+        this.cargando = false;
+      },
+      error: () => {
+        this.mensajeError = 'Error al cargar la colección.';
+        this.cargando = false;
+      }
+    });
+  }
+
+  anadirAleatorio(): void {
+    this.anadiendo = true;
+    this.mensajeExito = '';
+    this.mensajeError = '';
+
+    this.xuxemonService.anadirAleatorio().subscribe({
+      next: (res) => {
+        this.mensajeExito = `¡${res.xuxemon.nombre} añadido a tu colección!`;
+        this.anadiendo = false;
+        this.cargarColeccion(); // Recargamos la lista
+      },
+      error: () => {
+        this.mensajeError = 'Error al añadir el xuxemon.';
+        this.anadiendo = false;
+      }
+    });
+  }
+
+  get coleccionFiltrada(): EntradaColeccion[] {
+    let lista = this.coleccion;
+
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase();
+      lista = lista.filter(e => e.xuxemon.nombre.toLowerCase().includes(q));
+    }
+
+    if (this.filterTipo !== 'Todos') {
+      lista = lista.filter(e => e.xuxemon.tipo === this.filterTipo);
+    }
+
+    return lista;
+  }
+
+  tipoEmoji(tipo: string): string {
+    if (tipo === 'Tierra') return '🌿';
+    if (tipo === 'Aire') return '💨';
+    if (tipo === 'Agua') return '💧';
+    return '🌐';
+  }
+
+  tamanoEmoji(tamano: string): string {
+    if (tamano === 'Pequeño') return '🥚';
+    if (tamano === 'Mediano') return '🌿';
+    return '⭐';
+  }
 }
