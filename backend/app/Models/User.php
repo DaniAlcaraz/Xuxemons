@@ -66,4 +66,9 @@ class User extends Authenticatable
         return $this->hasMany(Mochila::class, 'user_identificador', 'identificador');
     }
 
+    public function xuxemons() {
+        return $this->belongsToMany(Xuxemon::class, 'xuxemon_usuario', 'user_identificador', 'xuxemon_id')
+                    ->withTimestamps();
+    }
+
 }
