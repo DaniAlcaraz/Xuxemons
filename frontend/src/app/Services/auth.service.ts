@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   eliminarCuenta(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuario/deshabilitar`, {}, {
+    return this.http.post(`${this.apiUrl}/usuario/baja`, {}, {
       headers: this.getAuthHeaders()
     });
   }
