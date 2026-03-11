@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Mochila;
 
 class User extends Authenticatable
 {
@@ -60,4 +61,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function mochila() {
+        return $this->hasMany(Mochila::class, 'user_identificador', 'identificador');
+    }
+
 }
