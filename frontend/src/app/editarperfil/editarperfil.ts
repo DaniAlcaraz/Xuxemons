@@ -14,7 +14,7 @@ interface NavItem {
 @Component({
   selector: 'app-editarperfil',
   standalone: true,
-  imports: [NgFor, RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule],
   templateUrl: './editarperfil.html',
   styleUrls: ['./editarperfil.css']
 })

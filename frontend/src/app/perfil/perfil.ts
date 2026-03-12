@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgClass, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../Services/auth.service';
 import { OnInit } from '@angular/core';
@@ -46,7 +46,7 @@ interface NavItem {
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [NgClass, NgFor, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.css']
 })
