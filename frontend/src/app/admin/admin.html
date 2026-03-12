@@ -72,7 +72,7 @@
       <h2 class="dboard-section-title">🎒 Mochila de {{ usuarioSeleccionado }}</h2>
       <div class="admin-table">
         <div class="admin-table-head">
-          <span>Ítem</span><span>Tipo</span><span>Cantidad</span><span>Espacios</span><span>Rareza</span>
+          <span>Ítem</span><span>Tipo</span><span>Cantidad</span><span>Espacios</span>
         </div>
         @for (entry of mochilaUsuario; track entry.id) {
         <div class="admin-table-row">
@@ -82,7 +82,6 @@
           </span></span>
           <span class="admin-qty">{{ entry.cantidad }}</span>
           <span class="admin-qty">{{ entry.item.tipo === 'xuxe' ? (entry.cantidad / 5 | number:'1.0-0') : entry.cantidad }}</span>
-          <span><span class="rareza-badge" [class]="'rareza-' + entry.item.rareza">{{ entry.item.rareza }}</span></span>
         </div>
         }
       </div>
