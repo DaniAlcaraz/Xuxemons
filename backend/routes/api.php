@@ -7,13 +7,14 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MochilaController;
 use App\Http\Controllers\XuxemonController;
 use App\Models\Xuxemon;
+use App\Models\Coleccion;
 
-// Rutas públicas
+// ── Rutas públicas ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/items', [MochilaController::class, 'catalogoItems']);
 
-// Rutas protegidas con Sanctum
+// ── Rutas protegidas con Sanctum ──────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);

@@ -2,87 +2,97 @@
 
   <header class="dboard-header">
     <div class="dboard-header-content">
-      <h1>Mochila</h1>
+      <h1>🎒 Mochila</h1>
       <p>Tu inventario</p>
     </div>
   </header>
 
   <main class="dboard-main" id="main-content">
 
-    <!-- Buscador de objetos -->
-    <section class="mochila-search-section" aria-label="Buscar objetos">
+    <!-- Buscador -->
+    <section class="mochila-search-section" aria-label="Buscar objeto">
       <div class="mochila-search-wrapper">
         <span class="mochila-search-icon" aria-hidden="true">🔍</span>
-        <input class="mochila-search-input" type="search" placeholder="Buscar objeto..." [(ngModel)]="searchQuery"
-          aria-label="Buscar objeto" />
+        <input class="mochila-search-input" type="search" placeholder="Buscar objeto..."
+          [(ngModel)]="searchQuery" aria-label="Buscar objeto" />
       </div>
     </section>
 
-    <!-- Barra de espacios usados -->
-    <div class="mochila-slots-bar">
-      <div class="mochila-slots-info">
-        <span class="mochila-slots-label">Espacios ocupados</span>
-        <span class="mochila-slots-count" [class.full]="mochilaLlena">
-          {{ espaciosUsados }} / 20
-        </span>
-      </div>
-      <div class="mochila-slots-track" role="progressbar" [attr.aria-valuenow]="espaciosUsados" aria-valuemin="0"
-        aria-valuemax="20" aria-label="Espacios de mochila ocupados">
-        <div class="mochila-slots-fill" [style.width.%]="(espaciosUsados / 20) * 100" [class.full]="mochilaLlena">
-        </div>
-      </div>
-      @if (mochilaLlena) {
-      <p class="mochila-full-msg">⚠️ ¡Mochila llena!</p>
-      }
+    <!-- Barra de espacios -->
+    <div class="xuxedex-counter-bar">
+      <span class="xuxedex-counter-label">Espacios ocupados</span>
+      <span class="xuxedex-counter-badge" [class.full]="mochilaLlena">{{ espaciosUsados }} / 20</span>
+    </div>
+    <div class="admin-stat-bar-wrap">
+      <div class="admin-stat-bar" [style.width.%]="(espaciosUsados / 20) * 100" [class.full]="mochilaLlena"></div>
     </div>
 
     <!-- Leyenda -->
     <div class="mochila-legend">
-      <span class="mochila-legend-item">
-        <span class="mochila-legend-dot stackable"></span>
-        Xuxes <em>(apilables, máx. 5/espacio)</em>
-      </span>
-      <span class="mochila-legend-item">
-        <span class="mochila-legend-dot single"></span>
-        Vacunas <em>(no apilables, 1/espacio)</em>
-      </span>
+      <span class="legend-item"><span class="legend-dot apilable"></span> Xuxes (apilables, máx. 5/espacio)</span>
+      <span class="legend-item"><span class="legend-dot simple"></span> Vacunas (no apilables, 1/espacio)</span>
     </div>
 
     <!-- Filtros -->
-    <section class="mochila-categories" aria-label="Filtrar por categoría">
+    <section class="mochila-categories" aria-label="Filtrar por tipo">
       @for (f of filters; track f) {
       <button class="mochila-cat-btn" [class.active]="selectedFilter === f" (click)="selectedFilter = f"
-        [attr.aria-pressed]="selectedFilter === f">{{ f }}</button>
+        [attr.aria-pressed]="selectedFilter === f">
+        {{ f }}
+      </button>
       }
     </section>
 
-    <!-- Grid Inventario -->
-    <section class="dboard-card" aria-labelledby="inv-heading">
-      <h2 id="inv-heading" class="dboard-section-title">Inventario</h2>
-      <ul class="mochila-grid" role="list" aria-label="Espacios de la mochila">
-        @for (slot of displaySlots; track $index) {
-        <li class="mochila-slot" [class.occupied]="slot !== null" [class.stackable]="slot?.item?.kind === 'apilable'"
-          [class.single]="slot?.item?.kind === 'simple'" [class.rarity-raro]="slot?.item?.rareza === 'raro'"
-          [class.rarity-epico]="slot?.item?.rareza === 'épico'"
-          [class.rarity-legendario]="slot?.item?.rareza === 'legendario'"
-          [attr.aria-label]="slot ? slot.item.name + ' x' + slot.cantidad : 'Espacio vacío'" tabindex="0">
-          @if (slot !== null) {
-          <div class="mochila-slot-img" aria-hidden="true">{{ slot.item.img }}</div>
-          <p class="mochila-slot-name">{{ slot.item.name }}</p>
-          @if (slot.item.kind === 'apilable') {
-          <span class="mochila-slot-qty">{{ slot.cantidad }}/5</span>
+    <!-- Grid inventario -->
+    <section class="dboard-card" aria-labelledby="inventario-heading">
+      <h2 id="inventario-heading" class="dboard-section-title">Inventario</h2>
+
+      @if (cargando) {
+        <p class="xuxedex-empty">Cargando inventario...</p>
+      } @else {
+        <div class="mochila-grid">
+          @for (slot of displaySlots; track $index) {
+            @if (slot) {
+            <div class="mochila-slot filled"
+              [class.slot-apilable]="slot.item.kind === 'apilable'"
+              [class.slot-simple]="slot.item.kind === 'simple'"
+              [class.rarity-raro]="slot.item.rareza === 'raro'"
+              [class.rarity-epico]="slot.item.rareza === 'épico'"
+              [class.rarity-legendario]="slot.item.rareza === 'legendario'"
+              [attr.aria-label]="slot.item.name + ' x' + slot.cantidad">
+              <span class="slot-img">{{ slot.item.img }}</span>
+              <span class="slot-qty">{{ slot.cantidad }}</span>
+              <span class="slot-name">{{ slot.item.name }}</span>
+              <span class="rareza-badge" [class]="'rareza-' + slot.item.rareza">{{ slot.item.rareza }}</span>
+            </div>
+            } @else {
+            <div class="mochila-slot empty" aria-label="Espacio vacío">
+              <span class="slot-empty-icon">—</span>
+            </div>
+            }
           }
-          <span class="mochila-slot-kind" [class.kind-stackable]="slot.item.kind === 'apilable'"
-            [class.kind-single]="slot.item.kind === 'simple'">
-            {{ slot.item.kind === 'apilable' ? 'xuxe' : 'Vacuna' }}
-          </span>
-          } @else {
-          <span class="mochila-slot-empty" aria-hidden="true">—</span>
-          }
-        </li>
-        }
-      </ul>
+        </div>
+      }
     </section>
+
+    <!-- Resumen xuxes apilables -->
+    @if (itemsApilables.length > 0) {
+    <section class="dboard-card">
+      <h2 class="dboard-section-title">🔴 Resumen de Xuxes</h2>
+      <div class="admin-table">
+        <div class="admin-table-head">
+          <span>Xuxe</span><span>Total</span><span>Espacios</span>
+        </div>
+        @for (item of itemsApilables; track item.id) {
+        <div class="admin-table-row">
+          <span class="admin-item-name"><span>{{ item.img }}</span>{{ item.name }}</span>
+          <span class="admin-qty">{{ item.quantity }}</span>
+          <span class="admin-qty">{{ espaciosDe(item) }}</span>
+        </div>
+        }
+      </div>
+    </section>
+    }
 
   </main>
 
@@ -92,8 +102,10 @@
 
   <nav class="dboard-bottom-nav" aria-label="Navegación principal">
     @for (item of navItems; track item.route) {
-    <a class="dboard-nav-item" [class.active]="item.route === '/mochila'" [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/mochila' ? 'page' : null" [attr.aria-label]="item.label">
+    <a class="dboard-nav-item" [class.active]="item.route === '/mochila'"
+      [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/mochila' ? 'page' : null"
+      [attr.aria-label]="item.label">
       <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
       <span>{{ item.label }}</span>
     </a>

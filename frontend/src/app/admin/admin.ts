@@ -191,20 +191,6 @@ export class Admin implements OnInit {
     });
   }
 
-    calcularEspacios(mochila: any[]): void {
-    this.espaciosUsadosUsuario = mochila.reduce((total, entry) => {
-      // Si es un xuxemon (cantidad=1, tipo=xuxemon)
-      if (entry.item.tipo === 'xuxemon') return total + 1;
-      // Si es xuxe (apilable)
-      if (entry.item.tipo === 'xuxe') return total + Math.ceil(entry.cantidad / 5);
-      // Si es vacuna (simple)
-      return total + entry.cantidad;
-    }, 0);
-    this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
-    this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
-    this.cdr.detectChanges();
-  }
-
   cargarMochilaUsuario(): void {
     if (!this.usuarioSeleccionado) return;
     const id = encodeURIComponent(this.usuarioSeleccionado);
@@ -243,26 +229,16 @@ export class Admin implements OnInit {
     });
   }
 
-  getEmoji(nombre: string): string { 
-    const emojisXux: Record<string, string> = {
-      'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌', 'Beeboo': '🐝', 'Boo-hoot': '🦉',
-      'Cabrales': '🐐', 'Catua': '🦜', 'Catyuska': '🕊️', 'Chapapá': '🐸', 'Chopper': '🐱',
-      'Nemo': '🐠', 'Flipper': '🐬', 'Megalo': '🦈', 'Tux': '🐧', 'Dolly': '🐑',
-      'Krokolisko': '🐊', 'Rawlion': '🦁', 'Rexxo': '🦖', 'Oinkcelot': '🐷',
-    };
-    return emojisXux[nombre] ?? (EMOJIS[nombre] ?? '📦'); 
+  calcularEspacios(mochila: any[]): void {
+    this.espaciosUsadosUsuario = mochila.reduce((total, m) => {
+      return total + (m.item.tipo === 'xuxe' ? Math.ceil(m.cantidad / 5) : m.cantidad);
+    }, 0);
+    this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
+    this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
+    this.cdr.detectChanges();
   }
 
-  // Helper para el HTML
-  isDiscovered(idXuxemon: number): boolean {
-    return this.userXuxemonIds.includes(idXuxemon);
-  }
-
-  get totalXuxemons()  { return this.xuxemons.length; }
-  get descubiertos()   { return this.userXuxemonIds.length; }
-  get noDescubiertos() { return this.totalXuxemons - this.descubiertos; }
-  get porcentajeDesc() { return this.totalXuxemons > 0 ? (this.descubiertos / this.totalXuxemons) * 100 : 0; }
-  
+  getEmoji(nombre: string): string { return EMOJIS[nombre] ?? '📦'; }
 
   anadirXuxes(): void {
     this.adminXuxeMsg = '';
@@ -271,7 +247,6 @@ export class Admin implements OnInit {
         this.adminXuxeMsg = '✅ ' + res.message;
         this.adminXuxeQty = 1;
         this.cargarMochilaUsuario();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.adminXuxeMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
@@ -287,7 +262,6 @@ export class Admin implements OnInit {
         this.adminVacunaMsg = '✅ ' + res.message;
         this.adminVacunaQty = 1;
         this.cargarMochilaUsuario();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.adminVacunaMsg = '⚠️ ' + (err.error?.error ?? 'Error al añadir');
@@ -303,7 +277,6 @@ export class Admin implements OnInit {
         this.adminQuitarMsg = '✅ ' + res.message;
         this.adminQuitarQty = 1;
         this.cargarMochilaUsuario();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         this.adminQuitarMsg = '⚠️ ' + (err.error?.error ?? 'Error al quitar');
