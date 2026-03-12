@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MochilaController;
+use App\Http\Controllers\XuxemonController;
 use App\Models\Xuxemon;
 use App\Models\Coleccion;
 
@@ -17,41 +18,41 @@ Route::get('/items', [MochilaController::class, 'catalogoItems']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-    Route::put('/usuario', [AuthController::class, 'update']);
-    Route::post('/usuario/baja', [AuthController::class, 'baja']);
+    
+    // Perfil de usuario (requiere autenticación)
+    Route::put('/usuario', [UsuarioController::class, 'update']);
+    Route::post('/usuario/baja', [AuthController::class, 'baja']); // Volvió a ser baja según la última petición del usuario
 
     // Mochila
     Route::get('/mochila', [MochilaController::class, 'index']);
     Route::post('/mochila/anadir', [MochilaController::class, 'anadir']);
     Route::post('/mochila/quitar', [MochilaController::class, 'quitar']);
 
-    
     Route::get('/admin/mochila', function(\Illuminate\Http\Request $request) {
-    $id = $request->query('user');
-    $mochila = \App\Models\Mochila::where('user_identificador', $id)->with('item')->get();
-    return response()->json($mochila);
-});
+        $id = $request->query('user');
+        $mochila = \App\Models\Mochila::where('user_identificador', $id)->with('item')->get();
+        return response()->json($mochila);
+    });
+
+    Route::get('/admin/usuarios/{identificador}/xuxemons', function($id) {
+        $user = \App\Models\User::where('identificador', $id)->firstOrFail();
+        return response()->json($user->xuxemons);
+    });
+
+    // Colección de Xuxemons del usuario
+    Route::get('/xuxemons/me', [XuxemonController::class, 'misXuxemons']);
+    Route::post('/xuxemons/{id}/evolucionar', [XuxemonController::class, 'subirNivel']);
+
+    // Gestión Admin de Xuxemons
+    Route::prefix('admin/xuxemons')->group(function () {
+        Route::post('/anadir', [XuxemonController::class, 'anadirXuxemon']);
+        // El usuario pidió "ocultar" que es quitar
+        Route::post('/quitar', [XuxemonController::class, 'quitarXuxemon']);
+        Route::post('/aleatorio', [XuxemonController::class, 'anadirAleatorio']);
+    });
 });
 
 // Rutas de gestión de usuarios
 Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
 Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
-
-// Rutas de Xuxemons
-Route::get('/xuxemons', function () {
-    return Xuxemon::all();
-});
-
-Route::get('/xuxemons/{id}', function ($id) {
-    $xuxemon = Xuxemon::find($id);
-    return $xuxemon ? response()->json($xuxemon) : response()->json(['error' => 'No encontrado'], 404);
-});
-
-Route::post('/xuxemons/{id}/evolucionar', function ($id) {
-    $xuxemon = Xuxemon::find($id);
-    if (!$xuxemon) return response()->json(['error' => 'No encontrado'], 404);
-        
-    $xuxemon->evolucionar();
-    return response()->json(['mensaje' => '¡Evolucionado!', 'xuxemon' => $xuxemon]);
-});

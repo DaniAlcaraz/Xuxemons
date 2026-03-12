@@ -156,12 +156,12 @@
     <section class="dboard-card">
       <h2 class="dboard-section-title">Estado de la colección</h2>
       <div class="admin-pills">
-        @for (x of xuxemons; track x.id) {
-        <span class="admin-pill" [class.pill-discovered]="x.discovered" [class.pill-hidden]="!x.discovered"
-          [class.type-tierra]="x.discovered && x.tipo === 'Tierra'"
-          [class.type-aire]="x.discovered && x.tipo === 'Aire'"
-          [class.type-agua]="x.discovered && x.tipo === 'Agua'">
-          {{ x.discovered ? x.img + ' ' + x.nombre : '🔒 ???' }}
+        @for (x of xuxemons; track x.IDxuxemon) {
+        <span class="admin-pill" [class.pill-discovered]="isDiscovered(x.IDxuxemon)" [class.pill-hidden]="!isDiscovered(x.IDxuxemon)"
+          [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
+          [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'"
+          [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'">
+          {{ isDiscovered(x.IDxuxemon) ? getEmoji(x.nombre) + ' ' + x.nombre : '🔒 ???' }}
         </span>
         }
       </div>
@@ -175,8 +175,8 @@
         <div class="admin-form-fields">
           <label class="admin-label">Xuxemon</label>
           <select class="admin-select" [(ngModel)]="adminDescubrirId">
-            @for (x of xuxemons; track x.id) {
-            <option [value]="x.id">{{ x.discovered ? '✅' : '🔒' }} #{{ x.id }} {{ x.nombre }}</option>
+            @for (x of xuxemons; track x.IDxuxemon) {
+            <option [value]="x.IDxuxemon">{{ isDiscovered(x.IDxuxemon) ? '✅' : '🔒' }} #{{ x.IDxuxemon }} {{ x.nombre }}</option>
             }
           </select>
           <button class="admin-btn btn-add" (click)="descubrirXuxemon()" [disabled]="noDescubiertos === 0">🔓 Descubrir</button>

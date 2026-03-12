@@ -50,23 +50,23 @@
       <h2 id="xuxedex-heading" class="dboard-section-title">Colección</h2>
 
       <ul class="xuxedex-grid" role="list" aria-label="Colección de xuxemons">
-        @for (x of filteredXuxemons; track x.id) {
-        <li class="xuxedex-card" [class.discovered]="x.discovered" [class.undiscovered]="!x.discovered"
-          [class.type-tierra]="x.discovered && x.tipo === 'Tierra'"
-          [class.type-aire]="x.discovered && x.tipo === 'Aire'" [class.type-agua]="x.discovered && x.tipo === 'Agua'"
-          [attr.aria-label]="x.discovered ? x.nombre + ', tipo ' + x.tipo + ', ' + x.tamano : 'Xuxemon desconocido'"
+        @for (x of filteredXuxemons; track x.IDxuxemon) {
+        <li class="xuxedex-card" [class.discovered]="isDiscovered(x.IDxuxemon)" [class.undiscovered]="!isDiscovered(x.IDxuxemon)"
+          [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
+          [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'" [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'"
+          [attr.aria-label]="isDiscovered(x.IDxuxemon) ? x.nombre + ', tipo ' + x.tipo + ', ' + x.tamano : 'Xuxemon desconocido'"
           tabindex="0">
 
-          @if (x.discovered) {
+          @if (isDiscovered(x.IDxuxemon)) {
           <!-- Badge tamaño -->
-          <span class="xuxedex-tamano-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
+          <span class="xuxedex-badge size-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
             [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
             {{ tamanoLabel(x.tamano) }}
           </span>
 
           <div class="xuxedex-img" aria-hidden="true" [class.size-pequeno]="x.tamano === 'Pequeño'"
             [class.size-mediano]="x.tamano === 'Mediano'" [class.size-grande]="x.tamano === 'Grande'">
-            {{ x.img }}
+            {{ getEmoji(x.nombre) }}
           </div>
 
           <p class="xuxedex-name">{{ x.nombre }}</p>
