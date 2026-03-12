@@ -5,7 +5,8 @@ import { CommonModule } from '@angular/common';
 import { MochilaService } from '../Services/mochila';
 import { AuthService } from '../Services/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export type Rareza = 'común' | 'raro' | 'épico' | 'legendario';
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
@@ -192,11 +193,14 @@ export class Admin implements OnInit {
   }
 
   cargarMochilaUsuario(): void {
-    if (!this.usuarioSeleccionado) return;
-    const id = encodeURIComponent(this.usuarioSeleccionado);
-    
-    const obsMochila = this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${id}`, { headers: this.headers() });
-    const obsXuxemons = this.http.get<any[]>(`${this.apiUrl}/admin/usuarios/${this.usuarioSeleccionado}/xuxemons`, { headers: this.headers() });
+  if (!this.usuarioSeleccionado) return;
+  const id = encodeURIComponent(this.usuarioSeleccionado);
+
+  const obsMochila = this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${id}`, { headers: this.headers() });
+  const obsXuxemons = this.http.get<any[]>(
+    `${this.apiUrl}/admin/usuarios/${this.usuarioSeleccionado}/xuxemons`,
+    { headers: this.headers() }
+  ).pipe(catchError(() => of([])));  
 
     forkJoin({ items: obsMochila, xuxemons: obsXuxemons }).subscribe({
       next: (res) => {
@@ -230,7 +234,8 @@ export class Admin implements OnInit {
   }
 
   calcularEspacios(mochila: any[]): void {
-    this.espaciosUsadosUsuario = mochila.reduce((total, m) => {
+    const soloItems = mochila.filter(m => m.item.tipo === 'xuxe' || m.item.tipo === 'vacuna');
+    this.espaciosUsadosUsuario = soloItems.reduce((total, m) => {
       return total + (m.item.tipo === 'xuxe' ? Math.ceil(m.cantidad / 5) : m.cantidad);
     }, 0);
     this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;

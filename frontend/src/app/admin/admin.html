@@ -75,14 +75,16 @@
           <span>Ítem</span><span>Tipo</span><span>Cantidad</span><span>Espacios</span>
         </div>
         @for (entry of mochilaUsuario; track entry.id) {
-        <div class="admin-table-row">
-          <span class="admin-item-name"><span>{{ getEmoji(entry.item.nombre) }}</span>{{ entry.item.nombre }}</span>
-          <span><span class="kind-badge" [class.kind-apilable]="entry.item.tipo === 'xuxe'" [class.kind-simple]="entry.item.tipo === 'vacuna'">
-            {{ entry.item.tipo === 'xuxe' ? 'Xuxe' : 'Vacuna' }}
-          </span></span>
-          <span class="admin-qty">{{ entry.cantidad }}</span>
-          <span class="admin-qty">{{ entry.item.tipo === 'xuxe' ? (entry.cantidad / 5 | number:'1.0-0') : entry.cantidad }}</span>
-        </div>
+          @if (entry.item.tipo === 'xuxe' || entry.item.tipo === 'vacuna') {
+          <div class="admin-table-row">
+            <span class="admin-item-name"><span>{{ getEmoji(entry.item.nombre) }}</span>{{ entry.item.nombre }}</span>
+            <span><span class="kind-badge" [class.kind-apilable]="entry.item.tipo === 'xuxe'" [class.kind-simple]="entry.item.tipo === 'vacuna'">
+              {{ entry.item.tipo === 'xuxe' ? 'Xuxe' : 'Vacuna' }}
+            </span></span>
+            <span class="admin-qty">{{ entry.cantidad }}</span>
+            <span class="admin-qty">{{ entry.item.tipo === 'xuxe' ? (entry.cantidad / 5 | number:'1.0-0') : entry.cantidad }}</span>
+          </div>
+          }
         }
       </div>
     </section>
