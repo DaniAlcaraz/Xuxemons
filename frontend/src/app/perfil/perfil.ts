@@ -4,44 +4,11 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../Services/auth.service';
 import { OnInit } from '@angular/core';
 
-
-interface UserProfile {
-  name: string;
-  since: string;
-  location: string;
-  level: number;
-  xp: number;
-  xpMax: number;
-}
-
-interface Stat {
-  xuxemons: number;
-  batallas: number;
-  victorias: number;
-  derrotas: number;
-  amigos: number;
-  dias: number;
-}
-
-interface Logro {
-  icon: string;
-  name: string;
-  unlocked: boolean;
-}
-
-interface Xuxemon {
-  name: string;
-  type: string;
-  level: number;
-  hp: number;
-  img: string;
-}
-
-interface NavItem {
-  icon: string;
-  label: string;
-  route: string;
-}
+import { UserProfile } from '../interfaces/user-profile';
+import { Stat } from '../interfaces/stat';
+import { Logro } from '../interfaces/logro';
+import { PerfilXuxemon } from '../interfaces/perfil-xuxemon';
+import { NavItem } from '../interfaces/nav-item';
 
 @Component({
   selector: 'app-perfil',
@@ -90,7 +57,7 @@ export class Perfil implements OnInit {
     { icon: '🏆', name: 'Leyenda',         unlocked: false }
   ];
 
-  xuxemons: Xuxemon[] = [
+  xuxemons: PerfilXuxemon[] = [
     { name: 'Elconchudo', type: 'Agua',   level: 15, hp: 100, img: 'https://em-content.zobj.net/source/apple/354/crab_1f980.png'    },
     { name: 'Oreo',       type: 'Tierra', level: 12, hp: 50,  img: 'https://em-content.zobj.net/source/apple/354/cow_1f404.png'      },
     { name: 'Beeboo',     type: 'Aire',   level: 10, hp: 78,  img: 'https://em-content.zobj.net/source/apple/354/honeybee_1f41d.png' }
