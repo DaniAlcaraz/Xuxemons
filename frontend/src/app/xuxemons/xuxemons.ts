@@ -19,9 +19,24 @@ export interface Xuxemon {
 interface NavItem { icon: string; label: string; route: string; }
 
 const EMOJIS: Record<string, string> = {
-  'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌', 'Beeboo': '🐝', 'Boo-hoot': '🦉',
-  'Cabrales': '🐐', 'Catua': ' Parrot', 'Catyuska': '🕊️', 'Chapapá': '🐸', 'Chopper': '🐱',
+  'Apleki':       '🐌', 'Avecrem':      '🐔', 'Bambino':      '🦌',
+  'Beeboo':       '🐝', 'Boo-hoot':     '🦉', 'Cabrales':     '🐐',
+  'Catua':        '🦜', 'Catyuska':     '🕊️', 'Chapapá':      '🐸',
+  'Chopper':      '🐱', 'Cuellilargui': '🦕', 'Deskangoo':    '🦘',
+  'Doflamingo':   '🦩', 'Dolly':        '🐑', 'Elconchudo':   '🦀',
+  'Eldientes':    '🦛', 'Elgominas':    '🦔', 'Flipper':      '🐬',
+  'Floppi':       '🐒', 'Horseluis':    '🦄', 'Krokolisko':   '🐊',
+  'Kurama':       '🦊', 'Ladybug':      '🐞', 'Lengualargui': '🦎',
+  'Medusation':   '🪼', 'Meekmeek':     '🐭', 'Megalo':       '🦈',
+  'Mocha':        '🐳', 'Murcimurci':   '🦇', 'Nemo':         '🐠',
+  'Oinkcelot':    '🐷', 'Oreo':         '🐄', 'Otto':         '🦦',
+  'Pinchimott':   '🦀', 'Pollis':       '🐣', 'Posón':        '🦋',
+  'Quakko':       '🦆', 'Rajoy':        '🕊️', 'Rawlion':      '🦁',
+  'Rexxo':        '🦖', 'Ron':          '🐈', 'Sesssi':       '🐍',
+  'Shelly':       '🐢', 'Sirucco':      '🦅', 'Torcas':       '🦫',
+  'Trompeta':     '🐦', 'Trompi':       '🐘', 'Tux':          '🐧',
 };
+
 
 @Component({
   selector: 'app-xuxemons',
