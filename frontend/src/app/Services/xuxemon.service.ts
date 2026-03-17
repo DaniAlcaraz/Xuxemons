@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Xuxemon, ColeccionResponse } from '../models/xuxemon';
+import { Xuxemon, ColeccionResponse } from '../interfaces/xuxemon';
 import { AuthService } from './auth.service';
 
 @Injectable({
