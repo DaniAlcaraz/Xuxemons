@@ -3,7 +3,6 @@ import { LoginComponent } from './login/login';
 import { Perfil } from './perfil/perfil';
 import { Registro } from './registro/registro';
 import { Dashboard } from './dashboard/dashboard';
-import { Editarperfil } from './editarperfil/editarperfil';
 import { Xuxemons } from './xuxemons/xuxemons';
 import { Mochila } from './mochila/mochila';
 import { Admin } from './admin/admin';
@@ -16,10 +15,6 @@ export const routes: Routes = [
   {
     path: 'perfil',
     component: Perfil,
-  },
-  {
-    path: 'editar/perfil',
-    component: Editarperfil,
   },
   {
     path: 'registro',
