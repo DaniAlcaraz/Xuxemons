@@ -24,7 +24,7 @@ export class Registro {
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      contrasena: ['', [Validators.required, Validators.minLength(8)]],
+      contrasena: ['', [Validators.required, Validators.minLength(6)]],
       repetirContrasena: ['', Validators.required]
     }, { validators: this.passwordsMatch });
   }
