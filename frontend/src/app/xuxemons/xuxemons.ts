@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
+
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
 export type TamanoXuxemon = 'Pequeño' | 'Mediano' | 'Grande';
 
@@ -14,29 +15,30 @@ export interface Xuxemon {
   tipo: TipoXuxemon;
   tamano: TamanoXuxemon;
   img: string;
+  enfermo: boolean;
+  enfermedad: string | null;
 }
 
 interface NavItem { icon: string; label: string; route: string; }
 
 const EMOJIS: Record<string, string> = {
-  'Apleki':       '🐌', 'Avecrem':      '🐔', 'Bambino':      '🦌',
-  'Beeboo':       '🐝', 'Boo-hoot':     '🦉', 'Cabrales':     '🐐',
-  'Catua':        '🦜', 'Catyuska':     '🕊️', 'Chapapá':      '🐸',
-  'Chopper':      '🐱', 'Cuellilargui': '🦕', 'Deskangoo':    '🦘',
-  'Doflamingo':   '🦩', 'Dolly':        '🐑', 'Elconchudo':   '🦀',
-  'Eldientes':    '🦛', 'Elgominas':    '🦔', 'Flipper':      '🐬',
-  'Floppi':       '🐒', 'Horseluis':    '🦄', 'Krokolisko':   '🐊',
-  'Kurama':       '🦊', 'Ladybug':      '🐞', 'Lengualargui': '🦎',
-  'Medusation':   '🪼', 'Meekmeek':     '🐭', 'Megalo':       '🦈',
-  'Mocha':        '🐳', 'Murcimurci':   '🦇', 'Nemo':         '🐠',
-  'Oinkcelot':    '🐷', 'Oreo':         '🐄', 'Otto':         '🦦',
-  'Pinchimott':   '🦀', 'Pollis':       '🐣', 'Posón':        '🦋',
-  'Quakko':       '🦆', 'Rajoy':        '🕊️', 'Rawlion':      '🦁',
-  'Rexxo':        '🦖', 'Ron':          '🐈', 'Sesssi':       '🐍',
-  'Shelly':       '🐢', 'Sirucco':      '🦅', 'Torcas':       '🦫',
-  'Trompeta':     '🐦', 'Trompi':       '🐘', 'Tux':          '🐧',
+  'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌',
+  'Beeboo': '🐝', 'Boo-hoot': '🦉', 'Cabrales': '🐐',
+  'Catua': '🦜', 'Catyuska': '🕊️', 'Chapapá': '🐸',
+  'Chopper': '🐱', 'Cuellilargui': '🦕', 'Deskangoo': '🦘',
+  'Doflamingo': '🦩', 'Dolly': '🐑', 'Elconchudo': '🦀',
+  'Eldientes': '🦛', 'Elgominas': '🦔', 'Flipper': '🐬',
+  'Floppi': '🐒', 'Horseluis': '🦄', 'Krokolisko': '🐊',
+  'Kurama': '🦊', 'Ladybug': '🐞', 'Lengualargui': '🦎',
+  'Medusation': '🪼', 'Meekmeek': '🐭', 'Megalo': '🦈',
+  'Mocha': '🐳', 'Murcimurci': '🦇', 'Nemo': '🐠',
+  'Oinkcelot': '🐷', 'Oreo': '🐄', 'Otto': '🦦',
+  'Pinchimott': '🦀', 'Pollis': '🐣', 'Posón': '🦋',
+  'Quakko': '🦆', 'Rajoy': '🕊️', 'Rawlion': '🦁',
+  'Rexxo': '🦖', 'Ron': '🐈', 'Sesssi': '🐍',
+  'Shelly': '🐢', 'Sirucco': '🦅', 'Torcas': '🦫',
+  'Trompeta': '🐦', 'Trompi': '🐘', 'Tux': '🐧',
 };
-
 
 @Component({
   selector: 'app-xuxemons',
@@ -45,13 +47,13 @@ const EMOJIS: Record<string, string> = {
   templateUrl: './xuxemons.html',
   styleUrls: ['./xuxemons.css']
 })
-export class Xuxemons {
+export class Xuxemons implements OnInit {
 
   searchQuery = '';
   filterTipo: string = 'Todos';
   filterTamano: string = 'Todos';
 
-  tiposFiltro = ['Todos', 'Tierra', 'Aire', 'Agua'];
+  tiposFiltro   = ['Todos', 'Tierra', 'Aire', 'Agua'];
   tamanosFiltro = ['Todos', 'Pequeño', 'Mediano', 'Grande'];
 
   private apiUrl = 'http://localhost:8000/api';
@@ -59,41 +61,65 @@ export class Xuxemons {
   userOwnedIds: number[] = [];
   cargando = true;
 
-  constructor(private http: HttpClient, private authService: AuthService, private cdr: ChangeDetectorRef) {}
+  // Vacunas en mochila
+  vacunasEnMochila: { item_id: number; nombre: string; cantidad: number }[] = [];
 
-ngOnInit(): void {
-  console.log('Token:', this.authService.obtenerToken());
-  this.cargarDatos();
-}
+  // Modal curar
+  xuxemonACurar: Xuxemon | null = null;
+  vacunaSeleccionada: number | null = null;
+  mensajeCura = '';
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarDatos();
+  }
 
   cargarDatos(): void {
-  const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-  this.cargando = true;
-  
-  this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
-    next: (fullList) => {
-      console.log('Catálogo xuxemons:', fullList); 
-      this.xuxemons = fullList;
-      this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
-        next: (myList) => {
-          console.log('Mis xuxemons:', myList); 
-          this.userOwnedIds = myList.map(x => x.IDxuxemon);
-          this.cargando = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error /xuxemons/me:', err);  
-          this.cargando = false;
-          this.cdr.detectChanges();
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Error /xuxemons:', err);  
-      this.cargando = false;
-    }
-  });
-}
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.cargando = true;
+
+    this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
+      next: (fullList) => {
+        this.xuxemons = fullList;
+        this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
+          next: (myList) => {
+            this.userOwnedIds = myList.map(x => x.IDxuxemon);
+            // Actualizar estado enfermo en la lista
+            myList.forEach(x => {
+              const found = this.xuxemons.find(xux => xux.IDxuxemon === x.IDxuxemon);
+              if (found) {
+                found.enfermo    = x.enfermo;
+                found.enfermedad = x.enfermedad;
+              }
+            });
+            this.cargando = false;
+            this.cdr.detectChanges();
+          },
+          error: () => { this.cargando = false; this.cdr.detectChanges(); }
+        });
+      },
+      error: () => { this.cargando = false; }
+    });
+
+    // Cargar vacunas de la mochila
+    this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers }).subscribe({
+      next: (mochila) => {
+        this.vacunasEnMochila = mochila
+          .filter(e => e.item?.tipo === 'vacuna')
+          .map(e => ({
+            item_id:  e.item_id,
+            nombre:   e.item.nombre,
+            cantidad: e.cantidad
+          }));
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   isDiscovered(id: number): boolean {
     return this.userOwnedIds.includes(id);
@@ -103,9 +129,8 @@ ngOnInit(): void {
     return EMOJIS[nombre] ?? '🥚';
   }
 
-  // ── Computed 
   get totalXuxemons(): number { return this.xuxemons.length; }
-  get descubiertos(): number { return this.userOwnedIds.length; }
+  get descubiertos(): number  { return this.userOwnedIds.length; }
 
   get filteredXuxemons(): Xuxemon[] {
     let list = this.xuxemons;
@@ -113,31 +138,27 @@ ngOnInit(): void {
       const q = this.searchQuery.toLowerCase();
       list = list.filter(x => this.isDiscovered(x.IDxuxemon) && x.nombre.toLowerCase().includes(q));
     }
-    if (this.filterTipo !== 'Todos') list = list.filter(x => x.tipo === this.filterTipo);
+    if (this.filterTipo   !== 'Todos') list = list.filter(x => x.tipo   === this.filterTipo);
     if (this.filterTamano !== 'Todos') list = list.filter(x => x.tamano === this.filterTamano);
     return list;
   }
 
-  // ── Evolución 
   nextTamano(t: TamanoXuxemon): TamanoXuxemon | null {
     if (t === 'Pequeño') return 'Mediano';
     if (t === 'Mediano') return 'Grande';
     return null;
   }
 
+  canEvolve(xux: Xuxemon): boolean {
+    return this.isDiscovered(xux.IDxuxemon) && xux.tamano !== 'Grande' && !xux.enfermo;
+  }
+
   evolucionar(xux: Xuxemon): void {
     const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
     this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
-      next: (res) => {
-        console.log('Evolución exitosa:', res);
-        this.cargarDatos(); // Recargar para ver el nuevo tamaño
-      },
-      error: (err) => console.error('Error al evolucionar:', err)
+      next: () => this.cargarDatos(),
+      error: (err) => alert(err.error?.error || 'Error al evolucionar')
     });
-  }
-
-  canEvolve(xux: Xuxemon): boolean {
-    return this.isDiscovered(xux.IDxuxemon) && xux.tamano !== 'Grande';
   }
 
   tamanoLabel(t: TamanoXuxemon): string {
@@ -146,15 +167,48 @@ ngOnInit(): void {
     return '⭐ Grande';
   }
 
-  // ── Nav ──────────────────────────────────────────────────────────────────────
+  // ── Modal curar ──
+  abrirModalCurar(xux: Xuxemon): void {
+    this.xuxemonACurar      = xux;
+    this.vacunaSeleccionada = this.vacunasEnMochila.length > 0
+      ? this.vacunasEnMochila[0].item_id
+      : null;
+    this.mensajeCura = '';
+  }
+
+  cerrarModalCurar(): void {
+    this.xuxemonACurar      = null;
+    this.vacunaSeleccionada = null;
+    this.mensajeCura        = '';
+  }
+
+  curar(): void {
+    if (!this.xuxemonACurar || !this.vacunaSeleccionada) return;
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.post<any>(`${this.apiUrl}/xuxemons/curar`, {
+      xuxemon_id: this.xuxemonACurar.IDxuxemon,
+      item_id:    this.vacunaSeleccionada
+    }, { headers }).subscribe({
+      next: (res) => {
+        this.mensajeCura = '✅ ' + res.message;
+        this.cargarDatos();
+        setTimeout(() => this.cerrarModalCurar(), 1500);
+      },
+      error: (err) => {
+        this.mensajeCura = '⚠️ ' + (err.error?.error || 'Error al curar');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   navItems: NavItem[] = [
-    { icon: '🏠', label: 'Inicio', route: '/dashboard' },
-    { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
-    { icon: '🎒', label: 'Mochila', route: '/mochila' },
-    { icon: '👥', label: 'Amigos', route: '/amigos' },
-    { icon: '⚔️', label: 'Batallas', route: '/batallas' },
-    { icon: '💬', label: 'Chat', route: '/chat' },
-    { icon: '👤', label: 'Perfil', route: '/perfil' },
-    { icon: '🛡️', label: 'Admin', route: '/admin' },
+    { icon: '🏠', label: 'Inicio',   route: '/dashboard' },
+    { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
+    { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
+    { icon: '👥', label: 'Amigos',   route: '/amigos'    },
+    { icon: '⚔️', label: 'Batallas', route: '/batallas'  },
+    { icon: '💬', label: 'Chat',     route: '/chat'      },
+    { icon: '👤', label: 'Perfil',   route: '/perfil'    },
+    { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
 }
