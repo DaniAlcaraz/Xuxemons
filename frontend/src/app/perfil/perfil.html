@@ -2,132 +2,116 @@
 
   <header class="perfil-header">
     <div class="perfil-header-content">
-      <h1>Perfil</h1>
-      <p>Tu progreso como entrenador</p>
+      <h1>👤 Perfil</h1>
+      <p>Tu cuenta de entrenador</p>
     </div>
   </header>
 
   <main class="perfil-main" id="main-content">
 
-    <section class="perfil-card perfil-user-card" aria-labelledby="user-name-heading">
-      <div class="perfil-user-banner" role="presentation"></div>
-      <div class="perfil-user-body">
-        <div class="perfil-avatar-wrap">
-          <div class="perfil-avatar" role="img" [attr.aria-label]="'Foto de perfil de ' + user.name">
-            <span class="perfil-avatar-icon" aria-hidden="true">👤</span>
-          </div>
+    <!-- Banner + avatar -->
+    <section class="perfil-card perfil-avatar-card" aria-labelledby="avatar-heading">
+      <h2 id="avatar-heading" class="visually-hidden">Foto de perfil</h2>
+      <div class="perfil-avatar-banner" role="presentation"></div>
+      <div class="perfil-avatar-body">
+        <div class="perfil-avatar" role="img" [attr.aria-label]="'Foto de perfil de ' + form.value.nombre">
+          <span aria-hidden="true">👤</span>
         </div>
-        <div class="perfil-user-info">
-          <div class="perfil-user-meta">
-            <h2 id="user-name-heading" class="perfil-user-name">{{ user.name }}</h2>
-          </div>
-          <button class="perfil-edit-btn" routerLink="/editar/perfil" aria-label="Editar tu perfil">
-            Editar perfil
-          </button>
-        </div>
-      </div>
-      <div class="perfil-xp-section">
-        <span class="perfil-xp-label" id="xp-level">Nivel {{ user.level }}</span>
-        <span class="perfil-xp-info" id="xp-info">{{ user.xp }} / {{ user.xpMax }} EXP para nivel {{ user.level + 1 }}</span>
-      </div>
-      <div class="perfil-xp-bar" role="progressbar"
-        [attr.aria-valuenow]="user.xp" [attr.aria-valuemin]="0" [attr.aria-valuemax]="user.xpMax"
-        aria-labelledby="xp-level" aria-describedby="xp-info">
-        <div class="perfil-xp-fill" [style.width.%]="(user.xp / user.xpMax) * 100"></div>
+        <p class="perfil-avatar-name">{{ form.value.nombre }} {{ form.value.apellidos }}</p>
+        <p class="perfil-avatar-id">{{ identificador }}</p>
       </div>
     </section>
 
-    <div class="perfil-two-col">
+    <!-- Formulario -->
+    <section class="perfil-card" aria-labelledby="datos-heading">
+      <h2 id="datos-heading" class="perfil-section-title">Datos personales</h2>
 
-      <section class="perfil-card" aria-labelledby="stats-heading">
-        <h2 id="stats-heading" class="perfil-section-title">Estadísticas</h2>
-        <dl class="perfil-stats-grid">
-          <div class="perfil-stat-item perfil-stat-orange">
-            <dd class="perfil-stat-big">{{ stats.xuxemons }}</dd>
-            <dt class="perfil-stat-sub">Xuxemons<br>capturados</dt>
-          </div>
-          <div class="perfil-stat-item perfil-stat-yellow">
-            <dd class="perfil-stat-big">{{ stats.batallas }}</dd>
-            <dt class="perfil-stat-sub">Batallas<br>en total</dt>
-          </div>
-          <div class="perfil-stat-item perfil-stat-orange">
-            <dd class="perfil-stat-big">{{ stats.victorias }}</dd>
-            <dt class="perfil-stat-sub">Victorias</dt>
-          </div>
-          <div class="perfil-stat-item perfil-stat-yellow">
-            <dd class="perfil-stat-big">{{ stats.derrotas }}</dd>
-            <dt class="perfil-stat-sub">Derrotas</dt>
-          </div>
-          <div class="perfil-stat-item perfil-stat-orange">
-            <dd class="perfil-stat-big">{{ stats.amigos }}</dd>
-            <dt class="perfil-stat-sub">Amigos</dt>
-          </div>
-          <div class="perfil-stat-item perfil-stat-yellow">
-            <dd class="perfil-stat-big">{{ stats.dias }}</dd>
-            <dt class="perfil-stat-sub">Días jugando</dt>
-          </div>
-        </dl>
-      </section>
+      <form [formGroup]="form" class="perfil-form" (ngSubmit)="onSubmit()" novalidate>
 
-      <section class="perfil-card" aria-labelledby="logros-heading">
-        <h2 id="logros-heading" class="perfil-section-title">Logros</h2>
-        <ul class="perfil-logros-grid" role="list">
-          @for (logro of logros; track logro.name) {
-            <li class="perfil-logro-item" [class.perfil-logro-unlocked]="logro.unlocked"
-              [attr.aria-label]="logro.name + (logro.unlocked ? ' — desbloqueado' : ' — bloqueado')">
-              <span class="perfil-logro-icon" aria-hidden="true">{{ logro.icon }}</span>
-              <span class="perfil-logro-name">{{ logro.name }}</span>
-            </li>
-          }
-        </ul>
-      </section>
-
-    </div>
-
-    <section class="perfil-card" aria-labelledby="xuxemons-heading">
-      <div class="perfil-card-header">
-        <h2 id="xuxemons-heading" class="perfil-section-title">Els meus xuxemons</h2>
-        <button class="perfil-ver-todos-btn" aria-label="Ver todos los Xuxemons">Ver todos</button>
-      </div>
-      <ul class="perfil-xuxemon-grid" role="list">
-        @for (x of xuxemons; track x.name) {
-          <li class="perfil-xuxemon-card" tabindex="0"
-            [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'">
-            <img [src]="x.img" [alt]="x.name" class="perfil-xuxemon-img" />
-            <p class="perfil-xuxemon-name">{{ x.name }}</p>
-            <span class="perfil-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
-            <div class="perfil-xuxemon-stats" aria-hidden="true">
-              <div class="perfil-stat-row">
-                <span>Nivel</span>
-                <span class="perfil-val">{{ x.level }}</span>
-              </div>
-              <div class="perfil-stat-row">
-                <span>Vida</span>
-                <span class="perfil-val">{{ x.hp }}%</span>
-              </div>
-              <div class="perfil-hp-bar" role="progressbar"
-                [attr.aria-valuenow]="x.hp" aria-valuemin="0" aria-valuemax="100"
-                [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'">
-                <div class="perfil-hp-fill" [style.width.%]="x.hp"></div>
-              </div>
-            </div>
-          </li>
+        @if (formSubmitted && form.invalid) {
+          <div role="alert" aria-live="polite" class="perfil-alert perfil-alert-error">
+            <span aria-hidden="true">⚠</span> Por favor, revisa los campos marcados antes de guardar.
+          </div>
         }
-      </ul>
-    </section>
+        @if (guardadoOk) {
+          <div role="alert" class="perfil-alert perfil-alert-ok">
+            ✅ Cambios guardados correctamente.
+          </div>
+        }
+        @if (errorGuardado) {
+          <div role="alert" class="perfil-alert perfil-alert-error">
+            <span aria-hidden="true">⚠</span> Error al guardar los cambios.
+          </div>
+        }
 
-    <section class="perfil-card" aria-labelledby="actividad-heading">
-      <h2 id="actividad-heading" class="perfil-section-title">Actividad reciente</h2>
-      <article class="perfil-notif perfil-notif-blue">
-        <p class="perfil-notif-title">¡Has capturado un xuxemon!</p>
-        <p class="perfil-notif-body">Elconchudo se ha unido a tu equipo</p>
-        <time class="perfil-notif-time" datetime="PT2H">Hace 2 horas</time>
-      </article>
-      <article class="perfil-notif perfil-notif-green">
-        <p class="perfil-notif-title">¡Has ganado una batalla!</p>
-        <p class="perfil-notif-body">Victoria contra Marc</p>
-        <time class="perfil-notif-time" datetime="PT5H">Hace 5 horas</time>
-      </article>
+        <div class="perfil-form-row">
+          <div class="perfil-form-group">
+            <label for="p-nombre" class="perfil-label">Nombre <span aria-hidden="true" class="perfil-required">*</span></label>
+            <input id="p-nombre" type="text" class="perfil-input" placeholder="Tu nombre"
+              formControlName="nombre" autocomplete="given-name"
+              [attr.aria-invalid]="isInvalid('nombre') ? 'true' : 'false'" />
+            @if (isInvalid('nombre')) {
+              <p class="perfil-error-msg" role="alert">El nombre es obligatorio</p>
+            }
+          </div>
+          <div class="perfil-form-group">
+            <label for="p-apellidos" class="perfil-label">Apellidos <span aria-hidden="true" class="perfil-required">*</span></label>
+            <input id="p-apellidos" type="text" class="perfil-input" placeholder="Tus apellidos"
+              formControlName="apellidos" autocomplete="family-name"
+              [attr.aria-invalid]="isInvalid('apellidos') ? 'true' : 'false'" />
+            @if (isInvalid('apellidos')) {
+              <p class="perfil-error-msg" role="alert">Los apellidos son obligatorios</p>
+            }
+          </div>
+        </div>
+
+        <div class="perfil-form-group">
+          <label class="perfil-label">Tu identificador</label>
+          <div class="perfil-input-wrap">
+            <input type="text" class="perfil-input" [value]="identificador" readonly />
+            <button type="button" class="perfil-copy-btn" (click)="copiarIdentificador()" aria-label="Copiar identificador">📋</button>
+          </div>
+          <p class="perfil-hint">Este es tu ID de acceso. Úsalo para iniciar sesión.</p>
+        </div>
+
+        <div class="perfil-form-group">
+          <label for="p-correo" class="perfil-label">Correo electrónico <span aria-hidden="true" class="perfil-required">*</span></label>
+          <input id="p-correo" type="email" class="perfil-input" placeholder="entrenador@xuxemons.com"
+            formControlName="correo" autocomplete="email"
+            [attr.aria-invalid]="isInvalid('correo') ? 'true' : 'false'" />
+          @if (isInvalid('correo')) {
+            <p class="perfil-error-msg" role="alert">Introduce un correo electrónico válido</p>
+          }
+        </div>
+
+        <div class="perfil-form-group">
+          <label for="p-contrasena" class="perfil-label">Nueva contraseña</label>
+          <div class="perfil-input-wrap">
+            <input id="p-contrasena" [type]="mostrarPassword ? 'text' : 'password'"
+              class="perfil-input" placeholder="Dejar en blanco para no cambiar"
+              formControlName="contrasena" autocomplete="new-password"
+              [attr.aria-invalid]="isInvalid('contrasena') ? 'true' : 'false'" />
+            <button type="button" class="perfil-copy-btn"
+              (click)="mostrarPassword = !mostrarPassword"
+              [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              {{ mostrarPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <p class="perfil-hint">Déjalo en blanco para mantener tu contraseña. Mínimo 6 caracteres.</p>
+          @if (isInvalid('contrasena')) {
+            <p class="perfil-error-msg" role="alert">La contraseña debe tener al menos 6 caracteres</p>
+          }
+        </div>
+
+        <div class="perfil-actions">
+          <button type="submit" class="perfil-btn perfil-btn-guardar" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+          <button type="button" class="perfil-btn perfil-btn-cerrar" (click)="cerrarSesion()">Cerrar sesión</button>
+          <button type="button" class="perfil-btn perfil-btn-eliminar" (click)="eliminarCuenta()">Eliminar cuenta</button>
+        </div>
+
+      </form>
     </section>
 
   </main>

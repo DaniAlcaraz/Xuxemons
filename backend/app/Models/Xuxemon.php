@@ -21,14 +21,13 @@ class Xuxemon extends Model
         return $this->save();
     }
 
-    // Un xuxemon puede estar en la colección de muchos usuarios
     public function usuarios()
     {
         return $this->belongsToMany(
             User::class,
-            'coleccion',
+            'xuxemon_usuario',
             'xuxemon_id',
-            'usuario_id',
+            'user_identificador',
             'IDxuxemon',
             'identificador'
         );

@@ -178,15 +178,18 @@ export class Admin implements OnInit {
       next: (data) => {
         this.xuxemons = data;
         if (data.length > 0) this.adminDescubrirId = data[0].IDxuxemon;
+        this.cdr.detectChanges();
       }
     });
   }
 
   cargarXuxemonsUsuario(): void {
     if (!this.usuarioSeleccionado) return;
-    this.http.get<any[]>(`${this.apiUrl}/admin/usuarios/${this.usuarioSeleccionado}/xuxemons`, { headers: this.headers() }).subscribe({
+    const userId = encodeURIComponent(this.usuarioSeleccionado);
+    this.http.get<any[]>(`${this.apiUrl}/admin/usuarios/${userId}/xuxemons`, { headers: this.headers() }).subscribe({
       next: (data) => {
-        this.userXuxemonIds = data.map(x => x.IDxuxemon);
+        this.userXuxemonIds = data.map(x => Number(x.IDxuxemon));
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Error cargando xuxemons del usuario:', err)
     });
@@ -198,7 +201,7 @@ export class Admin implements OnInit {
 
   const obsMochila = this.http.get<any[]>(`${this.apiUrl}/admin/mochila?user=${id}`, { headers: this.headers() });
   const obsXuxemons = this.http.get<any[]>(
-    `${this.apiUrl}/admin/usuarios/${this.usuarioSeleccionado}/xuxemons`,
+    `${this.apiUrl}/admin/usuarios/${id}/xuxemons`,
     { headers: this.headers() }
   ).pipe(catchError(() => of([])));  
 

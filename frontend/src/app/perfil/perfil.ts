@@ -1,109 +1,132 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../Services/auth.service';
-import { OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
-
-interface UserProfile {
-  name: string;
-  since: string;
-  location: string;
-  level: number;
-  xp: number;
-  xpMax: number;
-}
-
-interface Stat {
-  xuxemons: number;
-  batallas: number;
-  victorias: number;
-  derrotas: number;
-  amigos: number;
-  dias: number;
-}
-
-interface Logro {
-  icon: string;
-  name: string;
-  unlocked: boolean;
-}
-
-interface Xuxemon {
-  name: string;
-  type: string;
-  level: number;
-  hp: number;
-  img: string;
-}
-
-interface NavItem {
-  icon: string;
-  label: string;
-  route: string;
-}
+interface NavItem { icon: string; label: string; route: string; }
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.css']
 })
 export class Perfil implements OnInit {
 
-  user: UserProfile = {
-    name: '',
-    since: '',
-    location: '',
-    level: 18,
-    xp: 4111,
-    xpMax: 5000
-  };
+  form: FormGroup;
+  mostrarPassword = false;
+  formSubmitted = false;
+  isSubmitting = false;
+  guardadoOk = false;
+  errorGuardado = false;
+  identificador = '';
 
-
-  constructor(private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.form = this.fb.group({
+      nombre:     ['', Validators.required],
+      apellidos:  ['', Validators.required],
+      correo:     ['', [Validators.required, Validators.email]],
+      contrasena: ['', [Validators.minLength(6)]]
+    });
+  }
 
   ngOnInit(): void {
     const userData = this.authService.obtenerUsuario();
     if (userData) {
-      this.user.name = userData.nombre;
+      this.identificador = userData.identificador;
+      this.form.patchValue({
+        nombre:    userData.nombre,
+        apellidos: userData.apellidos,
+        correo:    userData.email
+      });
     }
   }
 
+  isInvalid(field: string): boolean {
+    const control = this.form.get(field);
+    return !!(control?.invalid && (control?.touched || this.formSubmitted));
+  }
 
-  stats: Stat = {
-    xuxemons: 5,
-    batallas: 15,
-    victorias: 12,
-    derrotas: 3,
-    amigos: 5,
-    dias: 40
-  };
+  copiarIdentificador(): void {
+    navigator.clipboard.writeText(this.identificador);
+  }
 
-  logros: Logro[] = [
-    { icon: '🦀', name: 'Primer Xuxemon',  unlocked: true  },
-    { icon: '⚔️', name: '100 batallas',    unlocked: true  },
-    { icon: '🗺️', name: 'Explorador',      unlocked: true  },
-    { icon: '👥', name: 'Amigo sociable',  unlocked: false },
-    { icon: '🎓', name: 'Maestro',         unlocked: false },
-    { icon: '🏆', name: 'Leyenda',         unlocked: false }
-  ];
+  onSubmit(): void {
+    this.formSubmitted = true;
+    this.guardadoOk = false;
+    this.errorGuardado = false;
+    this.form.markAllAsTouched();
 
-  xuxemons: Xuxemon[] = [
-    { name: 'Elconchudo', type: 'Agua',   level: 15, hp: 100, img: 'https://em-content.zobj.net/source/apple/354/crab_1f980.png'    },
-    { name: 'Oreo',       type: 'Tierra', level: 12, hp: 50,  img: 'https://em-content.zobj.net/source/apple/354/cow_1f404.png'      },
-    { name: 'Beeboo',     type: 'Aire',   level: 10, hp: 78,  img: 'https://em-content.zobj.net/source/apple/354/honeybee_1f41d.png' }
-  ];
+    if (this.form.valid) {
+      this.isSubmitting = true;
+      this.cdr.detectChanges();
+
+      const datos: any = {
+        nombre:    this.form.value.nombre,
+        apellidos: this.form.value.apellidos,
+        email:     this.form.value.correo,
+      };
+      if (this.form.value.contrasena) {
+        datos.password = this.form.value.contrasena;
+      }
+
+      this.authService.actualizarPerfil(datos).subscribe({
+        next: (res) => {
+          this.isSubmitting = false;
+          this.authService.guardarUsuario(res.user);
+          this.guardadoOk = true;
+          this.form.patchValue({ contrasena: '' });
+          this.formSubmitted = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.isSubmitting = false;
+          this.errorGuardado = true;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  cerrarSesion(): void {
+    this.authService.logout().subscribe({
+      next: () => { this.authService.cerrarSesion(); this.router.navigate(['/login']); },
+      error: () => { this.authService.cerrarSesion(); this.router.navigate(['/login']); }
+    });
+  }
+
+  eliminarCuenta(): void {
+    if (confirm('¿Estás totalmente seguro de que quieres eliminar tu cuenta?')) {
+      this.authService.eliminarCuenta().subscribe({
+        next: () => {
+          alert('Tu cuenta ha sido eliminada correctamente.');
+          this.authService.cerrarSesion();
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          console.error('Error al intentar eliminar:', error);
+          alert('Hubo un error al procesar tu baja. Inténtalo de nuevo más tarde.');
+        }
+      });
+    }
+  }
 
   navItems: NavItem[] = [
-    { icon: '🏠', label: 'Inicio',    route: '/dashboard' },
+    { icon: '🏠', label: 'Inicio',   route: '/dashboard' },
     { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
     { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
     { icon: '👥', label: 'Amigos',   route: '/amigos'    },
     { icon: '⚔️', label: 'Batallas', route: '/batallas'  },
     { icon: '💬', label: 'Chat',     route: '/chat'      },
     { icon: '👤', label: 'Perfil',   route: '/perfil'    },
-    { icon: '🛡️', label: 'Admin',   route: '/admin'     }
+    { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
 }

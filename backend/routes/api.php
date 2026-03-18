@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Colección de Xuxemons del usuario
+    Route::get('/xuxemons', [XuxemonController::class, 'index']); // Agregada ruta faltante
     Route::get('/xuxemons/me', [XuxemonController::class, 'misXuxemons']);
     Route::post('/xuxemons/{id}/evolucionar', [XuxemonController::class, 'subirNivel']);
 
