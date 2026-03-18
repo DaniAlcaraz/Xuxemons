@@ -14,9 +14,19 @@ class XuxemonController extends Controller
     }
 
     public function misXuxemons(Request $request)
-    {
-        return response()->json($request->user()->xuxemons);
-    }
+{
+    $xuxemons = $request->user()->xuxemons()->get()->map(function($x) {
+        return [
+            'IDxuxemon' => $x->IDxuxemon,
+            'nombre' => $x->nombre,
+            'tipo' => $x->tipo,
+            'tamano' => $x->pivot->tamano,
+            'xuxes_acumuladas' => $x->pivot->xuxes_acumuladas,
+            'archivo' => $x->archivo,
+        ];
+    });
+    return response()->json($xuxemons);
+}
 
     public function anadirXuxemon(Request $request)
     {
@@ -70,16 +80,54 @@ class XuxemonController extends Controller
             'xuxemon' => $xuxemon
         ]);
     }
+    //funcion para subir de nivel a los xuxemons
+  public function subirNivel(Request $request, $id)
+{
+    $user = $request->user();
+    
+    // Buscar el xuxemon en la colección del usuario
+    $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $id)->first();
+    
+    if (!$pivot) {
+        return response()->json(['error' => 'No tienes este Xuxemon.'], 404);
+    }
 
-    public function subirNivel($id) {
-        $xuxemon = Xuxemon::findOrFail($id);
-        
-        // Llamamos al método que creamos en el modelo
-        $xuxemon->evolucionar();
+    $tamanoActual = $pivot->pivot->tamano;
 
+    if ($tamanoActual === 'Grande') {
+        return response()->json(['error' => 'Este Xuxemon ya está en su tamaño máximo.'], 400);
+    }
+
+    // Xuxes necesarias según tamaño actual
+    $xuxesNecesarias = $tamanoActual === 'Pequeño' ? 3 : 5;
+
+    $xuxesAcumuladas = $pivot->pivot->xuxes_acumuladas + 1;
+
+    if ($xuxesAcumuladas >= $xuxesNecesarias) {
+        // Evolucionar
+        $nuevoTamano = $tamanoActual === 'Pequeño' ? 'Mediano' : 'Grande';
+        $user->xuxemons()->updateExistingPivot($id, [
+            'tamano' => $nuevoTamano,
+            'xuxes_acumuladas' => 0,
+        ]);
         return response()->json([
-            'message' => '¡El Xuxemon ha evolucionado!',
-            'xuxemon' => $xuxemon
-    ]);
+            'message' => '¡' . $pivot->nombre . ' ha evolucionado a ' . $nuevoTamano . '!',
+            'evolucionado' => true,
+            'tamano' => $nuevoTamano,
+            'xuxes_acumuladas' => 0,
+        ]);
+    } else {
+        // Acumular xuxe
+        $user->xuxemons()->updateExistingPivot($id, [
+            'xuxes_acumuladas' => $xuxesAcumuladas,
+        ]);
+        $restantes = $xuxesNecesarias - $xuxesAcumuladas;
+        return response()->json([
+            'message' => 'Xuxe añadida. Faltan ' . $restantes . ' xuxes para evolucionar.',
+            'evolucionado' => false,
+            'tamano' => $tamanoActual,
+            'xuxes_acumuladas' => $xuxesAcumuladas,
+        ]);
+    }
 }
 }

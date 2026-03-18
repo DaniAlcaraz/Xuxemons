@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
+
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
 export type TamanoXuxemon = 'Pequeño' | 'Mediano' | 'Grande';
 
@@ -13,30 +13,30 @@ export interface Xuxemon {
   nombre: string;
   tipo: TipoXuxemon;
   tamano: TamanoXuxemon;
-  img: string;
+  xuxes_acumuladas: number;
+  archivo: string;
 }
 
 interface NavItem { icon: string; label: string; route: string; }
 
 const EMOJIS: Record<string, string> = {
-  'Apleki':       '🐌', 'Avecrem':      '🐔', 'Bambino':      '🦌',
-  'Beeboo':       '🐝', 'Boo-hoot':     '🦉', 'Cabrales':     '🐐',
-  'Catua':        '🦜', 'Catyuska':     '🕊️', 'Chapapá':      '🐸',
-  'Chopper':      '🐱', 'Cuellilargui': '🦕', 'Deskangoo':    '🦘',
-  'Doflamingo':   '🦩', 'Dolly':        '🐑', 'Elconchudo':   '🦀',
-  'Eldientes':    '🦛', 'Elgominas':    '🦔', 'Flipper':      '🐬',
-  'Floppi':       '🐒', 'Horseluis':    '🦄', 'Krokolisko':   '🐊',
-  'Kurama':       '🦊', 'Ladybug':      '🐞', 'Lengualargui': '🦎',
-  'Medusation':   '🪼', 'Meekmeek':     '🐭', 'Megalo':       '🦈',
-  'Mocha':        '🐳', 'Murcimurci':   '🦇', 'Nemo':         '🐠',
-  'Oinkcelot':    '🐷', 'Oreo':         '🐄', 'Otto':         '🦦',
-  'Pinchimott':   '🦀', 'Pollis':       '🐣', 'Posón':        '🦋',
-  'Quakko':       '🦆', 'Rajoy':        '🕊️', 'Rawlion':      '🦁',
-  'Rexxo':        '🦖', 'Ron':          '🐈', 'Sesssi':       '🐍',
-  'Shelly':       '🐢', 'Sirucco':      '🦅', 'Torcas':       '🦫',
-  'Trompeta':     '🐦', 'Trompi':       '🐘', 'Tux':          '🐧',
+  'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌',
+  'Beeboo': '🐝', 'Boo-hoot': '🦉', 'Cabrales': '🐐',
+  'Catua': '🦜', 'Catyuska': '🕊️', 'Chapapá': '🐸',
+  'Chopper': '🐱', 'Cuellilargui': '🦕', 'Deskangoo': '🦘',
+  'Doflamingo': '🦩', 'Dolly': '🐑', 'Elconchudo': '🦀',
+  'Eldientes': '🦛', 'Elgominas': '🦔', 'Flipper': '🐬',
+  'Floppi': '🐒', 'Horseluis': '🦄', 'Krokolisko': '🐊',
+  'Kurama': '🦊', 'Ladybug': '🐞', 'Lengualargui': '🦎',
+  'Medusation': '🪼', 'Meekmeek': '🐭', 'Megalo': '🦈',
+  'Mocha': '🐳', 'Murcimurci': '🦇', 'Nemo': '🐠',
+  'Oinkcelot': '🐷', 'Oreo': '🐄', 'Otto': '🦦',
+  'Pinchimott': '🦀', 'Pollis': '🐣', 'Posón': '🦋',
+  'Quakko': '🦆', 'Rajoy': '🕊️', 'Rawlion': '🦁',
+  'Rexxo': '🦖', 'Ron': '🐈', 'Sesssi': '🐍',
+  'Shelly': '🐢', 'Sirucco': '🦅', 'Torcas': '🦫',
+  'Trompeta': '🐦', 'Trompi': '🐘', 'Tux': '🐧',
 };
-
 
 @Component({
   selector: 'app-xuxemons',
@@ -45,7 +45,7 @@ const EMOJIS: Record<string, string> = {
   templateUrl: './xuxemons.html',
   styleUrls: ['./xuxemons.css']
 })
-export class Xuxemons {
+export class Xuxemons implements OnInit {
 
   searchQuery = '';
   filterTipo: string = 'Todos';
@@ -58,42 +58,49 @@ export class Xuxemons {
   xuxemons: Xuxemon[] = [];
   userOwnedIds: number[] = [];
   cargando = true;
+  mensajes: Record<number, string> = {};
 
-  constructor(private http: HttpClient, private authService: AuthService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-ngOnInit(): void {
-  console.log('Token:', this.authService.obtenerToken());
-  this.cargarDatos();
-}
+  ngOnInit(): void {
+    const saved = localStorage.getItem('xuxemon_mensajes');
+    if (saved) this.mensajes = JSON.parse(saved);
+    this.cargarDatos();
+  }
 
   cargarDatos(): void {
-  const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-  this.cargando = true;
-  
-  this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
-    next: (fullList) => {
-      console.log('Catálogo xuxemons:', fullList); 
-      this.xuxemons = fullList;
-      this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
-        next: (myList) => {
-          console.log('Mis xuxemons:', myList); 
-          this.userOwnedIds = myList.map(x => x.IDxuxemon);
-          this.cargando = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error /xuxemons/me:', err);  
-          this.cargando = false;
-          this.cdr.detectChanges();
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Error /xuxemons:', err);  
-      this.cargando = false;
-    }
-  });
-}
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.cargando = true;
+
+    this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
+      next: (fullList) => {
+        this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
+          next: (myList) => {
+            const myMap = new Map(myList.map(x => [x.IDxuxemon, x]));
+
+            this.xuxemons = fullList.map(x => {
+              const mine = myMap.get(x.IDxuxemon);
+              return {
+                ...x,
+                tamano: mine ? mine.tamano : x.tamano,
+                xuxes_acumuladas: mine ? mine.xuxes_acumuladas : 0,
+              };
+            });
+
+            this.userOwnedIds = myList.map(x => x.IDxuxemon);
+            this.cargando = false;
+            this.cdr.detectChanges();
+          },
+          error: () => { this.cargando = false; this.cdr.detectChanges(); }
+        });
+      },
+      error: () => { this.cargando = false; this.cdr.detectChanges(); }
+    });
+  }
 
   isDiscovered(id: number): boolean {
     return this.userOwnedIds.includes(id);
@@ -103,7 +110,14 @@ ngOnInit(): void {
     return EMOJIS[nombre] ?? '🥚';
   }
 
-  // ── Computed 
+  getMensaje(id: number): string {
+    return this.mensajes[id] ?? '';
+  }
+
+  xuxesNecesarias(tamano: TamanoXuxemon): number {
+    return tamano === 'Pequeño' ? 3 : 5;
+  }
+
   get totalXuxemons(): number { return this.xuxemons.length; }
   get descubiertos(): number { return this.userOwnedIds.length; }
 
@@ -118,7 +132,6 @@ ngOnInit(): void {
     return list;
   }
 
-  // ── Evolución 
   nextTamano(t: TamanoXuxemon): TamanoXuxemon | null {
     if (t === 'Pequeño') return 'Mediano';
     if (t === 'Mediano') return 'Grande';
@@ -129,8 +142,9 @@ ngOnInit(): void {
     const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
     this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
       next: (res) => {
-        console.log('Evolución exitosa:', res);
-        this.cargarDatos(); // Recargar para ver el nuevo tamaño
+        this.mensajes[xux.IDxuxemon] = res.message;
+        localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
+        this.cargarDatos();
       },
       error: (err) => console.error('Error al evolucionar:', err)
     });
@@ -146,15 +160,14 @@ ngOnInit(): void {
     return '⭐ Grande';
   }
 
-  // ── Nav ──────────────────────────────────────────────────────────────────────
   navItems: NavItem[] = [
-    { icon: '🏠', label: 'Inicio', route: '/dashboard' },
-    { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
-    { icon: '🎒', label: 'Mochila', route: '/mochila' },
-    { icon: '👥', label: 'Amigos', route: '/amigos' },
-    { icon: '⚔️', label: 'Batallas', route: '/batallas' },
-    { icon: '💬', label: 'Chat', route: '/chat' },
-    { icon: '👤', label: 'Perfil', route: '/perfil' },
-    { icon: '🛡️', label: 'Admin', route: '/admin' },
+    { icon: '🏠', label: 'Inicio',   route: '/dashboard' },
+    { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
+    { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
+    { icon: '👥', label: 'Amigos',   route: '/amigos'    },
+    { icon: '⚔️', label: 'Batallas', route: '/batallas'  },
+    { icon: '💬', label: 'Chat',     route: '/chat'      },
+    { icon: '👤', label: 'Perfil',   route: '/perfil'    },
+    { icon: '🛡️', label: 'Admin',    route: '/admin'     },
   ];
 }

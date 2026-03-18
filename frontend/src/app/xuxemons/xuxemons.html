@@ -53,47 +53,64 @@
         @for (x of filteredXuxemons; track x.IDxuxemon) {
         <li class="xuxedex-card" [class.discovered]="isDiscovered(x.IDxuxemon)" [class.undiscovered]="!isDiscovered(x.IDxuxemon)"
           [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
-          [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'" [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'"
+          [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'"
+          [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'"
           [attr.aria-label]="isDiscovered(x.IDxuxemon) ? x.nombre + ', tipo ' + x.tipo + ', ' + x.tamano : 'Xuxemon desconocido'"
           tabindex="0">
 
           @if (isDiscovered(x.IDxuxemon)) {
-          <!-- Badge tamaño -->
-          <span class="xuxedex-badge size-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
-            [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
-            {{ tamanoLabel(x.tamano) }}
-          </span>
 
-          <div class="xuxedex-img" aria-hidden="true" [class.size-pequeno]="x.tamano === 'Pequeño'"
-            [class.size-mediano]="x.tamano === 'Mediano'" [class.size-grande]="x.tamano === 'Grande'">
-            {{ getEmoji(x.nombre) }}
-          </div>
+            <span class="xuxedex-badge size-badge"
+              [class.tamano-pequeno]="x.tamano === 'Pequeño'"
+              [class.tamano-mediano]="x.tamano === 'Mediano'"
+              [class.tamano-grande]="x.tamano === 'Grande'">
+              {{ tamanoLabel(x.tamano) }}
+            </span>
 
-          <p class="xuxedex-name">{{ x.nombre }}</p>
+            <div class="xuxedex-img" aria-hidden="true"
+              [class.size-pequeno]="x.tamano === 'Pequeño'"
+              [class.size-mediano]="x.tamano === 'Mediano'"
+              [class.size-grande]="x.tamano === 'Grande'">
+              {{ getEmoji(x.nombre) }}
+            </div>
 
-          <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
-            {{ x.tipo }}
-          </span>
+            <p class="xuxedex-name">{{ x.nombre }}</p>
 
-          @if (canEvolve(x)) {
-          <button class="xuxedex-evolve-btn" (click)="evolucionar(x)" [attr.aria-label]="'Evolucionar ' + x.nombre">
-            ✨ Evolucionar
-          </button>
+            <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
+              {{ x.tipo }}
+            </span>
+
+            @if (canEvolve(x)) {
+              <div class="xux-progress-wrap">
+                <div class="xux-progress-bar"
+                  [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano)) * 100">
+                </div>
+              </div>
+              <span class="xux-progress-label">
+                {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano) }} xuxes
+              </span>
+              @if (getMensaje(x.IDxuxemon)) {
+                <span class="xux-msg">{{ getMensaje(x.IDxuxemon) }}</span>
+              }
+              <button class="xuxedex-evolve-btn" (click)="evolucionar(x)"
+                [attr.aria-label]="'Dar xuxe a ' + x.nombre">
+                🍬 Dar Xuxe
+              </button>
+            } @else {
+              <span class="xuxedex-max-badge">⭐ Máximo</span>
+            }
+
           } @else {
-          <span class="xuxedex-max-badge">⭐ Máximo</span>
-          }
-
-          } @else {
-          <div class="xuxedex-lock" aria-hidden="true">🔒</div>
-          <p class="xuxedex-name unknown">???</p>
-          <span class="xuxedex-type-badge badge-unknown">???</span>
+            <div class="xuxedex-lock" aria-hidden="true">🔒</div>
+            <p class="xuxedex-name unknown">???</p>
+            <span class="xuxedex-type-badge badge-unknown">???</span>
           }
         </li>
         }
       </ul>
 
       @if (filteredXuxemons.length === 0) {
-      <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
+        <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
       }
     </section>
 

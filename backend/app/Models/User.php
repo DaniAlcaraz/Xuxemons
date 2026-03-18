@@ -45,8 +45,16 @@ class User extends Authenticatable
     }
 
     public function xuxemons() {
-        return $this->belongsToMany(Xuxemon::class, 'xuxemon_usuario', 'user_identificador', 'xuxemon_id')
-                    ->withTimestamps();
-    }
+    return $this->belongsToMany(
+        Xuxemon::class,
+        'xuxemon_usuario',
+        'user_identificador',
+        'xuxemon_id'
+    )
+    ->withPivot('tamano', 'xuxes_acumuladas')
+    ->withTimestamps();
+}
+
+    
 
 }
