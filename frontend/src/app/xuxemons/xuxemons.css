@@ -1,3 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* ── Buscador ── */
+.mochila-search-section {
+  width: 100%;
+}
+
+.mochila-search-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid #d0d4f0;
+  padding: 10px 16px;
+  gap: 10px;
+  box-shadow: 0 2px 10px rgba(100, 120, 200, 0.08);
+}
+
+.mochila-search-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.mochila-search-input {
+  border: none;
+  outline: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f0f1e;
+  background: transparent;
+  width: 100%;
+}
+
+.mochila-search-input::placeholder {
+  color: #a0a4c0;
+  font-weight: 600;
+}
+
+/* ── Contador ── */
+.xuxedex-counter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid #d0d4f0;
+  padding: 14px 20px;
+  box-shadow: 0 2px 10px rgba(100, 120, 200, 0.08);
+}
+
+.xuxedex-counter-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #505070;
+}
+
+.xuxedex-counter-badge {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #6c7fe8;
+  background: #eef1fb;
+  border-radius: 20px;
+  padding: 4px 18px;
+}
+
+/* ── Filtros ── */
+.mochila-categories {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mochila-cat-btn {
+  padding: 8px 18px;
+  border-radius: 30px;
+  border: 2px solid #d0d4f0;
+  background: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #505070;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.mochila-cat-btn.active,
+.mochila-cat-btn:hover {
+  background: #eef1fb;
+  color: #3d4faa;
+  border-color: #6c7fe8;
+}
+
+.xux-tipo-btn.btn-tierra.active { background: #e8f5e9; color: #2e7d32; border-color: #66bb6a; }
+.xux-tipo-btn.btn-aire.active   { background: #e0f7fa; color: #00695c; border-color: #4dd0e1; }
+.xux-tipo-btn.btn-agua.active   { background: #e3f2fd; color: #1565c0; border-color: #64b5f6; }
+
+/* ── Grid Xuxedex ── */
+.xuxedex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Carta ── */
+.xuxedex-card {
+  background: #f8f9fe;
+  border: 2px solid #d0d4f0;
+  border-radius: 18px;
+  padding: 16px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  transition: transform 0.18s, box-shadow 0.18s;
+  cursor: default;
+}
+
+.xuxedex-card.discovered {
+  background: #fff;
+  border-color: #b0b8f0;
+  box-shadow: 0 2px 12px rgba(100, 120, 200, 0.10);
+}
+
+.xuxedex-card.discovered:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(100, 120, 200, 0.18);
+}
+
+.xuxedex-card:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Tipos */
+.xuxedex-card.type-tierra { border-color: #a5d6a7; }
+.xuxedex-card.type-aire   { border-color: #80deea; }
+.xuxedex-card.type-agua   { border-color: #90caf9; }
+
+/* No descubierto */
+.xuxedex-card.undiscovered {
+  background: #f0f0f8;
+  border-color: #d0d4f0;
+  opacity: 0.7;
+}
+
+/* ── Badge tamaño ── */
+.xuxedex-badge {
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-bottom: 2px;
+}
+
+.tamano-pequeno { background: #fffde7; color: #f57f17; border: 1.5px solid #ffe082; }
+.tamano-mediano { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
+.tamano-grande  { background: #fff8e1; color: #e65100; border: 1.5px solid #ffcc80; }
+
+/* ── Emoji imagen ── */
+.xuxedex-img {
+  line-height: 1;
+  margin: 4px 0 2px;
+  transition: transform 0.18s;
+}
+
+.xuxedex-card.discovered:hover .xuxedex-img {
+  transform: scale(1.12);
+}
+
+.size-pequeno { font-size: 36px; }
+.size-mediano { font-size: 46px; }
+.size-grande  { font-size: 58px; }
+
+/* ── Nombre ── */
+.xuxedex-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: #0f0f1e;
+  margin: 0;
+  text-align: center;
+}
+
+.xuxedex-name.unknown {
+  color: #a0a4c0;
+  letter-spacing: 2px;
+}
+
+/* ── Badge tipo ── */
+.xuxedex-type-badge {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 20px;
+  padding: 3px 12px;
+  margin-top: 2px;
+}
+
+.badge-tierra  { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
+.badge-aire    { background: #e0f7fa; color: #00695c; border: 1.5px solid #80deea; }
+.badge-agua    { background: #e3f2fd; color: #1565c0; border: 1.5px solid #90caf9; }
+.badge-unknown { background: #f0f0f8; color: #a0a4c0; border: 1.5px solid #d0d4f0; }
+
+/* ── Lock (no descubierto) ── */
+.xuxedex-lock {
+  font-size: 32px;
+  margin: 10px 0 4px;
+  opacity: 0.4;
+}
+
+/* ── Botón evolucionar ── */
+.xuxedex-evolve-btn {
+  margin-top: 6px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #6c7fe8, #8b5fd4);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: opacity 0.18s;
+  width: 100%;
+}
+
+.xuxedex-evolve-btn:hover { opacity: 0.85; }
+
+/* ── Badge máximo ── */
+.xuxedex-max-badge {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  background: #fff8e1;
+  color: #e65100;
+  border: 1.5px solid #ffcc80;
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-top: 4px;
+}
+
+/* ── Sin resultados ── */
+.xuxedex-empty {
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #a0a4c0;
+  padding: 32px 0;
+  margin: 0;
+}
+
 /* ── Enfermedad ── */
 .xuxedex-card.sick {
   border: 2px solid #ef9a9a !important;
