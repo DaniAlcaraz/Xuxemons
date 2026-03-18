@@ -94,7 +94,7 @@
           </label>
           <div class="input-wrapper" [class.error]="getError('contrasena')">
             <input id="contrasena" [type]="mostrarPassword ? 'text' : 'password'"
-              class="field-input field-input-password" placeholder="••••••••"
+              class="field-input field-input-password" placeholder="••••••"
               formControlName="contrasena" autocomplete="new-password" aria-required="true"
               [attr.aria-invalid]="getError('contrasena') ? 'true' : 'false'"
               aria-describedby="contrasena-error contrasena-hint"/>
@@ -116,7 +116,7 @@
               }
             </button>
           </div>
-          <p id="contrasena-hint" class="field-hint">Mínimo 8 caracteres</p>
+          <p id="contrasena-hint" class="field-hint">Mínimo 6 caracteres</p>
           @if (getError('contrasena')) {
             <p id="contrasena-error" class="error-msg" role="alert" aria-live="polite">
               <span class="error-icon" aria-hidden="true">✕</span>
@@ -134,7 +134,7 @@
           </label>
           <div class="input-wrapper" [class.error]="getError('repetirContrasena')">
             <input id="repetirContrasena" [type]="mostrarRepetirPassword ? 'text' : 'password'"
-              class="field-input field-input-password" placeholder="••••••••"
+              class="field-input field-input-password" placeholder="••••••"
               formControlName="repetirContrasena" autocomplete="new-password" aria-required="true"
               [attr.aria-invalid]="getError('repetirContrasena') ? 'true' : 'false'"
               aria-describedby="repetirContrasena-error"/>
