@@ -184,17 +184,9 @@
   padding: 10px 12px;
 }
 
-.admin-table-row.rarity-raro {
-  background: #f0f4ff;
-}
-
-.admin-table-row.rarity-epico {
-  background: #faf0ff;
-}
-
-.admin-table-row.rarity-legendario {
-  background: linear-gradient(90deg, #fffde7, #fff8e1);
-}
+.admin-table-row.rarity-raro    { background: #f0f4ff; }
+.admin-table-row.rarity-epico   { background: #faf0ff; }
+.admin-table-row.rarity-legendario { background: linear-gradient(90deg, #fffde7, #fff8e1); }
 
 .admin-item-name {
   display: flex;
@@ -219,13 +211,8 @@
   color: #fff;
 }
 
-.kind-apilable {
-  background: #3d4faa;
-}
-
-.kind-simple {
-  background: #7b3fa0;
-}
+.kind-apilable { background: #3d4faa; }
+.kind-simple   { background: #7b3fa0; }
 
 .rareza-badge {
   font-size: 12px;
@@ -235,31 +222,17 @@
   text-transform: capitalize;
 }
 
-.rareza-común {
-  background: #e0e4f8;
-  color: #3d4faa;
-}
-
-.rareza-raro {
-  background: #dceeff;
-  color: #1565c0;
-}
-
-.rareza-épico {
-  background: #f3e5ff;
-  color: #7b1fa2;
-}
-
-.rareza-legendario {
-  background: #fff8e1;
-  color: #e65100;
-}
+.rareza-común      { background: #e0e4f8; color: #3d4faa; }
+.rareza-raro       { background: #dceeff; color: #1565c0; }
+.rareza-épico      { background: #f3e5ff; color: #7b1fa2; }
+.rareza-legendario { background: #fff8e1; color: #e65100; }
 
 /* ── Forms grid ── */
 .admin-forms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  align-items: start;
 }
 
 .admin-form-card {
@@ -332,17 +305,9 @@
   cursor: not-allowed;
 }
 
-.btn-add {
-  background: linear-gradient(135deg, #2e7d32, #43a047);
-}
-
-.btn-remove {
-  background: linear-gradient(135deg, #c62828, #e53935);
-}
-
-.btn-neutral {
-  background: linear-gradient(135deg, #3d4faa, #6042a6);
-}
+.btn-add     { background: linear-gradient(135deg, #2e7d32, #43a047); }
+.btn-remove  { background: linear-gradient(135deg, #c62828, #e53935); }
+.btn-neutral { background: linear-gradient(135deg, #3d4faa, #6042a6); }
 
 /* ── Msg ── */
 .admin-msg {
@@ -370,68 +335,18 @@
   border: 1.5px solid transparent;
 }
 
-.pill-discovered {
-  background: #f0f4ff;
-  color: #3d4faa;
-  border-color: #b0bbee;
-}
-
-.pill-hidden {
-  background: #f0f0f4;
-  color: #aaaacc;
-  border: 1.5px dashed #ccccdd;
-}
-
-.type-tierra {
-  border-color: #6d4c41;
-  color: #4e342e;
-  background: #efebe9;
-}
-
-.type-aire {
-  border-color: #1565c0;
-  color: #0d47a1;
-  background: #e3f2fd;
-}
-
-.type-agua {
-  border-color: #00695c;
-  color: #004d40;
-  background: #e0f2f1;
-}
+.pill-discovered { background: #f0f4ff; color: #3d4faa; border-color: #b0bbee; }
+.pill-hidden     { background: #f0f0f4; color: #aaaacc; border: 1.5px dashed #ccccdd; }
+.type-tierra     { border-color: #6d4c41; color: #4e342e; background: #efebe9; }
+.type-aire       { border-color: #1565c0; color: #0d47a1; background: #e3f2fd; }
+.type-agua       { border-color: #00695c; color: #004d40; background: #e0f2f1; }
 
 /* ── Trainers ── */
-.admin-trainers {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.admin-trainer-row {
-  background: #f4f6ff;
-  border-radius: 14px;
-  padding: 14px 16px;
-}
-
-.admin-trainer-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.admin-trainer-name {
-  font-size: 16px;
-  font-weight: 900;
-  color: #0f0f1e;
-  flex: 1;
-}
-
-.admin-trainer-count {
-  font-size: 14px;
-  font-weight: 700;
-  color: #707090;
-}
+.admin-trainers        { display: flex; flex-direction: column; gap: 14px; }
+.admin-trainer-row     { background: #f4f6ff; border-radius: 14px; padding: 14px 16px; }
+.admin-trainer-header  { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.admin-trainer-name    { font-size: 16px; font-weight: 900; color: #0f0f1e; flex: 1; }
+.admin-trainer-count   { font-size: 14px; font-weight: 700; color: #707090; }
 
 .admin-trainer-btn {
   padding: 7px 14px;
@@ -446,22 +361,10 @@
   transition: background 0.15s, color 0.15s;
 }
 
-.admin-trainer-btn:hover:not(:disabled) {
-  background: #3d4faa;
-  color: #fff;
-}
+.admin-trainer-btn:hover:not(:disabled) { background: #3d4faa; color: #fff; }
+.admin-trainer-btn:disabled             { opacity: 0.4; cursor: not-allowed; }
 
-.admin-trainer-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.admin-trainer-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
+.admin-trainer-chips  { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 
 .trainer-chip {
   font-size: 13px;
@@ -538,21 +441,20 @@
 }
 
 /* ── Responsive ── */
+@media (max-width: 900px) {
+  .admin-forms-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 600px) {
   .admin-table-head,
   .admin-table-row {
     grid-template-columns: 2fr 1fr 1fr;
   }
 
-  .admin-table-head,
-  .admin-table-row {
-    grid-template-columns: 2fr 1fr 1fr;
-  }
-
-
   .admin-table-head span:nth-child(4),
   .admin-table-row span:nth-child(4) {
     display: none;
   }
-  
 }
