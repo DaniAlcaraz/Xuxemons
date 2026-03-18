@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
 import { CommonModule } from '@angular/common';
-
+import { ChangeDetectorRef } from '@angular/core';
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
 export type TamanoXuxemon = 'Pequeño' | 'Mediano' | 'Grande';
 
@@ -59,32 +59,41 @@ export class Xuxemons {
   userOwnedIds: number[] = [];
   cargando = true;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService, private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-    this.cargarDatos();
-  }
+ngOnInit(): void {
+  console.log('Token:', this.authService.obtenerToken());
+  this.cargarDatos();
+}
 
   cargarDatos(): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-    this.cargando = true;
-    
-    // 1. Cargar catálogo completo
-    this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
-      next: (fullList) => {
-        this.xuxemons = fullList;
-        // 2. Cargar lo que tiene el usuario
-        this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
-          next: (myList) => {
-            this.userOwnedIds = myList.map(x => x.IDxuxemon);
-            this.cargando = false;
-          },
-          error: () => this.cargando = false
-        });
-      },
-      error: () => this.cargando = false
-    });
-  }
+  const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+  this.cargando = true;
+  
+  this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
+    next: (fullList) => {
+      console.log('Catálogo xuxemons:', fullList); 
+      this.xuxemons = fullList;
+      this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
+        next: (myList) => {
+          console.log('Mis xuxemons:', myList); 
+          this.userOwnedIds = myList.map(x => x.IDxuxemon);
+          this.cargando = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error /xuxemons/me:', err);  
+          this.cargando = false;
+          this.cdr.detectChanges();
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error /xuxemons:', err);  
+      this.cargando = false;
+    }
+  });
+}
 
   isDiscovered(id: number): boolean {
     return this.userOwnedIds.includes(id);
@@ -94,7 +103,7 @@ export class Xuxemons {
     return EMOJIS[nombre] ?? '🥚';
   }
 
-  // ── Computed ─────────────────────────────────────────────────────────────────
+  // ── Computed 
   get totalXuxemons(): number { return this.xuxemons.length; }
   get descubiertos(): number { return this.userOwnedIds.length; }
 
@@ -109,7 +118,7 @@ export class Xuxemons {
     return list;
   }
 
-  // ── Evolución ────────────────────────────────────────────────────────────────
+  // ── Evolución 
   nextTamano(t: TamanoXuxemon): TamanoXuxemon | null {
     if (t === 'Pequeño') return 'Mediano';
     if (t === 'Mediano') return 'Grande';
