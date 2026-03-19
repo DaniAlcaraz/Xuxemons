@@ -16,7 +16,7 @@ class AuthController extends Controller
             'nombre' => 'required|string|max:255', //obligatorio, tipo texto, maximo 255 caracteres
             'apellidos' => 'required|string|max:255',
             'email' => 'required|email|unique:usuarios', //obligatorio, tipo email, que no se repita
-            'password' => 'required|string|min:8|confirmed', //obligatorio, minimo 8 caracteres
+            'password' => 'required|string|min:6|confirmed', //obligatorio, minimo 8 caracteres
         ]);
 
         //Añadir mascara #NombreXXXX
