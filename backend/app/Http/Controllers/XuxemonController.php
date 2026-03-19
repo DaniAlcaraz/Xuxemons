@@ -84,10 +84,9 @@ class XuxemonController extends Controller
   public function subirNivel(Request $request, $id)
 {
     $user = $request->user();
-    
-    // Buscar el xuxemon en la colección del usuario
+
     $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $id)->first();
-    
+
     if (!$pivot) {
         return response()->json(['error' => 'No tienes este Xuxemon.'], 404);
     }
@@ -98,13 +97,14 @@ class XuxemonController extends Controller
         return response()->json(['error' => 'Este Xuxemon ya está en su tamaño máximo.'], 400);
     }
 
-    // Xuxes necesarias según tamaño actual
-    $xuxesNecesarias = $tamanoActual === 'Pequeño' ? 3 : 5;
+    // Leer configuración global
+    $xuxesNecesarias = $tamanoActual === 'Pequeño'
+        ? (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3)
+        : (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5);
 
     $xuxesAcumuladas = $pivot->pivot->xuxes_acumuladas + 1;
 
     if ($xuxesAcumuladas >= $xuxesNecesarias) {
-        // Evolucionar
         $nuevoTamano = $tamanoActual === 'Pequeño' ? 'Mediano' : 'Grande';
         $user->xuxemons()->updateExistingPivot($id, [
             'tamano' => $nuevoTamano,
@@ -115,9 +115,9 @@ class XuxemonController extends Controller
             'evolucionado' => true,
             'tamano' => $nuevoTamano,
             'xuxes_acumuladas' => 0,
+            'xuxes_necesarias' => $xuxesNecesarias,
         ]);
     } else {
-        // Acumular xuxe
         $user->xuxemons()->updateExistingPivot($id, [
             'xuxes_acumuladas' => $xuxesAcumuladas,
         ]);
@@ -127,7 +127,30 @@ class XuxemonController extends Controller
             'evolucionado' => false,
             'tamano' => $tamanoActual,
             'xuxes_acumuladas' => $xuxesAcumuladas,
+            'xuxes_necesarias' => $xuxesNecesarias,
         ]);
     }
+}
+
+
+public function getConfigXuxes()
+{
+    return response()->json([
+        'xuxes_pequeno_a_mediano' => (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3),
+        'xuxes_mediano_a_grande'  => (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5),
+    ]);
+}
+
+public function setConfigXuxes(Request $request)
+{
+    $request->validate([
+        'xuxes_pequeno_a_mediano' => 'required|integer|min:1|max:99',
+        'xuxes_mediano_a_grande'  => 'required|integer|min:1|max:99',
+    ]);
+
+    \App\Models\Configuracion::set('xuxes_pequeno_a_mediano', $request->xuxes_pequeno_a_mediano);
+    \App\Models\Configuracion::set('xuxes_mediano_a_grande',  $request->xuxes_mediano_a_grande);
+
+    return response()->json(['message' => 'Configuración actualizada correctamente.']);
 }
 }

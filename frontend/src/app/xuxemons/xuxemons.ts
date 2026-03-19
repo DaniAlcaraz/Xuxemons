@@ -59,6 +59,7 @@ export class Xuxemons implements OnInit {
   userOwnedIds: number[] = [];
   cargando = true;
   mensajes: Record<number, string> = {};
+  xuxesConfig = { pequeno_mediano: 3, mediano_grande: 5 };
 
   constructor(
     private http: HttpClient,
@@ -69,7 +70,24 @@ export class Xuxemons implements OnInit {
   ngOnInit(): void {
     const saved = localStorage.getItem('xuxemon_mensajes');
     if (saved) this.mensajes = JSON.parse(saved);
-    this.cargarDatos();
+    this.cargarConfig();
+  }
+
+  cargarConfig(): void {
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.get<any>(`${this.apiUrl}/configuracion/xuxes`, { headers }).subscribe({
+      next: (data) => {
+        this.xuxesConfig = {
+          pequeno_mediano: data.xuxes_pequeno_a_mediano,
+          mediano_grande:  data.xuxes_mediano_a_grande,
+        };
+        this.cargarDatos();
+      },
+      error: () => {
+        // Si falla usar valores por defecto y continuar
+        this.cargarDatos();
+      }
+    });
   }
 
   cargarDatos(): void {
@@ -81,7 +99,6 @@ export class Xuxemons implements OnInit {
         this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
           next: (myList) => {
             const myMap = new Map(myList.map(x => [x.IDxuxemon, x]));
-
             this.xuxemons = fullList.map(x => {
               const mine = myMap.get(x.IDxuxemon);
               return {
@@ -90,7 +107,6 @@ export class Xuxemons implements OnInit {
                 xuxes_acumuladas: mine ? mine.xuxes_acumuladas : 0,
               };
             });
-
             this.userOwnedIds = myList.map(x => x.IDxuxemon);
             this.cargando = false;
             this.cdr.detectChanges();
@@ -115,7 +131,9 @@ export class Xuxemons implements OnInit {
   }
 
   xuxesNecesarias(tamano: TamanoXuxemon): number {
-    return tamano === 'Pequeño' ? 3 : 5;
+    return tamano === 'Pequeño'
+      ? this.xuxesConfig.pequeno_mediano
+      : this.xuxesConfig.mediano_grande;
   }
 
   get totalXuxemons(): number { return this.xuxemons.length; }
@@ -144,7 +162,7 @@ export class Xuxemons implements OnInit {
       next: (res) => {
         this.mensajes[xux.IDxuxemon] = res.message;
         localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
-        this.cargarDatos();
+        this.cargarConfig();
       },
       error: (err) => console.error('Error al evolucionar:', err)
     });

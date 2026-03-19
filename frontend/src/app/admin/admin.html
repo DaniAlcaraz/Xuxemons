@@ -18,7 +18,8 @@
           <span class="admin-stat-label">Espacios mochila</span>
         </div>
         <div class="admin-stat-bar-wrap">
-          <div class="admin-stat-bar" [style.width.%]="porcentajeMochilaUsuario" [class.full]="mochilaLlenaUsuario"></div>
+          <div class="admin-stat-bar" [style.width.%]="porcentajeMochilaUsuario" [class.full]="mochilaLlenaUsuario">
+          </div>
         </div>
       </div>
       <div class="admin-stat-card">
@@ -75,16 +76,18 @@
           <span>Ítem</span><span>Tipo</span><span>Cantidad</span><span>Espacios</span>
         </div>
         @for (entry of mochilaUsuario; track entry.id) {
-          @if (entry.item.tipo === 'xuxe' || entry.item.tipo === 'vacuna') {
-          <div class="admin-table-row">
-            <span class="admin-item-name"><span>{{ getEmoji(entry.item.nombre) }}</span>{{ entry.item.nombre }}</span>
-            <span><span class="kind-badge" [class.kind-apilable]="entry.item.tipo === 'xuxe'" [class.kind-simple]="entry.item.tipo === 'vacuna'">
+        @if (entry.item.tipo === 'xuxe' || entry.item.tipo === 'vacuna') {
+        <div class="admin-table-row">
+          <span class="admin-item-name"><span>{{ getEmoji(entry.item.nombre) }}</span>{{ entry.item.nombre }}</span>
+          <span><span class="kind-badge" [class.kind-apilable]="entry.item.tipo === 'xuxe'"
+              [class.kind-simple]="entry.item.tipo === 'vacuna'">
               {{ entry.item.tipo === 'xuxe' ? 'Xuxe' : 'Vacuna' }}
             </span></span>
-            <span class="admin-qty">{{ entry.cantidad }}</span>
-            <span class="admin-qty">{{ entry.item.tipo === 'xuxe' ? (entry.cantidad / 5 | number:'1.0-0') : entry.cantidad }}</span>
-          </div>
-          }
+          <span class="admin-qty">{{ entry.cantidad }}</span>
+          <span class="admin-qty">{{ entry.item.tipo === 'xuxe' ? (entry.cantidad / 5 | number:'1.0-0') : entry.cantidad
+            }}</span>
+        </div>
+        }
         }
       </div>
     </section>
@@ -104,7 +107,8 @@
           </select>
           <label class="admin-label">Cantidad</label>
           <input class="admin-input" type="number" min="1" [(ngModel)]="adminXuxeQty" />
-          <button class="admin-btn btn-add" (click)="anadirXuxes()" [disabled]="mochilaLlenaUsuario || !usuarioSeleccionado">
+          <button class="admin-btn btn-add" (click)="anadirXuxes()"
+            [disabled]="mochilaLlenaUsuario || !usuarioSeleccionado">
             ✅ Añadir Xuxes
           </button>
         </div>
@@ -123,7 +127,8 @@
           </select>
           <label class="admin-label">Cantidad</label>
           <input class="admin-input" type="number" min="1" [(ngModel)]="adminVacunaQty" />
-          <button class="admin-btn btn-add" (click)="anadirVacuna()" [disabled]="mochilaLlenaUsuario || !usuarioSeleccionado">
+          <button class="admin-btn btn-add" (click)="anadirVacuna()"
+            [disabled]="mochilaLlenaUsuario || !usuarioSeleccionado">
             ✅ Añadir Vacuna
           </button>
         </div>
@@ -159,7 +164,8 @@
       <h2 class="dboard-section-title">Estado de la colección</h2>
       <div class="admin-pills">
         @for (x of xuxemons; track x.IDxuxemon) {
-        <span class="admin-pill" [class.pill-discovered]="isDiscovered(x.IDxuxemon)" [class.pill-hidden]="!isDiscovered(x.IDxuxemon)"
+        <span class="admin-pill" [class.pill-discovered]="isDiscovered(x.IDxuxemon)"
+          [class.pill-hidden]="!isDiscovered(x.IDxuxemon)"
           [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
           [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'"
           [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'">
@@ -178,14 +184,32 @@
           <label class="admin-label">Xuxemon</label>
           <select class="admin-select" [(ngModel)]="adminDescubrirId">
             @for (x of xuxemons; track x.IDxuxemon) {
-            <option [value]="x.IDxuxemon">{{ isDiscovered(x.IDxuxemon) ? '✅' : '🔒' }} #{{ x.IDxuxemon }} {{ x.nombre }}</option>
+            <option [value]="x.IDxuxemon">{{ isDiscovered(x.IDxuxemon) ? '✅' : '🔒' }} #{{ x.IDxuxemon }} {{ x.nombre }}
+            </option>
             }
           </select>
-          <button class="admin-btn btn-add" (click)="descubrirXuxemon()" [disabled]="noDescubiertos === 0">🔓 Descubrir</button>
-          <button class="admin-btn btn-neutral" (click)="descubrirAleatorio()" [disabled]="noDescubiertos === 0">🎲 Aleatorio</button>
+          <button class="admin-btn btn-add" (click)="descubrirXuxemon()" [disabled]="noDescubiertos === 0">🔓
+            Descubrir</button>
+          <button class="admin-btn btn-neutral" (click)="descubrirAleatorio()" [disabled]="noDescubiertos === 0">🎲
+            Aleatorio</button>
           <button class="admin-btn btn-remove" (click)="ocultarXuxemon()">🔒 Ocultar</button>
         </div>
         @if (adminXuxMsg) { <p class="admin-msg">{{ adminXuxMsg }}</p> }
+      </section>
+
+      <section class="dboard-card admin-form-card">
+        <h2 class="dboard-section-title">⚙️ Configuración de evolución</h2>
+        <p class="admin-form-desc">Cambia las xuxes necesarias para evolucionar a todos los Xuxemons.</p>
+        <div class="admin-form-fields">
+          <label class="admin-label">🥚 Pequeño → 🌿 Mediano</label>
+          <input class="admin-input" type="number" min="1" max="99" [(ngModel)]="configPequenoMediano" />
+          <label class="admin-label">🌿 Mediano → ⭐ Grande</label>
+          <input class="admin-input" type="number" min="1" max="99" [(ngModel)]="configMedianoGrande" />
+          <button class="admin-btn btn-add" (click)="guardarConfigXuxes()">
+            💾 Guardar configuración
+          </button>
+        </div>
+        @if (adminConfigMsg) { <p class="admin-msg">{{ adminConfigMsg }}</p> }
       </section>
 
     </div>
