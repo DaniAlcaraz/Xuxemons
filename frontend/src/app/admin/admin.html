@@ -165,11 +165,16 @@
       <div class="admin-pills">
         @for (x of xuxemons; track x.IDxuxemon) {
         <span class="admin-pill" [class.pill-discovered]="isDiscovered(x.IDxuxemon)"
-          [class.pill-hidden]="!isDiscovered(x.IDxuxemon)"
+          [class.pill-hidden]="!isDiscovered(x.IDxuxemon)" [class.pill-sick]="isDiscovered(x.IDxuxemon) && x.enfermo"
           [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
           [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'"
           [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'">
-          {{ isDiscovered(x.IDxuxemon) ? getEmoji(x.nombre) + ' ' + x.nombre : '🔒 ???' }}
+          @if (isDiscovered(x.IDxuxemon)) {
+          {{ getEmoji(x.nombre) }} {{ x.nombre }}
+          @if (x.enfermo) { <span>🤒</span> }
+          } @else {
+          🔒 ???
+          }
         </span>
         }
       </div>
@@ -195,6 +200,34 @@
           <button class="admin-btn btn-remove" (click)="ocultarXuxemon()">🔒 Ocultar</button>
         </div>
         @if (adminXuxMsg) { <p class="admin-msg">{{ adminXuxMsg }}</p> }
+      </section>
+
+      <section class="dboard-card admin-form-card">
+        <h2 class="dboard-section-title">🤒 Enfermar xuxemon</h2>
+        <p class="admin-form-desc">Aplica una enfermedad a un xuxemon del usuario seleccionado.</p>
+        <div class="admin-form-fields">
+          <label class="admin-label">Xuxemon</label>
+          <select class="admin-select" [(ngModel)]="adminEnfermarXuxId">
+            @for (x of xuxemons; track x.IDxuxemon) {
+            @if (isDiscovered(x.IDxuxemon)) {
+            <option [value]="x.IDxuxemon">
+              {{ getEmoji(x.nombre) }} {{ x.nombre }}
+              {{ x.enfermo ? '🤒' : '' }}
+            </option>
+            }
+            }
+          </select>
+          <label class="admin-label">Enfermedad</label>
+          <select class="admin-select" [(ngModel)]="adminEnfermedad">
+            <option value="Bajón de azúcar">🍬 Bajón de azúcar (+2 xuxes/nivel)</option>
+            <option value="Atracón">🍔 Atracón (no puede alimentarse)</option>
+            <option value="Sobredosis de sucre">🍭 Sobredosis de sucre</option>
+          </select>
+          <button class="admin-btn btn-remove" (click)="enfermarXuxemon()" [disabled]="!usuarioSeleccionado">
+            🤒 Enfermar
+          </button>
+        </div>
+        @if (adminEnfermarMsg) { <p class="admin-msg">{{ adminEnfermarMsg }}</p> }
       </section>
 
       <section class="dboard-card admin-form-card">

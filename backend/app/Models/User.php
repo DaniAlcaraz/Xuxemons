@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,16 +43,15 @@ class User extends Authenticatable
     }
 
     public function xuxemons() {
-    return $this->belongsToMany(
-        Xuxemon::class,
-        'xuxemon_usuario',
-        'user_identificador',
-        'xuxemon_id'
-    )
-    ->withPivot('tamano', 'xuxes_acumuladas')
-    ->withTimestamps();
-}
-
-    
-
+        return $this->belongsToMany(
+            Xuxemon::class,
+            'xuxemon_usuario',
+            'user_identificador',
+            'xuxemon_id',
+            'identificador',
+            'IDxuxemon'
+        )
+        ->withPivot('tamano', 'xuxes_acumuladas', 'enfermo', 'enfermedad')
+        ->withTimestamps();
+    }
 }

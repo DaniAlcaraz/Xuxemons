@@ -18,6 +18,8 @@ export interface Usuario { identificador: string; nombre: string; apellidos: str
 export interface Xuxemon {
   IDxuxemon: number; nombre: string; tipo: TipoXuxemon;
   tamano: TamanoXuxemon; img: string; discovered: boolean;
+  enfermo: boolean;        // ← AÑADIDO
+  enfermedad: string | null; // ← AÑADIDO
 }
 interface NavItem { icon: string; label: string; route: string; }
 
@@ -77,12 +79,17 @@ export class Admin implements OnInit {
   adminQuitarQty = 1;
   adminQuitarMsg = '';
 
-  configPequenoMediano = 3;
-  configMedianoGrande = 5;
-  adminConfigMsg = '';
+configPequenoMediano = 3;
+  configMedianoGrande  = 5;
+  adminConfigMsg       = '';
+
+  // ── Enfermar ──
+  adminEnfermarXuxId = 0;
+  adminEnfermedad    = 'Bajón de azúcar';
+  adminEnfermarMsg   = '';
 
   xuxemons: Xuxemon[] = [];
-  adminDescubrirId = 1;
+  adminDescubrirId = 0;
   adminXuxMsg = '';
 
   constructor(
@@ -147,7 +154,11 @@ export class Admin implements OnInit {
   cargarXuxemons(): void {
     this.http.get<any[]>(`${this.apiUrl}/xuxemons`, { headers: this.headers() }).subscribe({
       next: (data) => {
-        this.xuxemons = data;
+        this.xuxemons = data.map(x => ({
+          ...x,
+          enfermo:    x.enfermo    ?? false,
+          enfermedad: x.enfermedad ?? null,
+        }));
         if (data.length > 0) this.adminDescubrirId = data[0].IDxuxemon;
         this.cdr.detectChanges();
       }
@@ -160,6 +171,15 @@ export class Admin implements OnInit {
     this.http.get<any[]>(`${this.apiUrl}/admin/usuarios/${userId}/xuxemons`, { headers: this.headers() }).subscribe({
       next: (data) => {
         this.userXuxemonIds = data.map(x => Number(x.IDxuxemon));
+        if (data.length > 0) this.adminEnfermarXuxId = data[0].IDxuxemon; // ← AÑADIDO
+        // Actualizar estado enfermo en la lista
+        data.forEach(x => {
+          const found = this.xuxemons.find(xux => xux.IDxuxemon === Number(x.IDxuxemon));
+          if (found) {
+            found.enfermo    = x.pivot?.enfermo    ?? false;
+            found.enfermedad = x.pivot?.enfermedad ?? null;
+          }
+        });
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error cargando xuxemons del usuario:', err)
@@ -183,7 +203,8 @@ export class Admin implements OnInit {
           cantidad: e.cantidad,
           item: e.item
         }));
-        const xuxEntries = res.xuxemons.map(x => ({
+
+        const xuxEntries = res.xuxemons.map((x: any) => ({
           id: x.IDxuxemon,
           cantidad: 1,
           item: {
@@ -335,6 +356,27 @@ export class Admin implements OnInit {
         this.refrescarTodo();
       },
       error: (err) => this.adminXuxMsg = '⚠️ ' + (err.error?.error || 'Error al ocultar')
+    });
+  }
+
+  // ── Enfermar ── ← AÑADIDO
+  enfermarXuxemon(): void {
+    if (!this.usuarioSeleccionado) return;
+    this.adminEnfermarMsg = '';
+    const body = {
+      user_identificador: this.usuarioSeleccionado,
+      xuxemon_id:         Number(this.adminEnfermarXuxId),
+      enfermedad:         this.adminEnfermedad,
+    };
+    this.http.post<any>(`${this.apiUrl}/admin/xuxemons/enfermar`, body, { headers: this.headers() }).subscribe({
+      next: (res) => {
+        this.adminEnfermarMsg = '✅ ' + res.message;
+        this.refrescarTodo();
+      },
+      error: (err) => {
+        this.adminEnfermarMsg = '⚠️ ' + (err.error?.error || 'Error al enfermar');
+        this.cdr.detectChanges();
+      }
     });
   }
 

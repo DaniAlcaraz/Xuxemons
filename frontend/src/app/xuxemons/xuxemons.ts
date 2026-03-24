@@ -15,6 +15,9 @@ export interface Xuxemon {
   tamano: TamanoXuxemon;
   xuxes_acumuladas: number;
   archivo: string;
+  img: string;
+  enfermo: boolean;
+  enfermedad: string | null;
 }
 
 interface NavItem { icon: string; label: string; route: string; }
@@ -51,7 +54,7 @@ export class Xuxemons implements OnInit {
   filterTipo: string = 'Todos';
   filterTamano: string = 'Todos';
 
-  tiposFiltro = ['Todos', 'Tierra', 'Aire', 'Agua'];
+  tiposFiltro   = ['Todos', 'Tierra', 'Aire', 'Agua'];
   tamanosFiltro = ['Todos', 'Pequeño', 'Mediano', 'Grande'];
 
   private apiUrl = 'http://localhost:8000/api';
@@ -60,6 +63,14 @@ export class Xuxemons implements OnInit {
   cargando = true;
   mensajes: Record<number, string> = {};
   xuxesConfig = { pequeno_mediano: 3, mediano_grande: 5 };
+
+  // Vacunas en mochila
+  vacunasEnMochila: { item_id: number; nombre: string; cantidad: number }[] = [];
+
+  // Modal curar
+  xuxemonACurar: Xuxemon | null = null;
+  vacunaSeleccionada: number | null = null;
+  mensajeCura = '';
 
   constructor(
     private http: HttpClient,
@@ -74,8 +85,8 @@ export class Xuxemons implements OnInit {
   }
 
   cargarConfig(): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-    this.http.get<any>(`${this.apiUrl}/configuracion/xuxes`, { headers }).subscribe({
+    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
+    this.http.get<any>(${this.apiUrl}/configuracion/xuxes, { headers }).subscribe({
       next: (data) => {
         this.xuxesConfig = {
           pequeno_mediano: data.xuxes_pequeno_a_mediano,
@@ -91,20 +102,22 @@ export class Xuxemons implements OnInit {
   }
 
   cargarDatos(): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
     this.cargando = true;
 
-    this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
+    this.http.get<Xuxemon[]>(${this.apiUrl}/xuxemons, { headers }).subscribe({
       next: (fullList) => {
-        this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
+        this.http.get<any[]>(${this.apiUrl}/xuxemons/me, { headers }).subscribe({
           next: (myList) => {
             const myMap = new Map(myList.map(x => [x.IDxuxemon, x]));
             this.xuxemons = fullList.map(x => {
               const mine = myMap.get(x.IDxuxemon);
               return {
                 ...x,
-                tamano: mine ? mine.tamano : x.tamano,
+                tamano:           mine ? mine.tamano           : x.tamano,
                 xuxes_acumuladas: mine ? mine.xuxes_acumuladas : 0,
+                enfermo:          mine ? mine.enfermo          : false,
+                enfermedad:       mine ? mine.enfermedad       : null,
               };
             });
             this.userOwnedIds = myList.map(x => x.IDxuxemon);
@@ -115,6 +128,21 @@ export class Xuxemons implements OnInit {
         });
       },
       error: () => { this.cargando = false; this.cdr.detectChanges(); }
+    });
+
+    // Cargar vacunas de la mochila
+    const headers2 = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
+    this.http.get<any[]>(${this.apiUrl}/mochila, { headers: headers2 }).subscribe({
+      next: (mochila) => {
+        this.vacunasEnMochila = mochila
+          .filter(e => e.item?.tipo === 'vacuna')
+          .map(e => ({
+            item_id:  e.item_id,
+            nombre:   e.item.nombre,
+            cantidad: e.cantidad
+          }));
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -137,7 +165,7 @@ export class Xuxemons implements OnInit {
   }
 
   get totalXuxemons(): number { return this.xuxemons.length; }
-  get descubiertos(): number { return this.userOwnedIds.length; }
+  get descubiertos(): number  { return this.userOwnedIds.length; }
 
   get filteredXuxemons(): Xuxemon[] {
     let list = this.xuxemons;
@@ -145,7 +173,7 @@ export class Xuxemons implements OnInit {
       const q = this.searchQuery.toLowerCase();
       list = list.filter(x => this.isDiscovered(x.IDxuxemon) && x.nombre.toLowerCase().includes(q));
     }
-    if (this.filterTipo !== 'Todos') list = list.filter(x => x.tipo === this.filterTipo);
+    if (this.filterTipo   !== 'Todos') list = list.filter(x => x.tipo   === this.filterTipo);
     if (this.filterTamano !== 'Todos') list = list.filter(x => x.tamano === this.filterTamano);
     return list;
   }
@@ -156,26 +184,60 @@ export class Xuxemons implements OnInit {
     return null;
   }
 
+  canEvolve(xux: Xuxemon): boolean {
+    return this.isDiscovered(xux.IDxuxemon) && xux.tamano !== 'Grande' && !xux.enfermo;
+  }
+
   evolucionar(xux: Xuxemon): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-    this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
+    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
+    this.http.post<any>(${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar, {}, { headers }).subscribe({
       next: (res) => {
         this.mensajes[xux.IDxuxemon] = res.message;
         localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
         this.cargarConfig();
       },
-      error: (err) => console.error('Error al evolucionar:', err)
+      error: (err) => alert(err.error?.error || 'Error al evolucionar')
     });
-  }
-
-  canEvolve(xux: Xuxemon): boolean {
-    return this.isDiscovered(xux.IDxuxemon) && xux.tamano !== 'Grande';
   }
 
   tamanoLabel(t: TamanoXuxemon): string {
     if (t === 'Pequeño') return '🥚 Pequeño';
     if (t === 'Mediano') return '🌿 Mediano';
     return '⭐ Grande';
+  }
+
+  // ── Modal curar ──
+  abrirModalCurar(xux: Xuxemon): void {
+    this.xuxemonACurar      = xux;
+    this.vacunaSeleccionada = this.vacunasEnMochila.length > 0
+      ? this.vacunasEnMochila[0].item_id
+      : null;
+    this.mensajeCura = '';
+  }
+
+  cerrarModalCurar(): void {
+    this.xuxemonACurar      = null;
+    this.vacunaSeleccionada = null;
+    this.mensajeCura        = '';
+  }
+
+  curar(): void {
+    if (!this.xuxemonACurar || !this.vacunaSeleccionada) return;
+    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
+    this.http.post<any>(${this.apiUrl}/xuxemons/curar, {
+      xuxemon_id: this.xuxemonACurar.IDxuxemon,
+      item_id:    this.vacunaSeleccionada
+    }, { headers }).subscribe({
+      next: (res) => {
+        this.mensajeCura = '✅ ' + res.message;
+        this.cargarDatos();
+        setTimeout(() => this.cerrarModalCurar(), 1500);
+      },
+      error: (err) => {
+        this.mensajeCura = '⚠️ ' + (err.error?.error || 'Error al curar');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   navItems: NavItem[] = [

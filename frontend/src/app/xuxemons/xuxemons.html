@@ -51,7 +51,8 @@
 
       <ul class="xuxedex-grid" role="list" aria-label="Colección de xuxemons">
         @for (x of filteredXuxemons; track x.IDxuxemon) {
-        <li class="xuxedex-card" [class.discovered]="isDiscovered(x.IDxuxemon)" [class.undiscovered]="!isDiscovered(x.IDxuxemon)"
+        <li class="xuxedex-card" [class.discovered]="isDiscovered(x.IDxuxemon)"
+          [class.undiscovered]="!isDiscovered(x.IDxuxemon)" [class.sick]="isDiscovered(x.IDxuxemon) && x.enfermo"
           [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
           [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'"
           [class.type-agua]="isDiscovered(x.IDxuxemon) && x.tipo === 'Agua'"
@@ -60,6 +61,7 @@
 
           @if (isDiscovered(x.IDxuxemon)) {
 
+            <!-- Badge tamaño -->
             <span class="xuxedex-badge size-badge"
               [class.tamano-pequeno]="x.tamano === 'Pequeño'"
               [class.tamano-mediano]="x.tamano === 'Mediano'"
@@ -80,7 +82,12 @@
               {{ x.tipo }}
             </span>
 
-            @if (canEvolve(x)) {
+            @if (x.enfermo) {
+              <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
+              <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
+                💉 Curar
+              </button>
+            } @else if (canEvolve(x)) {
               <div class="xux-progress-wrap">
                 <div class="xux-progress-bar"
                   [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano)) * 100">
@@ -113,6 +120,34 @@
         <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
       }
     </section>
+
+    <!-- Modal curar -->
+    @if (xuxemonACurar) {
+    <div class="modal-overlay" (click)="cerrarModalCurar()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3 class="modal-title">💉 Curar a {{ xuxemonACurar.nombre }}</h3>
+        <p class="modal-sick">🤒 Enfermedad: <strong>{{ xuxemonACurar.enfermedad }}</strong></p>
+
+        @if (vacunasEnMochila.length > 0) {
+        <label class="admin-label">Selecciona vacuna</label>
+        <select class="admin-select" [(ngModel)]="vacunaSeleccionada">
+          @for (v of vacunasEnMochila; track v.item_id) {
+          <option [value]="v.item_id">{{ v.nombre }} (x{{ v.cantidad }})</option>
+          }
+        </select>
+        <button class="modal-btn-cure" (click)="curar()">💉 Usar vacuna</button>
+        } @else {
+        <p class="modal-no-vacunas">⚠️ No tienes vacunas en la mochila</p>
+        }
+
+        @if (mensajeCura) {
+        <p class="modal-msg">{{ mensajeCura }}</p>
+        }
+
+        <button class="modal-btn-cancel" (click)="cerrarModalCurar()">Cancelar</button>
+      </div>
+    </div>
+    }
 
   </main>
 
