@@ -61,47 +61,63 @@
 
           @if (isDiscovered(x.IDxuxemon)) {
 
-          <!-- Badge tamaño -->
-          <span class="xuxedex-badge size-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
-            [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
-            {{ tamanoLabel(x.tamano) }}
-          </span>
+            <!-- Badge tamaño -->
+            <span class="xuxedex-badge size-badge"
+              [class.tamano-pequeno]="x.tamano === 'Pequeño'"
+              [class.tamano-mediano]="x.tamano === 'Mediano'"
+              [class.tamano-grande]="x.tamano === 'Grande'">
+              {{ tamanoLabel(x.tamano) }}
+            </span>
 
-          <div class="xuxedex-img" aria-hidden="true" [class.size-pequeno]="x.tamano === 'Pequeño'"
-            [class.size-mediano]="x.tamano === 'Mediano'" [class.size-grande]="x.tamano === 'Grande'">
-            {{ getEmoji(x.nombre) }}
-          </div>
+            <div class="xuxedex-img" aria-hidden="true"
+              [class.size-pequeno]="x.tamano === 'Pequeño'"
+              [class.size-mediano]="x.tamano === 'Mediano'"
+              [class.size-grande]="x.tamano === 'Grande'">
+              {{ getEmoji(x.nombre) }}
+            </div>
 
-          <p class="xuxedex-name">{{ x.nombre }}</p>
+            <p class="xuxedex-name">{{ x.nombre }}</p>
 
-          <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
-            {{ x.tipo }}
-          </span>
+            <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
+              {{ x.tipo }}
+            </span>
 
-          @if (x.enfermo) {
-          <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
-          <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
-            💉 Curar
-          </button>
-          } @else if (canEvolve(x)) {
-          <button class="xuxedex-evolve-btn" (click)="evolucionar(x)" [attr.aria-label]="'Evolucionar ' + x.nombre">
-            ✨ Evolucionar
-          </button>
+            @if (x.enfermo) {
+              <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
+              <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
+                💉 Curar
+              </button>
+            } @else if (canEvolve(x)) {
+              <div class="xux-progress-wrap">
+                <div class="xux-progress-bar"
+                  [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano)) * 100">
+                </div>
+              </div>
+              <span class="xux-progress-label">
+                {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano) }} xuxes
+              </span>
+              @if (getMensaje(x.IDxuxemon)) {
+                <span class="xux-msg">{{ getMensaje(x.IDxuxemon) }}</span>
+              }
+              <button class="xuxedex-evolve-btn" (click)="evolucionar(x)"
+                [attr.aria-label]="'Dar xuxe a ' + x.nombre">
+                🍬 Dar Xuxe
+              </button>
+            } @else {
+              <span class="xuxedex-max-badge">⭐ Máximo</span>
+            }
+
           } @else {
-          <span class="xuxedex-max-badge">⭐ Máximo</span>
-          }
-
-          } @else {
-          <div class="xuxedex-lock" aria-hidden="true">🔒</div>
-          <p class="xuxedex-name unknown">???</p>
-          <span class="xuxedex-type-badge badge-unknown">???</span>
+            <div class="xuxedex-lock" aria-hidden="true">🔒</div>
+            <p class="xuxedex-name unknown">???</p>
+            <span class="xuxedex-type-badge badge-unknown">???</span>
           }
         </li>
         }
       </ul>
 
       @if (filteredXuxemons.length === 0) {
-      <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
+        <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
       }
     </section>
 

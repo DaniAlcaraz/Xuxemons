@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
@@ -9,20 +8,20 @@ use App\Http\Controllers\XuxemonController;
 
 // ── Rutas públicas ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/items', [MochilaController::class, 'catalogoItems']);
+Route::post('/login',    [AuthController::class, 'login']);
+Route::get('/items',     [MochilaController::class, 'catalogoItems']);
 
 // ── Rutas protegidas con Sanctum ──────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/me',      [AuthController::class, 'me']);
 
     // Perfil de usuario
-    Route::put('/usuario', [UsuarioController::class, 'update']);
-    Route::post('/usuario/baja', [AuthController::class, 'baja']);
+    Route::put('/usuario',        [UsuarioController::class, 'update']);
+    Route::post('/usuario/baja',  [AuthController::class, 'baja']);
 
     // Mochila
-    Route::get('/mochila', [MochilaController::class, 'index']);
+    Route::get('/mochila',         [MochilaController::class, 'index']);
     Route::post('/mochila/anadir', [MochilaController::class, 'anadir']);
     Route::post('/mochila/quitar', [MochilaController::class, 'quitar']);
 
@@ -32,7 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
         $mochila = \App\Models\Mochila::where('user_identificador', $id)->with('item')->get();
         return response()->json($mochila);
     });
-
     Route::get('/admin/usuarios/{identificador}/xuxemons', function($id) {
         $user = \App\Models\User::where('identificador', $id)->firstOrFail();
         return response()->json($user->xuxemons()->withPivot('enfermo', 'enfermedad')->get());
@@ -51,6 +49,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/aleatorio', [XuxemonController::class, 'anadirAleatorio']);
         Route::post('/enfermar',  [XuxemonController::class, 'enfermarXuxemon']);
     });
+
+    // Configuración global de xuxes
+    Route::get('/configuracion/xuxes',  [XuxemonController::class, 'getConfigXuxes']);
+    Route::post('/configuracion/xuxes', [XuxemonController::class, 'setConfigXuxes']);
 });
 
 // Rutas de gestión de usuarios
