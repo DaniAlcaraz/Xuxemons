@@ -85,8 +85,8 @@ export class Xuxemons implements OnInit {
   }
 
   cargarConfig(): void {
-    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
-    this.http.get<any>(${this.apiUrl}/configuracion/xuxes, { headers }).subscribe({
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.get<any>(`${this.apiUrl}/configuracion/xuxes`, { headers }).subscribe({
       next: (data) => {
         this.xuxesConfig = {
           pequeno_mediano: data.xuxes_pequeno_a_mediano,
@@ -95,19 +95,18 @@ export class Xuxemons implements OnInit {
         this.cargarDatos();
       },
       error: () => {
-        // Si falla usar valores por defecto y continuar
         this.cargarDatos();
       }
     });
   }
 
   cargarDatos(): void {
-    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
     this.cargando = true;
 
-    this.http.get<Xuxemon[]>(${this.apiUrl}/xuxemons, { headers }).subscribe({
+    this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
       next: (fullList) => {
-        this.http.get<any[]>(${this.apiUrl}/xuxemons/me, { headers }).subscribe({
+        this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
           next: (myList) => {
             const myMap = new Map(myList.map(x => [x.IDxuxemon, x]));
             this.xuxemons = fullList.map(x => {
@@ -131,8 +130,8 @@ export class Xuxemons implements OnInit {
     });
 
     // Cargar vacunas de la mochila
-    const headers2 = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
-    this.http.get<any[]>(${this.apiUrl}/mochila, { headers: headers2 }).subscribe({
+    const headers2 = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers: headers2 }).subscribe({
       next: (mochila) => {
         this.vacunasEnMochila = mochila
           .filter(e => e.item?.tipo === 'vacuna')
@@ -189,8 +188,8 @@ export class Xuxemons implements OnInit {
   }
 
   evolucionar(xux: Xuxemon): void {
-    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
-    this.http.post<any>(${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar, {}, { headers }).subscribe({
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
       next: (res) => {
         this.mensajes[xux.IDxuxemon] = res.message;
         localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
@@ -223,8 +222,8 @@ export class Xuxemons implements OnInit {
 
   curar(): void {
     if (!this.xuxemonACurar || !this.vacunaSeleccionada) return;
-    const headers = { 'Authorization': Bearer ${this.authService.obtenerToken()} };
-    this.http.post<any>(${this.apiUrl}/xuxemons/curar, {
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.post<any>(`${this.apiUrl}/xuxemons/curar`, {
       xuxemon_id: this.xuxemonACurar.IDxuxemon,
       item_id:    this.vacunaSeleccionada
     }, { headers }).subscribe({
