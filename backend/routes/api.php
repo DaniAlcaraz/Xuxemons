@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
         $user = \App\Models\User::where('identificador', $id)->firstOrFail();
         return response()->json($user->xuxemons()->withPivot('enfermo', 'enfermedad')->get());
     });
+    Route::get('/admin/usuarios/{identificador}/xuxes-diarios', [UsuarioController::class, 'obtenerXuxesDiariosConfig']);
+    Route::put('/admin/usuarios/{identificador}/xuxes-diarios', [UsuarioController::class, 'actualizarXuxesDiariosConfig']);
 
     // Xuxemons — rutas fijas SIEMPRE antes que las dinámicas {id}
     Route::get('/xuxemons',        [XuxemonController::class, 'index']);

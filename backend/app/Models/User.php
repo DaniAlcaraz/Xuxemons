@@ -24,7 +24,11 @@ class User extends Authenticatable
         'apellidos',
         'email',
         'password',
-        'rol'
+        'rol',
+        'xuxes_diarios_activo',
+        'xuxes_diarios_cantidad',
+        'xuxes_diarios_hora',
+        'xuxes_diarios_ultimo_reparto',
     ];
 
     protected $hidden = [
@@ -37,6 +41,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'xuxes_diarios_activo' => 'boolean',
+            'xuxes_diarios_cantidad' => 'integer',
+            'xuxes_diarios_ultimo_reparto' => 'date',
         ];
     }
 

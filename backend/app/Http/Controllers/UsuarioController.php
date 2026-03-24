@@ -73,4 +73,47 @@ class UsuarioController extends Controller
     return response()->json(['user' => $user]);
 }
 
+    public function obtenerXuxesDiariosConfig($identificador)
+    {
+        $user = User::where('identificador', $identificador)->first();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json([
+            'activo' => (bool) ($user->xuxes_diarios_activo ?? true),
+            'cantidad' => (int) ($user->xuxes_diarios_cantidad ?? 5),
+            'hora' => substr((string) ($user->xuxes_diarios_hora ?? '09:00:00'), 0, 5),
+            'ultimo_reparto' => $user->xuxes_diarios_ultimo_reparto?->toDateString(),
+        ]);
+    }
+
+    public function actualizarXuxesDiariosConfig(Request $request, $identificador)
+    {
+        $user = User::where('identificador', $identificador)->first();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $validated = $request->validate([
+            'activo' => 'required|boolean',
+            'cantidad' => 'required|integer|min:1|max:999',
+            'hora' => 'required|date_format:H:i',
+        ]);
+
+        $user->xuxes_diarios_activo = (bool) $validated['activo'];
+        $user->xuxes_diarios_cantidad = (int) $validated['cantidad'];
+        $user->xuxes_diarios_hora = $validated['hora'] . ':00';
+        $user->save();
+
+        return response()->json([
+            'message' => 'Configuración de xuxes diarios actualizada.',
+            'config' => [
+                'activo' => (bool) $user->xuxes_diarios_activo,
+                'cantidad' => (int) $user->xuxes_diarios_cantidad,
+                'hora' => substr((string) $user->xuxes_diarios_hora, 0, 5),
+            ],
+        ]);
+    }
+
 }

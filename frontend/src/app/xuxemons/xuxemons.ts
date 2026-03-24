@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
@@ -72,7 +72,8 @@ export class Xuxemons implements OnInit {
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +81,12 @@ export class Xuxemons implements OnInit {
   }
 
   cargarDatos(): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    const token = this.authService.obtenerToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
     this.cargando = true;
 
     this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
@@ -100,10 +106,24 @@ export class Xuxemons implements OnInit {
             this.cargando = false;
             this.cdr.detectChanges();
           },
-          error: () => { this.cargando = false; this.cdr.detectChanges(); }
+          error: (err) => {
+            if (err.status === 401) {
+              this.authService.cerrarSesion();
+              this.router.navigate(['/login']);
+            }
+            this.cargando = false;
+            this.cdr.detectChanges();
+          }
         });
       },
-      error: () => { this.cargando = false; }
+      error: (err) => {
+        if (err.status === 401) {
+          this.authService.cerrarSesion();
+          this.router.navigate(['/login']);
+        }
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
     });
 
     // Cargar vacunas de la mochila
@@ -117,7 +137,14 @@ export class Xuxemons implements OnInit {
             cantidad: e.cantidad
           }));
         this.cdr.detectChanges();
-      }
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          this.authService.cerrarSesion();
+          this.router.navigate(['/login']);
+          return;
+        }
+      },
     });
   }
 
