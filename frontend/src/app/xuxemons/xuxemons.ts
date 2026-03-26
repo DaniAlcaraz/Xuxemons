@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
 
 export type TipoXuxemon = 'Tierra' | 'Aire' | 'Agua';
 export type TamanoXuxemon = 'Pequeño' | 'Mediano' | 'Grande';
@@ -14,6 +13,8 @@ export interface Xuxemon {
   nombre: string;
   tipo: TipoXuxemon;
   tamano: TamanoXuxemon;
+  xuxes_acumuladas: number;
+  archivo: string;
   img: string;
   enfermo: boolean;
   enfermedad: string | null;
@@ -60,6 +61,8 @@ export class Xuxemons implements OnInit {
   xuxemons: Xuxemon[] = [];
   userOwnedIds: number[] = [];
   cargando = true;
+  mensajes: Record<number, string> = {};
+  xuxesConfig = { pequeno_mediano: 3, mediano_grande: 5 };
 
   // Vacunas en mochila
   vacunasEnMochila: { item_id: number; nombre: string; cantidad: number }[] = [];
@@ -77,7 +80,25 @@ export class Xuxemons implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarDatos();
+    const saved = localStorage.getItem('xuxemon_mensajes');
+    if (saved) this.mensajes = JSON.parse(saved);
+    this.cargarConfig();
+  }
+
+  cargarConfig(): void {
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.get<any>(`${this.apiUrl}/configuracion/xuxes`, { headers }).subscribe({
+      next: (data) => {
+        this.xuxesConfig = {
+          pequeno_mediano: data.xuxes_pequeno_a_mediano,
+          mediano_grande:  data.xuxes_mediano_a_grande,
+        };
+        this.cargarDatos();
+      },
+      error: () => {
+        this.cargarDatos();
+      }
+    });
   }
 
   cargarDatos(): void {
@@ -91,18 +112,20 @@ export class Xuxemons implements OnInit {
 
     this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
       next: (fullList) => {
-        this.xuxemons = fullList;
         this.http.get<any[]>(`${this.apiUrl}/xuxemons/me`, { headers }).subscribe({
           next: (myList) => {
-            this.userOwnedIds = myList.map(x => x.IDxuxemon);
-            // Actualizar estado enfermo en la lista
-            myList.forEach(x => {
-              const found = this.xuxemons.find(xux => xux.IDxuxemon === x.IDxuxemon);
-              if (found) {
-                found.enfermo    = x.enfermo;
-                found.enfermedad = x.enfermedad;
-              }
+            const myMap = new Map(myList.map(x => [x.IDxuxemon, x]));
+            this.xuxemons = fullList.map(x => {
+              const mine = myMap.get(x.IDxuxemon);
+              return {
+                ...x,
+                tamano:           mine ? mine.tamano           : x.tamano,
+                xuxes_acumuladas: mine ? mine.xuxes_acumuladas : 0,
+                enfermo:          mine ? mine.enfermo          : false,
+                enfermedad:       mine ? mine.enfermedad       : null,
+              };
             });
+            this.userOwnedIds = myList.map(x => x.IDxuxemon);
             this.cargando = false;
             this.cdr.detectChanges();
           },
@@ -127,7 +150,8 @@ export class Xuxemons implements OnInit {
     });
 
     // Cargar vacunas de la mochila
-    this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers }).subscribe({
+    const headers2 = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers: headers2 }).subscribe({
       next: (mochila) => {
         this.vacunasEnMochila = mochila
           .filter(e => e.item?.tipo === 'vacuna')
@@ -154,6 +178,16 @@ export class Xuxemons implements OnInit {
 
   getEmoji(nombre: string): string {
     return EMOJIS[nombre] ?? '🥚';
+  }
+
+  getMensaje(id: number): string {
+    return this.mensajes[id] ?? '';
+  }
+
+  xuxesNecesarias(tamano: TamanoXuxemon): number {
+    return tamano === 'Pequeño'
+      ? this.xuxesConfig.pequeno_mediano
+      : this.xuxesConfig.mediano_grande;
   }
 
   get totalXuxemons(): number { return this.xuxemons.length; }
@@ -183,7 +217,11 @@ export class Xuxemons implements OnInit {
   evolucionar(xux: Xuxemon): void {
     const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
     this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
-      next: () => this.cargarDatos(),
+      next: (res) => {
+        this.mensajes[xux.IDxuxemon] = res.message;
+        localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
+        this.cargarConfig();
+      },
       error: (err) => alert(err.error?.error || 'Error al evolucionar')
     });
   }

@@ -250,6 +250,21 @@
         @if (adminEnfermarMsg) { <p class="admin-msg">{{ adminEnfermarMsg }}</p> }
       </section>
 
+      <section class="dboard-card admin-form-card">
+        <h2 class="dboard-section-title">⚙️ Configuración de evolución</h2>
+        <p class="admin-form-desc">Cambia las xuxes necesarias para evolucionar a todos los Xuxemons.</p>
+        <div class="admin-form-fields">
+          <label class="admin-label">🥚 Pequeño → 🌿 Mediano</label>
+          <input class="admin-input" type="number" min="1" max="99" [(ngModel)]="configPequenoMediano" />
+          <label class="admin-label">🌿 Mediano → ⭐ Grande</label>
+          <input class="admin-input" type="number" min="1" max="99" [(ngModel)]="configMedianoGrande" />
+          <button class="admin-btn btn-add" (click)="guardarConfigXuxes()">
+            💾 Guardar configuración
+          </button>
+        </div>
+        @if (adminConfigMsg) { <p class="admin-msg">{{ adminConfigMsg }}</p> }
+      </section>
+
     </div>
     }
 

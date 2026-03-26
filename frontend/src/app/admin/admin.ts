@@ -83,13 +83,16 @@ export class Admin implements OnInit {
   adminXuxesDiariosCantidad = 5;
   adminXuxesDiariosMsg = '';
 
-  // ── Enfermar ── ← AÑADIDO
+configPequenoMediano = 3;
+  configMedianoGrande  = 5;
+  adminConfigMsg       = '';
+
+  // ── Enfermar ──
   adminEnfermarXuxId = 0;
   adminEnfermedad    = 'Bajón de azúcar';
   adminEnfermarMsg   = '';
 
   xuxemons: Xuxemon[] = [];
-
   adminDescubrirId = 0;
   adminXuxMsg = '';
 
@@ -117,6 +120,7 @@ export class Admin implements OnInit {
     this.cargarUsuarios();
     this.cargarItems();
     this.cargarXuxemons();
+    this.cargarConfigXuxes();
   }
 
   private manejarUnauthorized(err: any): boolean {
@@ -150,10 +154,10 @@ export class Admin implements OnInit {
       next: (data) => {
         this.itemsAPI = data;
         this.itemsApilablesAPI = data.filter(i => i.tipo === 'xuxe');
-        this.itemsSimplesAPI = data.filter(i => i.tipo === 'vacuna');
-        if (this.itemsApilablesAPI.length) this.adminXuxeId = this.itemsApilablesAPI[0].id;
-        if (this.itemsSimplesAPI.length) this.adminVacunaId = this.itemsSimplesAPI[0].id;
-        if (this.itemsAPI.length) this.adminQuitarItemId = this.itemsAPI[0].id;
+        this.itemsSimplesAPI   = data.filter(i => i.tipo === 'vacuna');
+        if (this.itemsApilablesAPI.length) this.adminXuxeId       = this.itemsApilablesAPI[0].id;
+        if (this.itemsSimplesAPI.length)   this.adminVacunaId     = this.itemsSimplesAPI[0].id;
+        if (this.itemsAPI.length)          this.adminQuitarItemId = this.itemsAPI[0].id;
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -246,7 +250,6 @@ export class Admin implements OnInit {
             descripcion: `Xuxemon de tipo ${x.tipo}`
           }
         }));
-
         this.mochilaUsuario = [...itemEntries, ...xuxEntries];
         this.calcularEspacios(this.mochilaUsuario);
       },
@@ -283,6 +286,34 @@ export class Admin implements OnInit {
     this.porcentajeMochilaUsuario = (this.espaciosUsadosUsuario / 20) * 100;
     this.mochilaLlenaUsuario = this.espaciosUsadosUsuario >= 20;
     this.cdr.detectChanges();
+  }
+
+  cargarConfigXuxes(): void {
+    this.http.get<any>(`${this.apiUrl}/configuracion/xuxes`, { headers: this.headers() }).subscribe({
+      next: (data) => {
+        this.configPequenoMediano = data.xuxes_pequeno_a_mediano;
+        this.configMedianoGrande  = data.xuxes_mediano_a_grande;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  guardarConfigXuxes(): void {
+    this.adminConfigMsg = '';
+    const body = {
+      xuxes_pequeno_a_mediano: this.configPequenoMediano,
+      xuxes_mediano_a_grande:  this.configMedianoGrande,
+    };
+    this.http.post<any>(`${this.apiUrl}/configuracion/xuxes`, body, { headers: this.headers() }).subscribe({
+      next: (res) => {
+        this.adminConfigMsg = '✅ ' + res.message;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminConfigMsg = '⚠️ ' + (err.error?.message ?? 'Error al guardar');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   get totalXuxemons(): number { return this.xuxemons.length; }

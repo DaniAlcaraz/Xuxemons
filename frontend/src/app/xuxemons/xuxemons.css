@@ -395,6 +395,76 @@
   margin: 0;
 }
 
+/* ── Chips entrenador ── */
+.xuxedex-trainer-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 14px 12px 50px;
+}
+
+.xuxedex-trainer-chip {
+  background: #eef1fb;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3d4faa;
+  border: 1px solid #d0d4f0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .xuxedex-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .xuxedex-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .xuxedex-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.xux-progress-wrap {
+  width: 80%;
+  height: 6px;
+  background: #d0d4f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 4px 0 0;
+}
+
+.xux-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3d4faa, #6042a6);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.xux-progress-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #505070;
+}
+
+.xux-msg {
+  font-size: 10px;
+  font-weight: 700;
+  color: #3d4faa;
+  text-align: center;
+  background: #eef1fb;
+  border-radius: 8px;
+  padding: 2px 6px;
+  margin-top: 2px;
+}
+
 /* ── Enfermedad ── */
 .xuxedex-card.sick {
   border: 2px solid #ef9a9a !important;
