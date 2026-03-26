@@ -82,6 +82,9 @@ export class Admin implements OnInit {
   adminXuxesDiariosHora = '09:00';
   adminXuxesDiariosCantidad = 5;
   adminXuxesDiariosMsg = '';
+  adminXuxemonsDiariosActivo = true;
+  adminXuxemonsDiariosHora = '09:00';
+  adminXuxemonsDiariosMsg = '';
 
 configPequenoMediano = 3;
   configMedianoGrande  = 5;
@@ -170,6 +173,7 @@ configPequenoMediano = 3;
 
   onUsuarioChange(): void {
     this.cargarConfigXuxesDiarios();
+    this.cargarConfigXuxemonsDiarios();
     this.refrescarTodo();
   }
 
@@ -273,6 +277,22 @@ configPequenoMediano = 3;
       },
       error: () => {
         this.adminXuxesDiariosMsg = '⚠️ No se pudo cargar la configuración diaria.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cargarConfigXuxemonsDiarios(): void {
+    if (!this.usuarioSeleccionado) return;
+    const userId = encodeURIComponent(this.usuarioSeleccionado);
+    this.http.get<any>(`${this.apiUrl}/admin/usuarios/${userId}/xuxemons-diarios`, { headers: this.headers() }).subscribe({
+      next: (config) => {
+        this.adminXuxemonsDiariosActivo = !!config.activo;
+        this.adminXuxemonsDiariosHora = config.hora || '09:00';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.adminXuxemonsDiariosMsg = '⚠️ No se pudo cargar la configuración diaria.';
         this.cdr.detectChanges();
       }
     });
@@ -448,6 +468,26 @@ configPequenoMediano = 3;
       },
       error: (err) => {
         this.adminXuxesDiariosMsg = '⚠️ ' + (err.error?.message || 'No se pudo guardar la configuración.');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  guardarXuxemonsDiarios(): void {
+    if (!this.usuarioSeleccionado) return;
+    this.adminXuxemonsDiariosMsg = '⏳ Guardando...';
+    const userId = encodeURIComponent(this.usuarioSeleccionado);
+    const body = {
+      activo: this.adminXuxemonsDiariosActivo,
+      hora: this.adminXuxemonsDiariosHora,
+    };
+    this.http.put<any>(`${this.apiUrl}/admin/usuarios/${userId}/xuxemons-diarios`, body, { headers: this.headers() }).subscribe({
+      next: (res) => {
+        this.adminXuxemonsDiariosMsg = '✅ ' + (res.message || 'Configuración guardada.');
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminXuxemonsDiariosMsg = '⚠️ ' + (err.error?.message || 'No se pudo guardar la configuración.');
         this.cdr.detectChanges();
       }
     });

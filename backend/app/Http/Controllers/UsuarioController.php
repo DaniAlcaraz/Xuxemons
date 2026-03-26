@@ -116,4 +116,43 @@ class UsuarioController extends Controller
         ]);
     }
 
+    public function obtenerXuxemonsDiariosConfig($identificador)
+    {
+        $user = User::where('identificador', $identificador)->first();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json([
+            'activo' => (bool) ($user->xuxemons_diarios_activo ?? true),
+            'hora' => substr((string) ($user->xuxemons_diarios_hora ?? '09:00:00'), 0, 5),
+            'ultimo_descubrimiento' => $user->xuxemons_diarios_ultimo_descubrimiento?->toDateString(),
+        ]);
+    }
+
+    public function actualizarXuxemonsDiariosConfig(Request $request, $identificador)
+    {
+        $user = User::where('identificador', $identificador)->first();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $validated = $request->validate([
+            'activo' => 'required|boolean',
+            'hora' => 'required|date_format:H:i',
+        ]);
+
+        $user->xuxemons_diarios_activo = (bool) $validated['activo'];
+        $user->xuxemons_diarios_hora = $validated['hora'] . ':00';
+        $user->save();
+
+        return response()->json([
+            'message' => 'Configuración de xuxemons diarios actualizada.',
+            'config' => [
+                'activo' => (bool) $user->xuxemons_diarios_activo,
+                'hora' => substr((string) $user->xuxemons_diarios_hora, 0, 5),
+            ],
+        ]);
+    }
+
 }

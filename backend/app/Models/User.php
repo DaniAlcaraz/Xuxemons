@@ -27,6 +27,9 @@ class User extends Authenticatable
         'xuxes_diarios_cantidad',
         'xuxes_diarios_hora',
         'xuxes_diarios_ultimo_reparto',
+        'xuxemons_diarios_activo',
+        'xuxemons_diarios_hora',
+        'xuxemons_diarios_ultimo_descubrimiento',
     ];
 
     protected $hidden = [
@@ -42,6 +45,8 @@ class User extends Authenticatable
             'xuxes_diarios_activo' => 'boolean',
             'xuxes_diarios_cantidad' => 'integer',
             'xuxes_diarios_ultimo_reparto' => 'date',
+            'xuxemons_diarios_activo' => 'boolean',
+            'xuxemons_diarios_ultimo_descubrimiento' => 'date',
         ];
     }
 

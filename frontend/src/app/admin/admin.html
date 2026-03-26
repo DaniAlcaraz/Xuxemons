@@ -223,6 +223,24 @@
       </section>
 
       <section class="dboard-card admin-form-card">
+        <h2 class="dboard-section-title">⏰ Xuxemons diarios</h2>
+        <p class="admin-form-desc">Descubre cada día un xuxemon oculto aleatorio en tamaño pequeño.</p>
+        <div class="admin-form-fields">
+          <label class="admin-label">Activado</label>
+          <select class="admin-select" [(ngModel)]="adminXuxemonsDiariosActivo">
+            <option [ngValue]="true">Sí</option>
+            <option [ngValue]="false">No</option>
+          </select>
+          <label class="admin-label">Hora de descubrimiento</label>
+          <input class="admin-input" type="time" [(ngModel)]="adminXuxemonsDiariosHora" />
+          <button class="admin-btn btn-neutral" (click)="guardarXuxemonsDiarios()" [disabled]="!usuarioSeleccionado">
+            💾 Guardar xuxemons diarios
+          </button>
+        </div>
+        @if (adminXuxemonsDiariosMsg) { <p class="admin-msg">{{ adminXuxemonsDiariosMsg }}</p> }
+      </section>
+
+      <section class="dboard-card admin-form-card">
         <h2 class="dboard-section-title">🤒 Enfermar xuxemon</h2>
         <p class="admin-form-desc">Aplica una enfermedad a un xuxemon del usuario seleccionado.</p>
         <div class="admin-form-fields">

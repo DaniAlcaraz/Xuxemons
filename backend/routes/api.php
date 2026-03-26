@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::get('/admin/usuarios/{identificador}/xuxes-diarios', [UsuarioController::class, 'obtenerXuxesDiariosConfig']);
     Route::put('/admin/usuarios/{identificador}/xuxes-diarios', [UsuarioController::class, 'actualizarXuxesDiariosConfig']);
+    Route::get('/admin/usuarios/{identificador}/xuxemons-diarios', [UsuarioController::class, 'obtenerXuxemonsDiariosConfig']);
+    Route::put('/admin/usuarios/{identificador}/xuxemons-diarios', [UsuarioController::class, 'actualizarXuxemonsDiariosConfig']);
 
     // Xuxemons — rutas fijas SIEMPRE antes que las dinámicas {id}
     Route::get('/xuxemons',        [XuxemonController::class, 'index']);
