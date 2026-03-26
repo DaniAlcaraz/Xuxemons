@@ -61,63 +61,87 @@
 
           @if (isDiscovered(x.IDxuxemon)) {
 
-            <!-- Badge tamaño -->
-            <span class="xuxedex-badge size-badge"
-              [class.tamano-pequeno]="x.tamano === 'Pequeño'"
-              [class.tamano-mediano]="x.tamano === 'Mediano'"
-              [class.tamano-grande]="x.tamano === 'Grande'">
-              {{ tamanoLabel(x.tamano) }}
-            </span>
+          <!-- Badge tamaño -->
+          <span class="xuxedex-badge size-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
+            [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
+            {{ tamanoLabel(x.tamano) }}
+          </span>
 
-            <div class="xuxedex-img" aria-hidden="true"
-              [class.size-pequeno]="x.tamano === 'Pequeño'"
-              [class.size-mediano]="x.tamano === 'Mediano'"
-              [class.size-grande]="x.tamano === 'Grande'">
-              {{ getEmoji(x.nombre) }}
+          <div class="xuxedex-img" aria-hidden="true" [class.size-pequeno]="x.tamano === 'Pequeño'"
+            [class.size-mediano]="x.tamano === 'Mediano'" [class.size-grande]="x.tamano === 'Grande'">
+            {{ getEmoji(x.nombre) }}
+          </div>
+
+          <p class="xuxedex-name">{{ x.nombre }}</p>
+
+          <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
+            {{ x.tipo }}
+          </span>
+
+          <!-- ── Enfermedad (siempre visible si está enfermo) ── -->
+          @if (x.enfermo) {
+          <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
+          <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
+            💉 Curar
+          </button>
+          }
+
+          <!-- ── Progreso + acción (siempre visible si puede crecer) ── -->
+          @if (x.tamano !== 'Grande') {
+
+          @if (x.enfermedad === 'Atracón') {
+          <!-- Atracón: no puede alimentarse, mostramos progreso bloqueado -->
+          <div class="xux-progress-wrap xux-progress-blocked">
+            <div class="xux-progress-bar"
+              [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano, x.enfermedad)) * 100">
             </div>
-
-            <p class="xuxedex-name">{{ x.nombre }}</p>
-
-            <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
-              {{ x.tipo }}
-            </span>
-
-            @if (x.enfermo) {
-              <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
-              <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
-                💉 Curar
-              </button>
-            } @else if (canEvolve(x)) {
-              <div class="xux-progress-wrap">
-                <div class="xux-progress-bar"
-                  [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano)) * 100">
-                </div>
-              </div>
-              <span class="xux-progress-label">
-                {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano) }} xuxes
-              </span>
-              @if (getMensaje(x.IDxuxemon)) {
-                <span class="xux-msg">{{ getMensaje(x.IDxuxemon) }}</span>
-              }
-              <button class="xuxedex-evolve-btn" (click)="evolucionar(x)"
-                [attr.aria-label]="'Dar xuxe a ' + x.nombre">
-                🍬 Dar Xuxe
-              </button>
-            } @else {
-              <span class="xuxedex-max-badge">⭐ Máximo</span>
-            }
+          </div>
+          <span class="xux-progress-label">
+            {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano, x.enfermedad) }} xuxes
+          </span>
+          <span class="xux-msg xux-msg-blocked">🚫 No puede alimentarse (Atracón)</span>
+          <button class="xuxedex-evolve-btn" disabled
+            [attr.aria-label]="'Dar xuxe a ' + x.nombre + ' (bloqueado por Atracón)'">
+            🍬 Dar Xuxe
+          </button>
 
           } @else {
-            <div class="xuxedex-lock" aria-hidden="true">🔒</div>
-            <p class="xuxedex-name unknown">???</p>
-            <span class="xuxedex-type-badge badge-unknown">???</span>
+          <!-- Normal o Bajón de azúcar: puede alimentarse -->
+          <div class="xux-progress-wrap">
+            <div class="xux-progress-bar"
+              [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano, x.enfermedad)) * 100">
+            </div>
+          </div>
+          <span class="xux-progress-label">
+            {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano, x.enfermedad) }} xuxes
+            @if (x.enfermedad === 'Bajón de azúcar') {
+            <span class="xux-penalty-note">(+2 por enfermedad)</span>
+            }
+          </span>
+          @if (getMensaje(x.IDxuxemon)) {
+          <span class="xux-msg">{{ getMensaje(x.IDxuxemon) }}</span>
+          }
+          <button class="xuxedex-evolve-btn" (click)="evolucionar(x)" [attr.aria-label]="'Dar xuxe a ' + x.nombre">
+            🍬 Dar Xuxe
+          </button>
+          }
+
+          } @else if (!x.enfermo) {
+          <!-- Grande y sano -->
+          <span class="xuxedex-max-badge">⭐ Máximo</span>
+          }
+
+          } @else {
+          <div class="xuxedex-lock" aria-hidden="true">🔒</div>
+          <p class="xuxedex-name unknown">???</p>
+          <span class="xuxedex-type-badge badge-unknown">???</span>
           }
         </li>
         }
       </ul>
 
       @if (filteredXuxemons.length === 0) {
-        <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
+      <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
       }
     </section>
 
@@ -158,7 +182,7 @@
   <nav class="dboard-bottom-nav" aria-label="Navegación principal">
     @for (item of navItems; track item.route) {
     <a class="dboard-nav-item" [class.active]="item.route === '/xuxemons'" [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/xuxemons' ? 'page' : null" [attr.aria-label]="item.label">
+      [attr.aria-label]="item.label" [attr.aria-current]="item.route === '/xuxemons' ? 'page' : null">
       <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
       <span>{{ item.label }}</span>
     </a>
