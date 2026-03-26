@@ -173,7 +173,30 @@ class XuxemonController extends Controller
             return response()->json(['error' => 'No tienes este Xuxemon.'], 404);
         }
 
-        // Bloqueo por enfermedad Atracón
+        // --- Validación y consumo de la Xuxe desde la mochila ---
+        $itemId = $request->input('item_id');
+        if (!$itemId) {
+            return response()->json(['error' => 'Debes seleccionar una xuxe de la mochila.'], 400);
+        }
+
+        $entradaMochila = Mochila::where('user_identificador', $user->identificador)
+            ->where('item_id', $itemId)
+            ->with('item')
+            ->first();
+
+        if (!$entradaMochila || $entradaMochila->item->tipo !== 'xuxe' || $entradaMochila->cantidad <= 0) {
+            return response()->json(['error' => 'No tienes esta xuxe en la mochila'], 400);
+        }
+
+        // Consumimos el item
+        $entradaMochila->cantidad -= 1;
+        if ($entradaMochila->cantidad <= 0) {
+            $entradaMochila->delete();
+        } else {
+            $entradaMochila->save();
+        }
+
+        // Bloqueo por enfermedad Atracón (solo si no es Grande ya)
         if ($pivot->pivot->enfermo && $pivot->pivot->enfermedad === 'Atracón') {
             return response()->json([
                 'error' => 'Este xuxemon tiene Atracón y no puede alimentarse'
@@ -199,22 +222,41 @@ class XuxemonController extends Controller
 
         if ($xuxesAcumuladas >= $xuxesNecesarias) {
             $nuevoTamano = $tamanoActual === 'Pequeño' ? 'Mediano' : 'Grande';
-            $user->xuxemons()->updateExistingPivot($id, [
+            
+            // --- CAMBIO AQUÍ: Curación automática si el nuevo tamaño es Grande ---
+            $datosActualizar = [
                 'tamano'           => $nuevoTamano,
                 'xuxes_acumuladas' => 0,
-            ]);
+            ];
 
-            $xuxemon = Xuxemon::findOrFail($id);
-            $this->intentarInfectar($user, $xuxemon);
+            if ($nuevoTamano === 'Grande') {
+                $datosActualizar['enfermo'] = false;
+                $datosActualizar['enfermedad'] = null;
+            }
+
+            $user->xuxemons()->updateExistingPivot($id, $datosActualizar);
+
+            // Intentar infectar solo si no es Grande (o si quieres que los grandes no enfermen nunca)
+            if ($nuevoTamano !== 'Grande') {
+                $xuxemon = Xuxemon::findOrFail($id);
+                $this->intentarInfectar($user, $xuxemon);
+            }
+
+            $msg = '¡' . $pivot->nombre . ' ha evolucionado a ' . $nuevoTamano . '!';
+            if ($nuevoTamano === 'Grande') {
+                $msg .= ' Al alcanzar su estado máximo, se ha curado de cualquier enfermedad.';
+            }
 
             return response()->json([
-                'message'          => '¡' . $pivot->nombre . ' ha evolucionado a ' . $nuevoTamano . '!',
+                'message'          => $msg,
                 'evolucionado'     => true,
                 'tamano'           => $nuevoTamano,
                 'xuxes_acumuladas' => 0,
                 'xuxes_necesarias' => $xuxesNecesarias,
             ]);
+
         } else {
+            // Lógica normal de incremento de xuxe
             $user->xuxemons()->updateExistingPivot($id, [
                 'xuxes_acumuladas' => $xuxesAcumuladas,
             ]);

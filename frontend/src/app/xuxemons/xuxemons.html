@@ -9,7 +9,6 @@
 
   <main class="dboard-main" id="main-content">
 
-    <!-- Buscador -->
     <section class="mochila-search-section" aria-label="Buscar xuxemon">
       <div class="mochila-search-wrapper">
         <span class="mochila-search-icon" aria-hidden="true">🔍</span>
@@ -18,13 +17,11 @@
       </div>
     </section>
 
-    <!-- Contador descubiertos -->
     <div class="xuxedex-counter-bar">
       <span class="xuxedex-counter-label">Xuxemons Descubiertos</span>
       <span class="xuxedex-counter-badge">{{ descubiertos }} / {{ totalXuxemons }}</span>
     </div>
 
-    <!-- Filtros tipo -->
     <section class="mochila-categories" aria-label="Filtrar por tipo">
       @for (f of tiposFiltro; track f) {
       <button class="mochila-cat-btn xux-tipo-btn" [class.active]="filterTipo === f" [class.btn-tierra]="f === 'Tierra'"
@@ -35,7 +32,6 @@
       }
     </section>
 
-    <!-- Filtros tamaño -->
     <section class="mochila-categories" aria-label="Filtrar por tamaño">
       @for (t of tamanosFiltro; track t) {
       <button class="mochila-cat-btn" [class.active]="filterTamano === t" (click)="filterTamano = t"
@@ -45,7 +41,6 @@
       }
     </section>
 
-    <!-- Grid Xuxedex -->
     <section class="dboard-card" aria-labelledby="xuxedex-heading">
       <h2 id="xuxedex-heading" class="dboard-section-title">Colección</h2>
 
@@ -61,7 +56,6 @@
 
           @if (isDiscovered(x.IDxuxemon)) {
 
-          <!-- Badge tamaño -->
           <span class="xuxedex-badge size-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
             [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
             {{ tamanoLabel(x.tamano) }}
@@ -78,7 +72,6 @@
             {{ x.tipo }}
           </span>
 
-          <!-- ── Enfermedad (siempre visible si está enfermo) ── -->
           @if (x.enfermo) {
           <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
           <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
@@ -86,49 +79,27 @@
           </button>
           }
 
-          <!-- ── Progreso + acción (siempre visible si puede crecer) ── -->
           @if (x.tamano !== 'Grande') {
-
-          @if (x.enfermedad === 'Atracón') {
-          <!-- Atracón: no puede alimentarse, mostramos progreso bloqueado -->
-          <div class="xux-progress-wrap xux-progress-blocked">
-            <div class="xux-progress-bar"
-              [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano, x.enfermedad)) * 100">
-            </div>
-          </div>
-          <span class="xux-progress-label">
-            {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano, x.enfermedad) }} xuxes
-          </span>
-          <span class="xux-msg xux-msg-blocked">🚫 No puede alimentarse (Atracón)</span>
-          <button class="xuxedex-evolve-btn" disabled
-            [attr.aria-label]="'Dar xuxe a ' + x.nombre + ' (bloqueado por Atracón)'">
-            🍬 Dar Xuxe
-          </button>
-
-          } @else {
-          <!-- Normal o Bajón de azúcar: puede alimentarse -->
-          <div class="xux-progress-wrap">
-            <div class="xux-progress-bar"
-              [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano, x.enfermedad)) * 100">
-            </div>
-          </div>
-          <span class="xux-progress-label">
-            {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano, x.enfermedad) }} xuxes
-            @if (x.enfermedad === 'Bajón de azúcar') {
-            <span class="xux-penalty-note">(+2 por enfermedad)</span>
+            @if (x.enfermedad === 'Atracón') {
+              <div class="xux-progress-wrap xux-progress-blocked">
+                <div class="xux-progress-bar" [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano, x.enfermedad)) * 100"></div>
+              </div>
+              <span class="xux-progress-label">{{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano, x.enfermedad) }} xuxes</span>
+              <span class="xux-msg xux-msg-blocked">🚫 No puede alimentarse (Atracón)</span>
+              <button class="xuxedex-evolve-btn" disabled>🍬 Dar Xuxe</button>
+            } @else {
+              <div class="xux-progress-wrap">
+                <div class="xux-progress-bar" [style.width.%]="(x.xuxes_acumuladas / xuxesNecesarias(x.tamano, x.enfermedad)) * 100"></div>
+              </div>
+              <span class="xux-progress-label">
+                {{ x.xuxes_acumuladas }}/{{ xuxesNecesarias(x.tamano, x.enfermedad) }} xuxes
+                @if (x.enfermedad === 'Bajón de azúcar') { <span class="xux-penalty-note">(+2)</span> }
+              </span>
+              @if (getMensaje(x.IDxuxemon)) { <span class="xux-msg">{{ getMensaje(x.IDxuxemon) }}</span> }
+              <button class="xuxedex-evolve-btn" (click)="abrirModalXuxe(x)">🍬 Dar Xuxe</button>
             }
-          </span>
-          @if (getMensaje(x.IDxuxemon)) {
-          <span class="xux-msg">{{ getMensaje(x.IDxuxemon) }}</span>
-          }
-          <button class="xuxedex-evolve-btn" (click)="evolucionar(x)" [attr.aria-label]="'Dar xuxe a ' + x.nombre">
-            🍬 Dar Xuxe
-          </button>
-          }
-
           } @else if (!x.enfermo) {
-          <!-- Grande y sano -->
-          <span class="xuxedex-max-badge">⭐ Máximo</span>
+            <span class="xuxedex-max-badge">⭐ Máximo</span>
           }
 
           } @else {
@@ -139,51 +110,60 @@
         </li>
         }
       </ul>
-
-      @if (filteredXuxemons.length === 0) {
-      <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
-      }
     </section>
 
-    <!-- Modal curar -->
     @if (xuxemonACurar) {
     <div class="modal-overlay" (click)="cerrarModalCurar()">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <h3 class="modal-title">💉 Curar a {{ xuxemonACurar.nombre }}</h3>
         <p class="modal-sick">🤒 Enfermedad: <strong>{{ xuxemonACurar.enfermedad }}</strong></p>
-
         @if (vacunasEnMochila.length > 0) {
-        <label class="admin-label">Selecciona vacuna</label>
-        <select class="admin-select" [(ngModel)]="vacunaSeleccionada">
-          @for (v of vacunasEnMochila; track v.item_id) {
-          <option [value]="v.item_id">{{ v.nombre }} (x{{ v.cantidad }})</option>
-          }
-        </select>
-        <button class="modal-btn-cure" (click)="curar()">💉 Usar vacuna</button>
+          <label class="admin-label">Selecciona vacuna</label>
+          <select class="admin-select" [(ngModel)]="vacunaSeleccionada">
+            @for (v of vacunasEnMochila; track v.item_id) {
+            <option [value]="v.item_id">{{ v.nombre }} (x{{ v.cantidad }})</option>
+            }
+          </select>
+          <button class="modal-btn-cure" (click)="curar()">💉 Usar vacuna</button>
         } @else {
-        <p class="modal-no-vacunas">⚠️ No tienes vacunas en la mochila</p>
+          <p class="modal-no-vacunas">⚠️ No tienes vacunas en la mochila</p>
         }
-
-        @if (mensajeCura) {
-        <p class="modal-msg">{{ mensajeCura }}</p>
-        }
-
+        @if (mensajeCura) { <p class="modal-msg">{{ mensajeCura }}</p> }
         <button class="modal-btn-cancel" (click)="cerrarModalCurar()">Cancelar</button>
+      </div>
+    </div>
+    }
+
+    @if (xuxemonAAlimentar) {
+    <div class="modal-overlay" (click)="cerrarModalXuxe()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3 class="modal-title">🍬 Dar Xuxe a {{ xuxemonAAlimentar.nombre }}</h3>
+        <p class="modal-sick">
+          Progreso: <strong>{{ xuxemonAAlimentar.xuxes_acumuladas }}/{{ xuxesNecesarias(xuxemonAAlimentar.tamano, xuxemonAAlimentar.enfermedad) }}</strong>
+        </p>
+        @if (xuxesEnMochila.length > 0) {
+          <label class="admin-label">Selecciona xuxe</label>
+          <select class="admin-select" [(ngModel)]="xuxeSeleccionada">
+            @for (x of xuxesEnMochila; track x.item_id) {
+              <option [value]="x.item_id">{{ x.nombre }} (x{{ x.cantidad }})</option>
+            }
+          </select>
+          <button class="modal-btn-cure" (click)="darXuxe()">🍬 Dar Xuxe</button>
+        } @else {
+          <p class="modal-no-vacunas">⚠️ No tienes xuxes en la mochila</p>
+        }
+        @if (mensajeXuxe) { <p class="modal-msg">{{ mensajeXuxe }}</p> }
+        <button class="modal-btn-cancel" (click)="cerrarModalXuxe()">Cancelar</button>
       </div>
     </div>
     }
 
   </main>
 
-  <footer class="dboard-footer">
-    <p>&copy; 2026 Xuxemons</p>
-  </footer>
-
-  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
+  <nav class="dboard-bottom-nav">
     @for (item of navItems; track item.route) {
-    <a class="dboard-nav-item" [class.active]="item.route === '/xuxemons'" [routerLink]="item.route"
-      [attr.aria-label]="item.label" [attr.aria-current]="item.route === '/xuxemons' ? 'page' : null">
-      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+    <a class="dboard-nav-item" [class.active]="item.route === '/xuxemons'" [routerLink]="item.route">
+      <span class="dboard-nav-icon">{{ item.icon }}</span>
       <span>{{ item.label }}</span>
     </a>
     }
