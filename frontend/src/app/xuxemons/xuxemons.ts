@@ -54,7 +54,7 @@ export class Xuxemons implements OnInit {
   filterTipo: string = 'Todos';
   filterTamano: string = 'Todos';
 
-  tiposFiltro   = ['Todos', 'Tierra', 'Aire', 'Agua'];
+  tiposFiltro = ['Todos', 'Tierra', 'Aire', 'Agua'];
   tamanosFiltro = ['Todos', 'Pequeño', 'Mediano', 'Grande'];
 
   private apiUrl = 'http://localhost:8000/api';
@@ -64,10 +64,8 @@ export class Xuxemons implements OnInit {
   mensajes: Record<number, string> = {};
   xuxesConfig = { pequeno_mediano: 3, mediano_grande: 5 };
 
-  // Vacunas en mochila
   vacunasEnMochila: { item_id: number; nombre: string; cantidad: number }[] = [];
 
-  // Modal curar
   xuxemonACurar: Xuxemon | null = null;
   vacunaSeleccionada: number | null = null;
   mensajeCura = '';
@@ -91,13 +89,11 @@ export class Xuxemons implements OnInit {
       next: (data) => {
         this.xuxesConfig = {
           pequeno_mediano: data.xuxes_pequeno_a_mediano,
-          mediano_grande:  data.xuxes_mediano_a_grande,
+          mediano_grande: data.xuxes_mediano_a_grande,
         };
         this.cargarDatos();
       },
-      error: () => {
-        this.cargarDatos();
-      }
+      error: () => { this.cargarDatos(); }
     });
   }
 
@@ -119,10 +115,10 @@ export class Xuxemons implements OnInit {
               const mine = myMap.get(x.IDxuxemon);
               return {
                 ...x,
-                tamano:           mine ? mine.tamano           : x.tamano,
+                tamano: mine ? mine.tamano : x.tamano,
                 xuxes_acumuladas: mine ? mine.xuxes_acumuladas : 0,
-                enfermo:          mine ? mine.enfermo          : false,
-                enfermedad:       mine ? mine.enfermedad       : null,
+                enfermo: mine ? mine.enfermo : false,
+                enfermedad: mine ? mine.enfermedad : null,
               };
             });
             this.userOwnedIds = myList.map(x => x.IDxuxemon);
@@ -149,17 +145,12 @@ export class Xuxemons implements OnInit {
       }
     });
 
-    // Cargar vacunas de la mochila
     const headers2 = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
     this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers: headers2 }).subscribe({
       next: (mochila) => {
         this.vacunasEnMochila = mochila
           .filter(e => e.item?.tipo === 'vacuna')
-          .map(e => ({
-            item_id:  e.item_id,
-            nombre:   e.item.nombre,
-            cantidad: e.cantidad
-          }));
+          .map(e => ({ item_id: e.item_id, nombre: e.item.nombre, cantidad: e.cantidad }));
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -184,14 +175,20 @@ export class Xuxemons implements OnInit {
     return this.mensajes[id] ?? '';
   }
 
-  xuxesNecesarias(tamano: TamanoXuxemon): number {
-    return tamano === 'Pequeño'
+  /**
+   * Xuxes necesarias para evolucionar, aplicando modificadores de enfermedad:
+   * - "Bajón de azúcar": +2 sobre el valor base
+   * - "Atracón": mismo valor base (el botón se bloquea en la vista)
+   */
+  xuxesNecesarias(tamano: TamanoXuxemon, enfermedad?: string | null): number {
+    const base = tamano === 'Pequeño'
       ? this.xuxesConfig.pequeno_mediano
       : this.xuxesConfig.mediano_grande;
+    return enfermedad === 'Bajón de azúcar' ? base + 2 : base;
   }
 
   get totalXuxemons(): number { return this.xuxemons.length; }
-  get descubiertos(): number  { return this.userOwnedIds.length; }
+  get descubiertos(): number { return this.userOwnedIds.length; }
 
   get filteredXuxemons(): Xuxemon[] {
     let list = this.xuxemons;
@@ -199,7 +196,7 @@ export class Xuxemons implements OnInit {
       const q = this.searchQuery.toLowerCase();
       list = list.filter(x => this.isDiscovered(x.IDxuxemon) && x.nombre.toLowerCase().includes(q));
     }
-    if (this.filterTipo   !== 'Todos') list = list.filter(x => x.tipo   === this.filterTipo);
+    if (this.filterTipo !== 'Todos') list = list.filter(x => x.tipo === this.filterTipo);
     if (this.filterTamano !== 'Todos') list = list.filter(x => x.tamano === this.filterTamano);
     return list;
   }
@@ -211,7 +208,10 @@ export class Xuxemons implements OnInit {
   }
 
   canEvolve(xux: Xuxemon): boolean {
-    return this.isDiscovered(xux.IDxuxemon) && xux.tamano !== 'Grande' && !xux.enfermo;
+    // Atracón bloquea; Bajón de azúcar permite evolucionar pero con más xuxes
+    return this.isDiscovered(xux.IDxuxemon)
+      && xux.tamano !== 'Grande'
+      && xux.enfermedad !== 'Atracón';
   }
 
   evolucionar(xux: Xuxemon): void {
@@ -222,7 +222,12 @@ export class Xuxemons implements OnInit {
         localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
         this.cargarConfig();
       },
-      error: (err) => alert(err.error?.error || 'Error al evolucionar')
+      error: (err) => {
+        // FIX: en vez de alert(), mostramos el error como mensaje inline en la carta
+        this.mensajes[xux.IDxuxemon] = '⚠️ ' + (err.error?.error || 'Error al evolucionar');
+        localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -232,9 +237,8 @@ export class Xuxemons implements OnInit {
     return '⭐ Grande';
   }
 
-  // ── Modal curar ──
   abrirModalCurar(xux: Xuxemon): void {
-    this.xuxemonACurar      = xux;
+    this.xuxemonACurar = xux;
     this.vacunaSeleccionada = this.vacunasEnMochila.length > 0
       ? this.vacunasEnMochila[0].item_id
       : null;
@@ -242,9 +246,9 @@ export class Xuxemons implements OnInit {
   }
 
   cerrarModalCurar(): void {
-    this.xuxemonACurar      = null;
+    this.xuxemonACurar = null;
     this.vacunaSeleccionada = null;
-    this.mensajeCura        = '';
+    this.mensajeCura = '';
   }
 
   curar(): void {
@@ -252,7 +256,7 @@ export class Xuxemons implements OnInit {
     const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
     this.http.post<any>(`${this.apiUrl}/xuxemons/curar`, {
       xuxemon_id: this.xuxemonACurar.IDxuxemon,
-      item_id:    this.vacunaSeleccionada
+      item_id: this.vacunaSeleccionada
     }, { headers }).subscribe({
       next: (res) => {
         this.mensajeCura = '✅ ' + res.message;
@@ -267,13 +271,13 @@ export class Xuxemons implements OnInit {
   }
 
   navItems: NavItem[] = [
-    { icon: '🏠', label: 'Inicio',   route: '/dashboard' },
-    { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
-    { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
-    { icon: '👥', label: 'Amigos',   route: '/amigos'    },
-    { icon: '⚔️', label: 'Batallas', route: '/batallas'  },
-    { icon: '💬', label: 'Chat',     route: '/chat'      },
-    { icon: '👤', label: 'Perfil',   route: '/perfil'    },
-    { icon: '🛡️', label: 'Admin',    route: '/admin'     },
+    { icon: '🏠', label: 'Inicio', route: '/dashboard' },
+    { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
+    { icon: '🎒', label: 'Mochila', route: '/mochila' },
+    { icon: '👥', label: 'Amigos', route: '/amigos' },
+    { icon: '⚔️', label: 'Batallas', route: '/batallas' },
+    { icon: '💬', label: 'Chat', route: '/chat' },
+    { icon: '👤', label: 'Perfil', route: '/perfil' },
+    { icon: '🛡️', label: 'Admin', route: '/admin' },
   ];
 }

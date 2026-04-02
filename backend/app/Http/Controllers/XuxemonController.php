@@ -133,9 +133,26 @@ class XuxemonController extends Controller
         if ($entradaMochila->cantidad <= 0) $entradaMochila->delete();
         else $entradaMochila->save();
 
+        // ── FIX: clamp xuxes_acumuladas al máximo base (sin enfermedad) ──
+        // Si el xuxemon tenía Bajón de azúcar, puede haber acumulado más xuxes
+        // de las que el tope base permite. Al curar, recortamos para evitar
+        // que la barra quede rota (>100%) o que evolucione sin querer.
+        $xuxesAcumuladas  = $xuxemon->pivot->xuxes_acumuladas;
+        $tamano           = $xuxemon->pivot->tamano;
+
+        $maxSinEnfermedad = $tamano === 'Pequeño'
+            ? (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3)
+            : (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5);
+
+        // min - 1 para que no evolucione automáticamente al curar.
+        // Si prefieres que evolucione al instante cuando ya llegó al tope,
+        // cambia ($maxSinEnfermedad - 1) por $maxSinEnfermedad.
+        $xuxesAjustadas = min($xuxesAcumuladas, $maxSinEnfermedad - 1);
+
         $user->xuxemons()->updateExistingPivot($request->xuxemon_id, [
-            'enfermo'    => false,
-            'enfermedad' => null,
+            'enfermo'          => false,
+            'enfermedad'       => null,
+            'xuxes_acumuladas' => $xuxesAjustadas,
         ]);
 
         return response()->json([
@@ -197,7 +214,7 @@ class XuxemonController extends Controller
             return response()->json(['error' => 'No tienes este Xuxemon.'], 404);
         }
 
-        // Bloqueo por enfermedad Atracón (del compañero)
+        // Bloqueo por enfermedad Atracón
         if ($pivot->pivot->enfermo && $pivot->pivot->enfermedad === 'Atracón') {
             return response()->json([
                 'error' => 'Este xuxemon tiene Atracón y no puede alimentarse'
@@ -228,7 +245,6 @@ class XuxemonController extends Controller
                 'xuxes_acumuladas' => 0,
             ]);
 
-            // Intentar infectar al evolucionar
             $xuxemon = Xuxemon::findOrFail($id);
             $this->intentarInfectar($user, $xuxemon);
 
@@ -244,7 +260,6 @@ class XuxemonController extends Controller
                 'xuxes_acumuladas' => $xuxesAcumuladas,
             ]);
 
-            // Intentar infectar al dar xuxe
             $xuxemon = Xuxemon::findOrFail($id);
             $this->intentarInfectar($user, $xuxemon);
 
