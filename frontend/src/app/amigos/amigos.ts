@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -57,7 +56,10 @@ export class Amigos implements OnInit, OnDestroy {
     { icon: '🛡️', label: 'Admin',     route: '/admin' },
   ];
 
-  constructor(private amigosService: AmigosService) {}
+  constructor(
+    private amigosService: AmigosService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.cargarAmigos();
@@ -70,22 +72,28 @@ export class Amigos implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ── Carga inicial ─────────────────────────────────────────────────────────
+  // ── Carga inicial 
   cargarAmigos(): void {
     this.amigosService.getAmigos().subscribe({
-      next: (data) => (this.amigos = data),
+      next: (data) => {
+        this.amigos = data;
+        this.cdr.detectChanges();
+      },
       error: () => this.mostrarError('No se pudieron cargar los amigos.')
     });
   }
 
   cargarSolicitudes(): void {
     this.amigosService.getSolicitudesRecibidas().subscribe({
-      next: (data) => (this.solicitudesRecibidas = data),
+      next: (data) => {
+        this.solicitudesRecibidas = data;
+        this.cdr.detectChanges();
+      },
       error: () => {}
     });
   }
 
-  // ── Búsqueda con debounce ─────────────────────────────────────────────────
+  // ── Búsqueda con debounce 
   configurarBusqueda(): void {
     this.busqueda$
       .pipe(
@@ -102,6 +110,7 @@ export class Amigos implements OnInit, OnDestroy {
         next: (res) => {
           this.resultadosBusqueda = res;
           this.cargandoBusqueda = false;
+          this.cdr.detectChanges();
         },
         error: () => {
           this.cargandoBusqueda = false;
@@ -116,7 +125,7 @@ export class Amigos implements OnInit, OnDestroy {
     this.busqueda$.next(this.textoBusqueda);
   }
 
-  // ── Solicitudes ───────────────────────────────────────────────────────────
+  // ── Solicitudes 
   enviarSolicitud(identificador: string): void {
     this.amigosService.enviarSolicitud(identificador).subscribe({
       next: () => {
@@ -151,7 +160,7 @@ export class Amigos implements OnInit, OnDestroy {
     });
   }
 
-  // ── Eliminar amigo ────────────────────────────────────────────────────────
+  // ── Eliminar amigo 
   confirmarEliminar(amigo: Amigo): void {
     this.amigoAEliminar = amigo;
   }
@@ -174,14 +183,14 @@ export class Amigos implements OnInit, OnDestroy {
     });
   }
 
-  // ── Tabs ──────────────────────────────────────────────────────────────────
+  // ── Tabs 
   cambiarTab(tab: Tab): void {
     this.tabActiva = tab;
     this.mensajeExito = '';
     this.mensajeError = '';
   }
 
-  // ── Utilidades ────────────────────────────────────────────────────────────
+  // ── Utilidades 
   private mostrarExito(msg: string): void {
     this.mensajeExito = msg;
     this.mensajeError = '';

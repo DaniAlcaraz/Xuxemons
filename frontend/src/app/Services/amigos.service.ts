@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
-
+import { AuthService } from '../Services/auth.service';
 export interface UsuarioBusqueda {
   identificador: string;
   nombre: string;
