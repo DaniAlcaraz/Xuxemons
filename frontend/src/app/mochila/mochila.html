@@ -45,24 +45,24 @@
       @if (cargando) {
         <p class="xuxedex-empty">Cargando inventario...</p>
       } @else {
-        <div class="mochila-grid">
+        <ul class="mochila-grid inventory">
           @for (slot of displaySlots; track $index) {
             @if (slot) {
-            <div class="mochila-slot filled"
+            <li class="mochila-slot filled" tabindex="0"
               [class.slot-apilable]="slot.item.kind === 'apilable'"
-              [class.slot-simple]="slot.item.kind === 'simple'"
-              [attr.aria-label]="slot.item.name + ' x' + slot.cantidad">
-              <span class="slot-img">{{ slot.item.img }}</span>
-              <span class="slot-qty">{{ slot.cantidad }}</span>
-              <span class="slot-name">{{ slot.item.name }}</span>
-            </div>
+              [class.slot-simple]="slot.item.kind === 'simple'">
+              <span class="visually-hidden">Slot {{ $index + 1 }} - {{ slot.cantidad }} {{ slot.item.name }}</span>
+              <span class="slot-img" aria-hidden="true">{{ slot.item.img }}</span>
+              <span class="slot-qty" aria-hidden="true">{{ slot.cantidad }}</span>
+              <span class="slot-name" aria-hidden="true">{{ slot.item.name }}</span>
+            </li>
             } @else {
-            <div class="mochila-slot empty" aria-label="Espacio vacío">
-              <span class="slot-empty-icon">—</span>
-            </div>
+            <li class="mochila-slot empty" aria-label="Espacio vacío">
+              <span class="slot-empty-icon" aria-hidden="true">—</span>
+            </li>
             }
           }
-        </div>
+        </ul>
       }
     </section>
 

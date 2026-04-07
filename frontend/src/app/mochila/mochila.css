@@ -192,7 +192,8 @@
     transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s;
 }
 
-.mochila-cat-btn:hover {
+.mochila-cat-btn:hover,
+.mochila-cat-btn:focus-visible {
     transform: translateY(-1px);
     border-color: #8870c8;
     color: #3d4faa;
@@ -252,7 +253,10 @@
     background: #f8f9fe;
 }
 
-.mochila-slot.occupied:hover {
+.mochila-slot.occupied:hover,
+.mochila-slot.occupied:focus-visible,
+.mochila-slot.filled:hover,
+.mochila-slot.filled:focus-visible {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(108, 127, 232, 0.15);
 }
@@ -458,7 +462,8 @@
     margin-top: 4px;
 }
 
-.mochila-admin-btn:hover:not(:disabled) {
+.mochila-admin-btn:hover:not(:disabled),
+.mochila-admin-btn:focus-visible:not(:disabled) {
     transform: translateY(-1px);
     opacity: 0.92;
 }
