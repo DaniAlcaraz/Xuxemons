@@ -6,10 +6,12 @@
 
 .visually-hidden {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
 }
@@ -43,7 +45,7 @@
   margin: 6px 0 0;
   font-family: 'Nunito', sans-serif;
   font-size: 22px;
-  color: rgba(255,255,255,0.95);
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 700;
 }
 
@@ -62,8 +64,8 @@
   background: #ffffff;
   border-radius: 22px;
   padding: 26px 24px;
-  box-shadow: 0 2px 20px rgba(100,120,200,0.10);
-  border: 1px solid rgba(200,210,240,0.6);
+  box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
+  border: 1px solid rgba(200, 210, 240, 0.6);
 }
 
 .dboard-section-title {
@@ -86,14 +88,16 @@
 /* ── Bottom Nav ── */
 .dboard-bottom-nav {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: #ffffff;
   border-top: 2px solid #d0d4f0;
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding: 12px 4px 16px;
-  box-shadow: 0 -2px 20px rgba(100,120,200,0.10);
+  box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
   z-index: 100;
 }
 
@@ -119,7 +123,7 @@
 .dboard-nav-item.active,
 .dboard-nav-item[aria-current="page"] {
   color: #2a3a9a;
-  background: rgba(61,79,170,0.10);
+  background: rgba(61, 79, 170, 0.10);
   font-weight: 900;
 }
 
@@ -150,7 +154,7 @@
   border: 2px solid #d0d4f0;
   padding: 10px 16px;
   gap: 10px;
-  box-shadow: 0 2px 10px rgba(100,120,200,0.08);
+  box-shadow: 0 2px 10px rgba(100, 120, 200, 0.08);
 }
 
 .mochila-search-icon {
@@ -183,7 +187,7 @@
   border-radius: 16px;
   border: 2px solid #d0d4f0;
   padding: 14px 20px;
-  box-shadow: 0 2px 10px rgba(100,120,200,0.08);
+  box-shadow: 0 2px 10px rgba(100, 120, 200, 0.08);
 }
 
 .xuxedex-counter-label {
@@ -230,9 +234,23 @@
   border-color: #6c7fe8;
 }
 
-.xux-tipo-btn.btn-tierra.active { background: #e8f5e9; color: #2e7d32; border-color: #66bb6a; }
-.xux-tipo-btn.btn-aire.active   { background: #e0f7fa; color: #00695c; border-color: #4dd0e1; }
-.xux-tipo-btn.btn-agua.active   { background: #e3f2fd; color: #1565c0; border-color: #64b5f6; }
+.xux-tipo-btn.btn-tierra.active {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #66bb6a;
+}
+
+.xux-tipo-btn.btn-aire.active {
+  background: #e0f7fa;
+  color: #00695c;
+  border-color: #4dd0e1;
+}
+
+.xux-tipo-btn.btn-agua.active {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #64b5f6;
+}
 
 /* ── Grid Xuxedex ── */
 .xuxedex-grid {
@@ -262,12 +280,12 @@
 .xuxedex-card.discovered {
   background: #fff;
   border-color: #b0b8f0;
-  box-shadow: 0 2px 12px rgba(100,120,200,0.10);
+  box-shadow: 0 2px 12px rgba(100, 120, 200, 0.10);
 }
 
 .xuxedex-card.discovered:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 24px rgba(100,120,200,0.18);
+  box-shadow: 0 6px 24px rgba(100, 120, 200, 0.18);
 }
 
 .xuxedex-card:focus-visible {
@@ -276,9 +294,17 @@
 }
 
 /* Tipos */
-.xuxedex-card.type-tierra { border-color: #a5d6a7; }
-.xuxedex-card.type-aire   { border-color: #80deea; }
-.xuxedex-card.type-agua   { border-color: #90caf9; }
+.xuxedex-card.type-tierra {
+  border-color: #a5d6a7;
+}
+
+.xuxedex-card.type-aire {
+  border-color: #80deea;
+}
+
+.xuxedex-card.type-agua {
+  border-color: #90caf9;
+}
 
 /* No descubierto */
 .xuxedex-card.undiscovered {
@@ -297,9 +323,23 @@
   margin-bottom: 2px;
 }
 
-.tamano-pequeno { background: #fffde7; color: #f57f17; border: 1.5px solid #ffe082; }
-.tamano-mediano { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
-.tamano-grande  { background: #fff8e1; color: #e65100; border: 1.5px solid #ffcc80; }
+.tamano-pequeno {
+  background: #fffde7;
+  color: #f57f17;
+  border: 1.5px solid #ffe082;
+}
+
+.tamano-mediano {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1.5px solid #a5d6a7;
+}
+
+.tamano-grande {
+  background: #fff8e1;
+  color: #e65100;
+  border: 1.5px solid #ffcc80;
+}
 
 /* ── Emoji imagen ── */
 .xuxedex-img {
@@ -312,9 +352,17 @@
   transform: scale(1.12);
 }
 
-.size-pequeno { font-size: 36px; }
-.size-mediano { font-size: 46px; }
-.size-grande  { font-size: 58px; }
+.size-pequeno {
+  font-size: 36px;
+}
+
+.size-mediano {
+  font-size: 46px;
+}
+
+.size-grande {
+  font-size: 58px;
+}
 
 /* ── Nombre ── */
 .xuxedex-name {
@@ -341,10 +389,29 @@
   margin-top: 2px;
 }
 
-.badge-tierra  { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
-.badge-aire    { background: #e0f7fa; color: #00695c; border: 1.5px solid #80deea; }
-.badge-agua    { background: #e3f2fd; color: #1565c0; border: 1.5px solid #90caf9; }
-.badge-unknown { background: #f0f0f8; color: #a0a4c0; border: 1.5px solid #d0d4f0; }
+.badge-tierra {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1.5px solid #a5d6a7;
+}
+
+.badge-aire {
+  background: #e0f7fa;
+  color: #00695c;
+  border: 1.5px solid #80deea;
+}
+
+.badge-agua {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1.5px solid #90caf9;
+}
+
+.badge-unknown {
+  background: #f0f0f8;
+  color: #a0a4c0;
+  border: 1.5px solid #d0d4f0;
+}
 
 /* ── Lock (no descubierto) ── */
 .xuxedex-lock {
@@ -369,7 +436,17 @@
   width: 100%;
 }
 
-.xuxedex-evolve-btn:hover { opacity: 0.85; }
+.xuxedex-evolve-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* Botón deshabilitado (Atracón) */
+.xuxedex-evolve-btn:disabled {
+  background: #d0d4f0;
+  color: #a0a4c0;
+  cursor: not-allowed;
+  opacity: 1;
+}
 
 /* ── Badge máximo ── */
 .xuxedex-max-badge {
@@ -432,13 +509,27 @@
   }
 }
 
+/* ════════════════════════════════════════
+   PROGRESO — fixes centrado y nuevos estilos
+   ════════════════════════════════════════ */
+
 .xux-progress-wrap {
-  width: 80%;
+  width: 100%;
+  /* FIX: era 80%, ahora ocupa todo el ancho de la carta */
   height: 6px;
   background: #d0d4f0;
   border-radius: 10px;
   overflow: hidden;
-  margin: 4px 0 0;
+  margin: 6px 0 0;
+}
+
+/* Barra bloqueada (Atracón) en gris */
+.xux-progress-wrap.xux-progress-blocked {
+  background: #e8e8f0;
+}
+
+.xux-progress-wrap.xux-progress-blocked .xux-progress-bar {
+  background: #b0b4d0;
 }
 
 .xux-progress-bar {
@@ -446,14 +537,21 @@
   background: linear-gradient(90deg, #3d4faa, #6042a6);
   border-radius: 10px;
   transition: width 0.4s ease;
+  /* Clamp visual: nunca supera el 100% aunque los datos sean mayores */
+  max-width: 100%;
 }
 
 .xux-progress-label {
   font-size: 10px;
   font-weight: 800;
   color: #505070;
+  text-align: center;
+  /* FIX: centrado */
+  width: 100%;
+  /* FIX: ocupa todo el ancho para centrar bien */
 }
 
+/* ── Mensajes de estado ── */
 .xux-msg {
   font-size: 10px;
   font-weight: 700;
@@ -461,8 +559,26 @@
   text-align: center;
   background: #eef1fb;
   border-radius: 8px;
-  padding: 2px 6px;
+  padding: 3px 8px;
   margin-top: 2px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mensaje bloqueado por Atracón */
+.xux-msg-blocked {
+  color: #c62828;
+  background: #ffebee;
+  border: 1px solid #ef9a9a;
+}
+
+/* Nota de penalización (+2 por enfermedad) */
+.xux-penalty-note {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: #c62828;
+  margin-top: 1px;
 }
 
 /* ── Enfermedad ── */
@@ -481,6 +597,8 @@
   padding: 3px 10px;
   margin-top: 4px;
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .xuxedex-cure-btn {
@@ -498,13 +616,15 @@
   width: 100%;
 }
 
-.xuxedex-cure-btn:hover { opacity: 0.85; }
+.xuxedex-cure-btn:hover {
+  opacity: 0.85;
+}
 
 /* ── Modal curar ── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -520,7 +640,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: 0 8px 40px rgba(100,120,200,0.2);
+  box-shadow: 0 8px 40px rgba(100, 120, 200, 0.2);
 }
 
 .modal-title {
@@ -574,7 +694,9 @@
   transition: opacity 0.18s;
 }
 
-.modal-btn-cure:hover { opacity: 0.85; }
+.modal-btn-cure:hover {
+  opacity: 0.85;
+}
 
 .modal-btn-cancel {
   padding: 10px;
@@ -589,7 +711,9 @@
   transition: background 0.18s;
 }
 
-.modal-btn-cancel:hover { background: #f0f2ff; }
+.modal-btn-cancel:hover {
+  background: #f0f2ff;
+}
 
 /* ── Modal inputs ── */
 .modal-box .admin-label {
