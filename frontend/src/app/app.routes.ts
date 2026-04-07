@@ -7,42 +7,59 @@ import { Xuxemons } from './xuxemons/xuxemons';
 import { Mochila } from './mochila/mochila';
 import { Admin } from './admin/admin';
 
+import { AuthGuard } from './guards/auth-guard';
+import { LoginGuard } from './guards/login-guard';
+
 export const routes: Routes = [
+ 
   {
     path: 'login',
     component: LoginComponent,
-  },
-  {
-    path: 'perfil',
-    component: Perfil,
+    canActivate: [LoginGuard]
   },
   {
     path: 'registro',
     component: Registro,
+    
   },
+
+ 
   {
     path: 'dashboard',
     component: Dashboard,
+    canActivate: [AuthGuard]
   },
+  {
+    path: 'perfil',
+    component: Perfil,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'xuxemons',
+    component: Xuxemons,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'mochila',
+    component: Mochila,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin',
+    component: Admin,
+    canActivate: [AuthGuard]
+  },
+
+  
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },
+
+  
   {
-    path: 'xuxemons',
-    component: Xuxemons,
-  },
-  {
-    path: 'mochila',
-    component: Mochila,
-  },
-  {
-    path: 'admin',
-    component: Admin,
+    path: '**',
+    redirectTo: 'login'
   }
 ];
-
-
-
-
