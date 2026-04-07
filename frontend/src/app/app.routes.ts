@@ -6,7 +6,7 @@ import { Dashboard } from './dashboard/dashboard';
 import { Xuxemons } from './xuxemons/xuxemons';
 import { Mochila } from './mochila/mochila';
 import { Admin } from './admin/admin';
-
+import { Amigos } from './amigos/amigos';
 export const routes: Routes = [
   {
     path: 'login',
@@ -37,6 +37,8 @@ export const routes: Routes = [
     path: 'mochila',
     component: Mochila,
   },
+  { path: 'amigos',
+    component: Amigos },
   {
     path: 'admin',
     component: Admin,
