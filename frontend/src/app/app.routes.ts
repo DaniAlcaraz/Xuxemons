@@ -7,7 +7,6 @@ import { Xuxemons } from './xuxemons/xuxemons';
 import { Mochila } from './mochila/mochila';
 import { Admin } from './admin/admin';
 import { Amigos } from './amigos/amigos';
-
 import { AuthGuard } from './guards/auth-guard';
 import { LoginGuard } from './guards/login-guard';
 
@@ -23,8 +22,6 @@ export const routes: Routes = [
     component: Registro,
     
   },
-
- 
   {
     path: 'dashboard',
     component: Dashboard,
@@ -43,6 +40,11 @@ export const routes: Routes = [
   {
     path: 'mochila',
     component: Mochila,
+    canActivate: [AuthGuard]
+  },
+    {
+    path: 'amigos',
+    component: Amigos,
     canActivate: [AuthGuard]
   },
   {
