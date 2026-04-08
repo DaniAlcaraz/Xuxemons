@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
 /* ════════════════════════════════════════
    BASE — copiado de dashboard.css
@@ -32,7 +32,7 @@
 }
 
 .dboard-header-content h1 {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 52px;
   font-weight: 900;
   color: #ffffff;
@@ -283,7 +283,8 @@
   box-shadow: 0 2px 12px rgba(100, 120, 200, 0.10);
 }
 
-.xuxedex-card.discovered:hover {
+.xuxedex-card.discovered:hover,
+.xuxedex-card.discovered:focus-visible {
   transform: translateY(-3px);
   box-shadow: 0 6px 24px rgba(100, 120, 200, 0.18);
 }
@@ -348,7 +349,8 @@
   transition: transform 0.18s;
 }
 
-.xuxedex-card.discovered:hover .xuxedex-img {
+.xuxedex-card.discovered:hover .xuxedex-img,
+.xuxedex-card.discovered:focus-visible .xuxedex-img {
   transform: scale(1.12);
 }
 
@@ -436,7 +438,8 @@
   width: 100%;
 }
 
-.xuxedex-evolve-btn:hover:not(:disabled) {
+.xuxedex-evolve-btn:hover:not(:disabled),
+.xuxedex-evolve-btn:focus-visible:not(:disabled) {
   opacity: 0.85;
 }
 
@@ -616,7 +619,8 @@
   width: 100%;
 }
 
-.xuxedex-cure-btn:hover {
+.xuxedex-cure-btn:hover,
+.xuxedex-cure-btn:focus-visible {
   opacity: 0.85;
 }
 

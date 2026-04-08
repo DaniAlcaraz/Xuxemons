@@ -6,6 +6,7 @@ use App\Models\Xuxemon;
 use App\Models\User;
 use App\Models\Mochila;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class XuxemonController extends Controller
 {
@@ -29,6 +30,8 @@ class XuxemonController extends Controller
     // ── FUSIÓN: devuelve campos de evolución Y de enfermedad ──
     public function misXuxemons(Request $request)
     {
+        $this->descubrirXuxemonDiarioSiToca($request->user());
+
         $xuxemons = $request->user()->xuxemons()->get()->map(function($x) {
             return [
                 'IDxuxemon'        => $x->IDxuxemon,
@@ -42,6 +45,44 @@ class XuxemonController extends Controller
             ];
         });
         return response()->json($xuxemons);
+    }
+
+    private function descubrirXuxemonDiarioSiToca(User $user): void
+    {
+        if (!$user->xuxemons_diarios_activo) {
+            return;
+        }
+
+        $horaConfig = (string) ($user->xuxemons_diarios_hora ?? '09:00:00');
+        $ahora = Carbon::now();
+        $hoy = $ahora->toDateString();
+
+        if ($user->xuxemons_diarios_ultimo_descubrimiento?->toDateString() === $hoy) {
+            return;
+        }
+
+        $horaMinutos = substr($horaConfig, 0, 5);
+        $instanteDescubrimiento = Carbon::createFromFormat('Y-m-d H:i', $hoy . ' ' . $horaMinutos);
+        if ($ahora->lt($instanteDescubrimiento)) {
+            return;
+        }
+
+        $idsExistentes = $user->xuxemons()->pluck('xuxemons.IDxuxemon')->toArray();
+        $pool = Xuxemon::whereNotIn('IDxuxemon', $idsExistentes)->get();
+        if ($pool->isEmpty()) {
+            $user->xuxemons_diarios_ultimo_descubrimiento = $hoy;
+            $user->save();
+            return;
+        }
+
+        $xuxemon = $pool->random();
+        $user->xuxemons()->syncWithoutDetaching([
+            $xuxemon->IDxuxemon => [
+                'tamano' => 'Pequeño',
+            ],
+        ]);
+        $user->xuxemons_diarios_ultimo_descubrimiento = $hoy;
+        $user->save();
     }
 
     public function curarXuxemon(Request $request)

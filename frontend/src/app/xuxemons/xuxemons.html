@@ -44,9 +44,9 @@
     <section class="dboard-card" aria-labelledby="xuxedex-heading">
       <h2 id="xuxedex-heading" class="dboard-section-title">Colección</h2>
 
-      <ul class="xuxedex-grid" role="list" aria-label="Colección de xuxemons">
+      <div class="xuxedex-grid" role="list" aria-label="Colección de xuxemons">
         @for (x of filteredXuxemons; track x.IDxuxemon) {
-        <li class="xuxedex-card" [class.discovered]="isDiscovered(x.IDxuxemon)"
+        <article class="xuxedex-card" role="listitem" [class.discovered]="isDiscovered(x.IDxuxemon)"
           [class.undiscovered]="!isDiscovered(x.IDxuxemon)" [class.sick]="isDiscovered(x.IDxuxemon) && x.enfermo"
           [class.type-tierra]="isDiscovered(x.IDxuxemon) && x.tipo === 'Tierra'"
           [class.type-aire]="isDiscovered(x.IDxuxemon) && x.tipo === 'Aire'"
@@ -58,22 +58,22 @@
 
           <span class="xuxedex-badge size-badge" [class.tamano-pequeno]="x.tamano === 'Pequeño'"
             [class.tamano-mediano]="x.tamano === 'Mediano'" [class.tamano-grande]="x.tamano === 'Grande'">
-            {{ tamanoLabel(x.tamano) }}
+            <span class="visually-hidden">Tamaño: </span>{{ tamanoLabel(x.tamano) }}
           </span>
 
-          <div class="xuxedex-img" aria-hidden="true" [class.size-pequeno]="x.tamano === 'Pequeño'"
+          <div class="xuxedex-img" role="img" [attr.aria-label]="'Imagen de ' + x.nombre" [class.size-pequeno]="x.tamano === 'Pequeño'"
             [class.size-mediano]="x.tamano === 'Mediano'" [class.size-grande]="x.tamano === 'Grande'">
             {{ getEmoji(x.nombre) }}
           </div>
 
-          <p class="xuxedex-name">{{ x.nombre }}</p>
+          <h2 class="xuxedex-name">{{ x.nombre }}</h2>
 
           <span class="xuxedex-type-badge" [class]="'badge-' + x.tipo.toLowerCase()">
             {{ x.tipo }}
           </span>
 
           @if (x.enfermo) {
-          <span class="xuxedex-sick-badge">🤒 {{ x.enfermedad }}</span>
+          <span class="xuxedex-sick-badge"><span class="visually-hidden">Estado enfermo: </span>🤒 {{ x.enfermedad }}</span>
           <button class="xuxedex-cure-btn" (click)="abrirModalCurar(x)">
             💉 Curar
           </button>
@@ -99,17 +99,22 @@
               <button class="xuxedex-evolve-btn" (click)="abrirModalXuxe(x)">🍬 Dar Xuxe</button>
             }
           } @else if (!x.enfermo) {
-            <span class="xuxedex-max-badge">⭐ Máximo</span>
+          <!-- Grande y sano -->
+          <span class="xuxedex-max-badge"><span class="visually-hidden">Estado: </span>⭐ Máximo</span>
           }
 
           } @else {
           <div class="xuxedex-lock" aria-hidden="true">🔒</div>
-          <p class="xuxedex-name unknown">???</p>
+          <h2 class="xuxedex-name unknown">???</h2>
           <span class="xuxedex-type-badge badge-unknown">???</span>
           }
-        </li>
+        </article>
         }
-      </ul>
+      </div>
+
+      @if (filteredXuxemons.length === 0) {
+      <p class="xuxedex-empty">No se encontraron xuxemons con ese filtro.</p>
+      }
     </section>
 
     @if (xuxemonACurar) {
