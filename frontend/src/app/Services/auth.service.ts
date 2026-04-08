@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,17 @@ export class AuthService {
     return !!this.obtenerToken();
   }
 
+  estaLogueadoAsync(): Observable<boolean> {
+    if (!this.obtenerToken()) return of(false);
+    return this.me().pipe(
+      map(() => true),
+      catchError(() => {
+        this.cerrarSesion();
+        return of(false);
+      })
+    );
+  }
+
   private getAuthHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Authorization': `Bearer ${this.obtenerToken()}`
@@ -63,7 +75,7 @@ export class AuthService {
   }
 
   actualizarPerfil(datos: any): Observable<any> {
-  return this.http.put(`${this.apiUrl}/usuario`, datos, {
+    return this.http.put(`${this.apiUrl}/usuario`, datos, {
       headers: this.getAuthHeaders()
     });
   }

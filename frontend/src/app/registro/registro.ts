@@ -51,7 +51,7 @@ export class Registro {
     this.form.markAllAsTouched();
     if (this.form.valid) {
       this.isSubmitting = true;
-      this.cdr.detectChanges(); // Fuerza la actualización para mostrar "Creando cuenta..."
+      this.cdr.detectChanges();
 
       const datos = {
         nombre: this.form.value.nombre,
@@ -63,9 +63,8 @@ export class Registro {
       this.authService.registro(datos).subscribe({
         next: (res) => {
           this.isSubmitting = false;
-          this.authService.guardarToken(res.access_token);
-          this.identificadorGenerado = res.user.identificador; 
-          this.cdr.detectChanges(); // Actualiza para mostrar el cartón verde con el ID
+          this.identificadorGenerado = res.user.identificador;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           this.isSubmitting = false;
