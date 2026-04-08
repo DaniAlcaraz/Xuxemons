@@ -1,5 +1,5 @@
 /* dashboard.css — sin :host, prefijos únicos dboard- */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
 /* ── Utilidad accesibilidad: oculta visualmente pero legible por lectores ── */
 .visually-hidden {
@@ -30,7 +30,7 @@
 }
 
 .dboard-header-content h1 {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo 2', cursive;
   font-size: 52px; /* Mapeado a .title del login */
   font-weight: 900;
   color: #ffffff;

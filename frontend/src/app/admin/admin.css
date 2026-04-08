@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
 .dboard-wrapper {
   font-family: 'Nunito', sans-serif;
@@ -15,6 +15,7 @@
 }
 
 .dboard-header-content h1 {
+  font-family: 'Baloo 2', cursive;
   font-size: 52px;
   font-weight: 900;
   color: #fff;
@@ -334,11 +335,11 @@
 }
 
 .btn-add {
-  background: linear-gradient(135deg, #2e7d32, #43a047);
+  background-color: #43a047;
 }
 
 .btn-remove {
-  background: linear-gradient(135deg, #c62828, #e53935);
+  background-color: #e53935;
 }
 
 .btn-neutral {
