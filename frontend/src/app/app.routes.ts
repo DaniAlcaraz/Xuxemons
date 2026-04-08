@@ -42,8 +42,7 @@ export const routes: Routes = [
     component: Mochila,
     canActivate: [AuthGuard]
   },
-    {
-    path: 'amigos',
+  { path: 'amigos',
     component: Amigos,
     canActivate: [AuthGuard]
   },
