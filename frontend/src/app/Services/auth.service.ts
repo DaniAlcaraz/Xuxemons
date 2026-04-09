@@ -57,6 +57,11 @@ export class AuthService {
     return !!this.obtenerToken();
   }
 
+  esAdmin(): boolean {
+    const user = this.obtenerUsuario();
+    return user?.rol === 'admin';
+  }
+
   estaLogueadoAsync(): Observable<boolean> {
     if (!this.obtenerToken()) return of(false);
     return this.me().pipe(

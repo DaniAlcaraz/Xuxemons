@@ -1,26 +1,14 @@
-services:
-  #Frontend
-  frontend:
-    image: node:20-alpine
-    container_name: xuxemons_angular
-    working_dir: /app
-    volumes:
-      - ./frontend:/app:cached
-    ports:
-      - "4200:4200"
-    command: sh -c "npm start -- --host 0.0.0.0 --poll=2000 --hmr"
-    networks:
-      - app-network
+version: "3.9"
 
-  # Backend
+services:
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: xuxemons_laravel
-    working_dir: /var/www/html
     volumes:
-      - ./backend:/var/www/html:cached
+      - backend-data:/var/www/html
+      - ./backend:/var/www/html:cached # solo para desarrollo, opcional
     ports:
       - "8000:80"
     environment:
@@ -30,12 +18,24 @@ services:
       DB_DATABASE: xuxemons_db
       DB_USERNAME: xuxemons_user
       DB_PASSWORD: 1234
-    networks:
-      - app-network
     depends_on:
       - db
+    networks:
+      - app-network
 
-  #Base de datos
+  frontend:
+    image: node:20-alpine
+    container_name: xuxemons_angular
+    working_dir: /app
+    volumes:
+      - frontend-data:/app
+      - ./frontend:/app:cached # solo desarrollo
+    ports:
+      - "4200:4200"
+    command: sh -c "npm start -- --host 0.0.0.0 --poll=500 --hmr" # polling más bajo
+    networks:
+      - app-network
+
   db:
     image: mysql:8.0
     container_name: xuxemons_db
@@ -52,10 +52,14 @@ services:
     networks:
       - app-network
 
+volumes:
+  backend-data:
+    driver: local
+  frontend-data:
+    driver: local
+  mysql-data:
+    driver: local
+
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  mysql-data:
-    driver: local
