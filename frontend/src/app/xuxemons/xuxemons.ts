@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../Services/auth.service';
@@ -64,17 +64,25 @@ export class Xuxemons implements OnInit {
   mensajes: Record<number, string> = {};
   xuxesConfig = { pequeno_mediano: 3, mediano_grande: 5 };
 
+  // Mochila
   vacunasEnMochila: { item_id: number; nombre: string; cantidad: number }[] = [];
+  xuxesEnMochila: { item_id: number; nombre: string; cantidad: number }[] = [];
 
+  // Modales
   xuxemonACurar: Xuxemon | null = null;
   vacunaSeleccionada: number | null = null;
   mensajeCura = '';
 
+  xuxemonAAlimentar: Xuxemon | null = null;
+  xuxeSeleccionada: number | null = null;
+  mensajeXuxe = '';
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
-  ) { }
+    private cdr: ChangeDetectorRef,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const saved = localStorage.getItem('xuxemon_mensajes');
@@ -97,7 +105,12 @@ export class Xuxemons implements OnInit {
   }
 
   cargarDatos(): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    const token = this.authService.obtenerToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    const headers = { 'Authorization': `Bearer ${token}` };
     this.cargando = true;
 
     this.http.get<Xuxemon[]>(`${this.apiUrl}/xuxemons`, { headers }).subscribe({
@@ -119,40 +132,53 @@ export class Xuxemons implements OnInit {
             this.cargando = false;
             this.cdr.detectChanges();
           },
-          error: () => { this.cargando = false; this.cdr.detectChanges(); }
+          error: (err) => {
+            if (err.status === 401) {
+              this.authService.cerrarSesion();
+              this.router.navigate(['/login']);
+            }
+            this.cargando = false;
+            this.cdr.detectChanges();
+          }
         });
       },
-      error: () => { this.cargando = false; this.cdr.detectChanges(); }
+      error: (err) => {
+        if (err.status === 401) {
+          this.authService.cerrarSesion();
+          this.router.navigate(['/login']);
+        }
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
     });
 
-    const headers2 = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-    this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers: headers2 }).subscribe({
+    // Cargar items de la mochila (Vacunas y Xuxes)
+    this.http.get<any[]>(`${this.apiUrl}/mochila`, { headers }).subscribe({
       next: (mochila) => {
         this.vacunasEnMochila = mochila
           .filter(e => e.item?.tipo === 'vacuna')
           .map(e => ({ item_id: e.item_id, nombre: e.item.nombre, cantidad: e.cantidad }));
+        
+        this.xuxesEnMochila = mochila
+          .filter(e => e.item?.tipo === 'xuxe')
+          .map(e => ({ item_id: e.item_id, nombre: e.item.nombre, cantidad: e.cantidad }));
+
         this.cdr.detectChanges();
-      }
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          this.authService.cerrarSesion();
+          this.router.navigate(['/login']);
+          return;
+        }
+      },
     });
   }
 
-  isDiscovered(id: number): boolean {
-    return this.userOwnedIds.includes(id);
-  }
+  isDiscovered(id: number): boolean { return this.userOwnedIds.includes(id); }
+  getEmoji(nombre: string): string { return EMOJIS[nombre] ?? '🥚'; }
+  getMensaje(id: number): string { return this.mensajes[id] ?? ''; }
 
-  getEmoji(nombre: string): string {
-    return EMOJIS[nombre] ?? '🥚';
-  }
-
-  getMensaje(id: number): string {
-    return this.mensajes[id] ?? '';
-  }
-
-  /**
-   * Xuxes necesarias para evolucionar, aplicando modificadores de enfermedad:
-   * - "Bajón de azúcar": +2 sobre el valor base
-   * - "Atracón": mismo valor base (el botón se bloquea en la vista)
-   */
   xuxesNecesarias(tamano: TamanoXuxemon, enfermedad?: string | null): number {
     const base = tamano === 'Pequeño'
       ? this.xuxesConfig.pequeno_mediano
@@ -174,47 +200,16 @@ export class Xuxemons implements OnInit {
     return list;
   }
 
-  nextTamano(t: TamanoXuxemon): TamanoXuxemon | null {
-    if (t === 'Pequeño') return 'Mediano';
-    if (t === 'Mediano') return 'Grande';
-    return null;
-  }
-
-  canEvolve(xux: Xuxemon): boolean {
-    // Atracón bloquea; Bajón de azúcar permite evolucionar pero con más xuxes
-    return this.isDiscovered(xux.IDxuxemon)
-      && xux.tamano !== 'Grande'
-      && xux.enfermedad !== 'Atracón';
-  }
-
-  evolucionar(xux: Xuxemon): void {
-    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
-    this.http.post<any>(`${this.apiUrl}/xuxemons/${xux.IDxuxemon}/evolucionar`, {}, { headers }).subscribe({
-      next: (res) => {
-        this.mensajes[xux.IDxuxemon] = res.message;
-        localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
-        this.cargarConfig();
-      },
-      error: (err) => {
-        // FIX: en vez de alert(), mostramos el error como mensaje inline en la carta
-        this.mensajes[xux.IDxuxemon] = '⚠️ ' + (err.error?.error || 'Error al evolucionar');
-        localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
   tamanoLabel(t: TamanoXuxemon): string {
     if (t === 'Pequeño') return '🥚 Pequeño';
     if (t === 'Mediano') return '🌿 Mediano';
     return '⭐ Grande';
   }
 
+  // --- Lógica de Curar ---
   abrirModalCurar(xux: Xuxemon): void {
     this.xuxemonACurar = xux;
-    this.vacunaSeleccionada = this.vacunasEnMochila.length > 0
-      ? this.vacunasEnMochila[0].item_id
-      : null;
+    this.vacunaSeleccionada = this.vacunasEnMochila.length > 0 ? this.vacunasEnMochila[0].item_id : null;
     this.mensajeCura = '';
   }
 
@@ -238,6 +233,40 @@ export class Xuxemons implements OnInit {
       },
       error: (err) => {
         this.mensajeCura = '⚠️ ' + (err.error?.error || 'Error al curar');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // --- Lógica de Dar Xuxe (Evolucionar) ---
+  abrirModalXuxe(xux: Xuxemon): void {
+    this.xuxemonAAlimentar = xux;
+    this.xuxeSeleccionada = this.xuxesEnMochila.length > 0 ? this.xuxesEnMochila[0].item_id : null;
+    this.mensajeXuxe = '';
+  }
+
+  cerrarModalXuxe(): void {
+    this.xuxemonAAlimentar = null;
+    this.xuxeSeleccionada = null;
+    this.mensajeXuxe = '';
+  }
+
+  darXuxe(): void {
+    if (!this.xuxemonAAlimentar || !this.xuxeSeleccionada) return;
+    const headers = { 'Authorization': `Bearer ${this.authService.obtenerToken()}` };
+    this.http.post<any>(`${this.apiUrl}/xuxemons/${this.xuxemonAAlimentar.IDxuxemon}/evolucionar`, 
+      { item_id: this.xuxeSeleccionada }, 
+      { headers }
+    ).subscribe({
+      next: (res) => {
+        this.mensajes[this.xuxemonAAlimentar!.IDxuxemon] = res.message;
+        localStorage.setItem('xuxemon_mensajes', JSON.stringify(this.mensajes));
+        this.mensajeXuxe = '✅ ' + res.message;
+        this.cargarConfig(); // Recarga xuxes y mochila
+        setTimeout(() => this.cerrarModalXuxe(), 1500);
+      },
+      error: (err) => {
+        this.mensajeXuxe = '⚠️ ' + (err.error?.error || 'Error al dar xuxe');
         this.cdr.detectChanges();
       }
     });

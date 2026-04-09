@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Mochila;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class MochilaController extends Controller {
 
@@ -11,6 +13,8 @@ class MochilaController extends Controller {
 
     // GET /mochila — mochila del usuario logueado
     public function index(Request $request) {
+        $this->repartirXuxesDiariosSiToca($request->user());
+
         $mochila = $request->user()
             ->mochila()
             ->with('item')
@@ -34,48 +38,15 @@ class MochilaController extends Controller {
         ]);
 
         $item     = Item::findOrFail($request->item_id);
-        $mochila  = Mochila::where('user_identificador', $request->user_identificador)->with('item')->get();
+        $resultado = $this->anadirConLimites($request->user_identificador, $item, (int) $request->cantidad);
 
-        // Calcular espacios usados
-        $espaciosUsados = $mochila->sum(function ($m) {
-            return $m->item->tipo === 'xuxe'
-                ? ceil($m->cantidad / self::MAX_STACK)
-                : $m->cantidad;
-        });
-        $espaciosLibres = self::MAX_ESPACIOS - $espaciosUsados;
-
-        if ($espaciosLibres <= 0) {
+        if ($resultado['anadidos'] <= 0) {
             return response()->json(['error' => 'La mochila del usuario está llena'], 400);
         }
-
-        $entrada = Mochila::where('user_identificador', $request->user_identificador)
-                          ->where('item_id', $request->item_id)
-                          ->first();
-
-        if ($item->tipo === 'xuxe') {
-            $hueco  = $entrada ? (self::MAX_STACK - ($entrada->cantidad % self::MAX_STACK)) % self::MAX_STACK : 0;
-            $caben  = $hueco + $espaciosLibres * self::MAX_STACK;
-            $anadir = min($request->cantidad, $caben);
-        } else {
-            $anadir = min($request->cantidad, $espaciosLibres);
-        }
-
-        if ($entrada) {
-            $entrada->cantidad += $anadir;
-            $entrada->save();
-        } else {
-            Mochila::create([
-                'user_identificador' => $request->user_identificador,
-                'item_id'            => $request->item_id,
-                'cantidad'           => $anadir,
-            ]);
-        }
-
-        $descartados = $request->cantidad - $anadir;
         return response()->json([
-            'message'     => 'Añadidos ' . $anadir . ' ' . $item->nombre . ($descartados > 0 ? ' (' . $descartados . ' descartados por espacio)' : ''),
-            'añadidos'    => $anadir,
-            'descartados' => $descartados,
+            'message'     => 'Añadidos ' . $resultado['anadidos'] . ' ' . $item->nombre . ($resultado['descartados'] > 0 ? ' (' . $resultado['descartados'] . ' descartados por espacio)' : ''),
+            'añadidos'    => $resultado['anadidos'],
+            'descartados' => $resultado['descartados'],
         ]);
     }
 
@@ -99,6 +70,84 @@ class MochilaController extends Controller {
         else $entrada->save();
 
         return response()->json(['message' => 'Quitados ' . $quitados, 'quitados' => $quitados]);
+    }
+
+    private function anadirConLimites(string $userIdentificador, Item $item, int $cantidad): array
+    {
+        $mochila = Mochila::where('user_identificador', $userIdentificador)->with('item')->get();
+
+        $espaciosUsados = $mochila->sum(function ($m) {
+            return $m->item->tipo === 'xuxe'
+                ? (int) ceil($m->cantidad / self::MAX_STACK)
+                : (int) $m->cantidad;
+        });
+        $espaciosLibres = self::MAX_ESPACIOS - $espaciosUsados;
+
+        if ($espaciosLibres <= 0) {
+            return ['anadidos' => 0, 'descartados' => $cantidad];
+        }
+
+        $entrada = Mochila::where('user_identificador', $userIdentificador)
+            ->where('item_id', $item->id)
+            ->first();
+
+        if ($item->tipo === 'xuxe') {
+            $hueco = $entrada ? (self::MAX_STACK - ($entrada->cantidad % self::MAX_STACK)) % self::MAX_STACK : 0;
+            $caben = $hueco + $espaciosLibres * self::MAX_STACK;
+            $anadir = min($cantidad, $caben);
+        } else {
+            $anadir = min($cantidad, $espaciosLibres);
+        }
+
+        if ($anadir <= 0) {
+            return ['anadidos' => 0, 'descartados' => $cantidad];
+        }
+
+        if ($entrada) {
+            $entrada->cantidad += $anadir;
+            $entrada->save();
+        } else {
+            Mochila::create([
+                'user_identificador' => $userIdentificador,
+                'item_id' => $item->id,
+                'cantidad' => $anadir,
+            ]);
+        }
+
+        return ['anadidos' => $anadir, 'descartados' => max(0, $cantidad - $anadir)];
+    }
+
+    private function repartirXuxesDiariosSiToca(User $user): void
+    {
+        if (!$user->xuxes_diarios_activo) {
+            return;
+        }
+
+        $cantidad = max(1, (int) ($user->xuxes_diarios_cantidad ?? 5));
+        $horaConfig = (string) ($user->xuxes_diarios_hora ?? '09:00:00');
+        $ahora = Carbon::now();
+        $hoy = $ahora->toDateString();
+
+        if ($user->xuxes_diarios_ultimo_reparto?->toDateString() === $hoy) {
+            return;
+        }
+
+        $horaMinutos = substr($horaConfig, 0, 5);
+        $instanteReparto = Carbon::createFromFormat('Y-m-d H:i', $hoy . ' ' . $horaMinutos);
+        if ($ahora->lt($instanteReparto)) {
+            return;
+        }
+
+        $itemXuxe = Item::where('tipo', 'xuxe')->orderBy('id')->first();
+        if (!$itemXuxe) {
+            return;
+        }
+
+        $resultado = $this->anadirConLimites($user->identificador, $itemXuxe, $cantidad);
+        if ($resultado['anadidos'] > 0) {
+            $user->xuxes_diarios_ultimo_reparto = $hoy;
+            $user->save();
+        }
     }
 
     
