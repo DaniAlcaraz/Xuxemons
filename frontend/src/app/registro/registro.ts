@@ -12,47 +12,76 @@ import { AuthService } from '../Services/auth.service';
   styleUrls: ['./registro.css']
 })
 export class Registro {
-  form: FormGroup;
-  mostrarPassword = false;
-  mostrarRepetirPassword = false;
-  formSubmitted = false;
-  isSubmitting = false;
-  identificadorGenerado: string | null = null;
+  // --- Propiedades del Componente ---
+  form: FormGroup;                 // Grupo de controles del formulario
+  mostrarPassword = false;         // Control visual para ver/ocultar contraseña
+  mostrarRepetirPassword = false;  // Control visual para ver/ocultar repetición
+  formSubmitted = false;           // Bandera para saber si el usuario intentó enviar el form
+  isSubmitting = false;            // Bandera de carga (loading) durante la petición
+  identificadorGenerado: string | null = null; // Almacena el ID retornado por el servidor tras el éxito
 
-  constructor(private fb: FormBuilder, private authService: AuthService, public router: Router, private cdr: ChangeDetectorRef) {
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    public router: Router, 
+    private cdr: ChangeDetectorRef
+  ) {
+    // Inicialización del formulario con validaciones síncronas
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.required, Validators.minLength(6)]],
       repetirContrasena: ['', Validators.required]
-    }, { validators: this.passwordsMatch });
+    }, { 
+      // Validador personalizado para comparar campos entre sí
+      validators: this.passwordsMatch 
+    });
   }
 
+  /**
+   * Validador personalizado: Comprueba que las dos contraseñas sean idénticas.
+   * Se aplica a nivel de FormGroup.
+   */
   passwordsMatch(group: AbstractControl) {
     const pass = group.get('contrasena')?.value;
     const repeat = group.get('repetirContrasena')?.value;
     return pass === repeat ? null : { noCoinciden: true };
   }
 
+  /**
+   * Gestión de mensajes de error para la vista.
+   * Retorna el texto del error según la validación que falle.
+   */
   getError(field: string): string | null {
     const control = this.form.get(field);
+    
+    // Si el usuario no ha tocado el campo y no ha dado a "enviar", no mostramos error aún
     if (!control?.touched && !this.formSubmitted) return null;
+
     if (control?.hasError('required')) return 'Este campo es obligatorio';
     if (control?.hasError('email')) return 'El formato del correo no es válido';
     if (control?.hasError('minlength')) return 'La contraseña debe tener al menos 6 caracteres';
+    
+    // Error especial para la coincidencia de contraseñas
     if (field === 'repetirContrasena' && this.form.hasError('noCoinciden') && (control?.touched || this.formSubmitted))
       return 'Las contraseñas no coinciden';
+    
     return null;
   }
 
+  /**
+   * Método principal de envío del formulario.
+   */
   onSubmit(): void {
     this.formSubmitted = true;
-    this.form.markAllAsTouched();
+    this.form.markAllAsTouched(); // Fuerza que se marquen todos para mostrar errores visuales
+
     if (this.form.valid) {
       this.isSubmitting = true;
-      this.cdr.detectChanges();
+      this.cdr.detectChanges(); // Forzamos detección de cambios para mostrar estados de carga
 
+      // Mapeo de los nombres de campos del formulario a los que espera la API de Laravel
       const datos = {
         nombre: this.form.value.nombre,
         apellidos: this.form.value.apellidos,
@@ -60,9 +89,12 @@ export class Registro {
         password: this.form.value.contrasena,
         password_confirmation: this.form.value.repetirContrasena
       };
+
+      // Llamada al servicio de autenticación
       this.authService.registro(datos).subscribe({
         next: (res) => {
           this.isSubmitting = false;
+          // Guardamos el identificador único que genera el backend (importante para tu lógica)
           this.identificadorGenerado = res.user.identificador;
           this.cdr.detectChanges();
         },
@@ -74,5 +106,4 @@ export class Registro {
       });
     }
   }
-
 }
