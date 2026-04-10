@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MochilaController;
 use App\Http\Controllers\XuxemonController;
+use App\Http\Controllers\AmistadController;
+
 
 // ── Rutas públicas ────────────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -57,6 +59,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Configuración global de xuxes
     Route::get('/configuracion/xuxes',  [XuxemonController::class, 'getConfigXuxes']);
     Route::post('/configuracion/xuxes', [XuxemonController::class, 'setConfigXuxes']);
+
+    // Amistades
+    Route::prefix('amigos')->group(function () {
+    Route::get('/buscar',                [AmistadController::class, 'buscar']);            // GET  /api/amigos/buscar?q=...
+    Route::post('/solicitud',            [AmistadController::class, 'enviarSolicitud']);   // POST /api/amigos/solicitud
+    Route::get('/solicitudes',           [AmistadController::class, 'solicitudesRecibidas']); // GET  /api/amigos/solicitudes
+    Route::post('/solicitud/{id}/aceptar',  [AmistadController::class, 'aceptar']);       // POST /api/amigos/solicitud/{id}/aceptar
+    Route::post('/solicitud/{id}/rechazar', [AmistadController::class, 'rechazar']);      // POST /api/amigos/solicitud/{id}/rechazar
+    Route::get('/',                      [AmistadController::class, 'listaAmigos']);       // GET  /api/amigos
+    Route::delete('/{id}',               [AmistadController::class, 'eliminarAmigo']);    // DELETE /api/amigos/{id}
+});
 });
 
 // Rutas de gestión de usuarios
