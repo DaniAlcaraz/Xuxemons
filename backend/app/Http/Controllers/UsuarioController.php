@@ -73,6 +73,9 @@ class UsuarioController extends Controller
     return response()->json(['user' => $user]);
 }
 
+    //LOGICA XUXES
+
+    //Obtiene xuxes
     public function obtenerXuxesDiariosConfig($identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -88,6 +91,7 @@ class UsuarioController extends Controller
         ]);
     }
 
+    //Actualiza xuxes
     public function actualizarXuxesDiariosConfig(Request $request, $identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -116,6 +120,9 @@ class UsuarioController extends Controller
         ]);
     }
 
+    //LOGICA PARA XUXEMONS
+
+    //Obtiene xuxemons
     public function obtenerXuxemonsDiariosConfig($identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -130,6 +137,7 @@ class UsuarioController extends Controller
         ]);
     }
 
+    //Actualiza xuxemons
     public function actualizarXuxemonsDiariosConfig(Request $request, $identificador)
     {
         $user = User::where('identificador', $identificador)->first();
