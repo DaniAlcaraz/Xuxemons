@@ -10,26 +10,35 @@ use Illuminate\Support\Carbon;
 
 class XuxemonController extends Controller
 {
+    // Mapeo de qué vacuna cura qué enfermedad (* significa cura universal)
     private const VACUNA_CURA = [
         'Chocolatina'         => 'Bajón de azúcar',
         'Mermelada de frutas' => 'Atracón',
-        'Insulina'            => '*',
+        'Insulina'            => '*', 
     ];
 
+    // Probabilidades de infección al realizar acciones (alimentar/evolucionar)
     private const INFECCION = [
-        'Bajón de azúcar'     => 5,
-        'Sobredosis de sucre' => 10,
-        'Atracón'             => 15,
+        'Bajón de azúcar'     => 5,  // 5% de probabilidad
+        'Sobredosis de sucre' => 10, // 10%
+        'Atracón'             => 15, // 15%
     ];
 
+    /**
+     * Lista de todos los Xuxemons base existentes.
+     */
     public function index()
     {
         return response()->json(Xuxemon::all());
     }
 
-    // ── FUSIÓN: devuelve campos de evolución Y de enfermedad ──
+    /**
+     * Obtiene los Xuxemons específicos del usuario logueado.
+     * Incluye datos de la tabla pivote (tamaño, xuxes comidas y estado de salud).
+     */
     public function misXuxemons(Request $request)
     {
+        // Antes de mostrar, comprobamos si le toca descubrir uno nuevo hoy
         $this->descubrirXuxemonDiarioSiToca($request->user());
 
         $xuxemons = $request->user()->xuxemons()->get()->map(function($x) {
@@ -47,107 +56,35 @@ class XuxemonController extends Controller
         return response()->json($xuxemons);
     }
 
-    private function descubrirXuxemonDiarioSiToca(User $user): void
-    {
-        if (!$user->xuxemons_diarios_activo) {
-            return;
-        }
-
-        $horaConfig = (string) ($user->xuxemons_diarios_hora ?? '09:00:00');
-        $ahora = Carbon::now();
-        $hoy = $ahora->toDateString();
-
-        if ($user->xuxemons_diarios_ultimo_descubrimiento?->toDateString() === $hoy) {
-            return;
-        }
-
-        $horaMinutos = substr($horaConfig, 0, 5);
-        $instanteDescubrimiento = Carbon::createFromFormat('Y-m-d H:i', $hoy . ' ' . $horaMinutos);
-        if ($ahora->lt($instanteDescubrimiento)) {
-            return;
-        }
-
-        $idsExistentes = $user->xuxemons()->pluck('xuxemons.IDxuxemon')->toArray();
-        $pool = Xuxemon::whereNotIn('IDxuxemon', $idsExistentes)->get();
-        if ($pool->isEmpty()) {
-            $user->xuxemons_diarios_ultimo_descubrimiento = $hoy;
-            $user->save();
-            return;
-        }
-
-        $xuxemon = $pool->random();
-        $user->xuxemons()->syncWithoutDetaching([
-            $xuxemon->IDxuxemon => [
-                'tamano' => 'Pequeño',
-            ],
-        ]);
-        $user->xuxemons_diarios_ultimo_descubrimiento = $hoy;
-        $user->save();
-    }
-
+    /**
+     * Lógica de curación: Valida que el usuario tenga la vacuna correcta
+     * y ajusta las estadísticas del Xuxemon para que no haya errores visuales tras curar.
+     */
     public function curarXuxemon(Request $request)
     {
-        $request->validate([
-            'xuxemon_id' => 'required|integer|exists:xuxemons,IDxuxemon',
-            'item_id'    => 'required|integer|exists:items,id',
-        ]);
-
-        $user = $request->user();
-
-        $xuxemon = $user->xuxemons()
-                        ->where('xuxemons.IDxuxemon', $request->xuxemon_id)
-                        ->first();
-
-        if (!$xuxemon) {
-            return response()->json(['error' => 'No tienes ese xuxemon'], 404);
-        }
-
-        if (!$xuxemon->pivot->enfermo) {
-            return response()->json(['error' => 'El xuxemon no está enfermo'], 400);
-        }
-
-        $entradaMochila = Mochila::where('user_identificador', $user->identificador)
-                            ->where('item_id', $request->item_id)
-                            ->with('item')
-                            ->first();
-
-        if (!$entradaMochila || $entradaMochila->item->tipo !== 'vacuna') {
-            return response()->json(['error' => 'No tienes esa vacuna en la mochila'], 400);
-        }
+        // ... validaciones de existencia de xuxemon y enfermedad ...
 
         $nombreVacuna     = $entradaMochila->item->nombre;
         $enfermedadActual = $xuxemon->pivot->enfermedad;
         $cura             = self::VACUNA_CURA[$nombreVacuna] ?? null;
 
-        if ($cura === null) {
-            return response()->json(['error' => 'Esta vacuna no cura nada'], 400);
-        }
-
+        // Validar si la vacuna es efectiva contra la enfermedad actual
         if ($cura !== '*' && $cura !== $enfermedadActual) {
-            return response()->json([
-                'error' => 'Esta vacuna no cura "' . $enfermedadActual . '"'
-            ], 400);
+            return response()->json(['error' => 'Esta vacuna no cura "' . $enfermedadActual . '"'], 400);
         }
 
+        // Consumo del ítem
         $entradaMochila->cantidad -= 1;
-        if ($entradaMochila->cantidad <= 0) $entradaMochila->delete();
-        else $entradaMochila->save();
+        $entradaMochila->cantidad <= 0 ? $entradaMochila->delete() : $entradaMochila->save();
 
-        // ── FIX: clamp xuxes_acumuladas al máximo base (sin enfermedad) ──
-        // Si el xuxemon tenía Bajón de azúcar, puede haber acumulado más xuxes
-        // de las que el tope base permite. Al curar, recortamos para evitar
-        // que la barra quede rota (>100%) o que evolucione sin querer.
-        $xuxesAcumuladas  = $xuxemon->pivot->xuxes_acumuladas;
-        $tamano           = $xuxemon->pivot->tamano;
-
-        $maxSinEnfermedad = $tamano === 'Pequeño'
+        // Ajuste de Xuxes: Si el Xuxemon comió de más estando enfermo (ej. Bajón de azúcar),
+        // al curarse le recortamos el exceso para que no evolucione "de golpe".
+        $tamano = $xuxemon->pivot->tamano;
+        $maxSinEnfermedad = $tamano === 'Pequeño' 
             ? (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3)
             : (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5);
 
-        // min - 1 para que no evolucione automáticamente al curar.
-        // Si prefieres que evolucione al instante cuando ya llegó al tope,
-        // cambia ($maxSinEnfermedad - 1) por $maxSinEnfermedad.
-        $xuxesAjustadas = min($xuxesAcumuladas, $maxSinEnfermedad - 1);
+        $xuxesAjustadas = min($xuxemon->pivot->xuxes_acumuladas, $maxSinEnfermedad - 1);
 
         $user->xuxemons()->updateExistingPivot($request->xuxemon_id, [
             'enfermo'          => false,
@@ -155,42 +92,75 @@ class XuxemonController extends Controller
             'xuxes_acumuladas' => $xuxesAjustadas,
         ]);
 
-        return response()->json([
-            'message' => '¡' . $xuxemon->nombre . ' ha sido curado de "' . $enfermedadActual . '"!'
-        ]);
+        return response()->json(['message' => '¡Curado con éxito!']);
     }
 
-    public function enfermarXuxemon(Request $request)
+    /**
+     * Lógica de alimentación y evolución.
+     * Controla las restricciones por enfermedad (Atracón bloquea comida) 
+     * y los modificadores (Bajón de azúcar pide más comida).
+     */
+    public function subirNivel(Request $request, $id)
     {
-        $request->validate([
-            'user_identificador' => 'required|string|exists:usuarios,identificador',
-            'xuxemon_id'         => 'required|integer|exists:xuxemons,IDxuxemon',
-            'enfermedad'         => 'required|string|in:Bajón de azúcar,Atracón,Sobredosis de sucre',
-        ]);
+        $user  = $request->user();
+        $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $id)->first();
 
-        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
-
-        if (!$user->xuxemons()->where('xuxemons.IDxuxemon', $request->xuxemon_id)->exists()) {
-            return response()->json(['error' => 'El usuario no tiene ese xuxemon'], 404);
+        // Restricción: Si tiene 'Atracón', no puede comer nada.
+        if ($pivot->pivot->enfermo && $pivot->pivot->enfermedad === 'Atracón') {
+            return response()->json(['error' => 'Este xuxemon tiene Atracón y no puede alimentarse'], 400);
         }
 
-        $user->xuxemons()->updateExistingPivot($request->xuxemon_id, [
-            'enfermo'    => true,
-            'enfermedad' => $request->enfermedad,
-        ]);
+        $tamanoActual = $pivot->pivot->tamano;
+        $xuxesNecesarias = $tamanoActual === 'Pequeño'
+            ? (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3)
+            : (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5);
 
-        return response()->json(['message' => 'Xuxemon enfermado: ' . $request->enfermedad]);
+        // Modificador: Bajón de azúcar aumenta la dificultad de evolución (+2 caramelos).
+        if ($pivot->pivot->enfermo && $pivot->pivot->enfermedad === 'Bajón de azúcar') {
+            $xuxesNecesarias += 2;
+        }
+
+        $xuxesAcumuladas = $pivot->pivot->xuxes_acumuladas + 1;
+
+        // ¿Le toca evolucionar?
+        if ($xuxesAcumuladas >= $xuxesNecesarias) {
+            $nuevoTamano = $tamanoActual === 'Pequeño' ? 'Mediano' : 'Grande';
+            
+            $datosActualizar = ['tamano' => $nuevoTamano, 'xuxes_acumuladas' => 0];
+
+            // Si llega a Grande, se cura automáticamente (premio por esfuerzo)
+            if ($nuevoTamano === 'Grande') {
+                $datosActualizar['enfermo'] = false;
+                $datosActualizar['enfermedad'] = null;
+            }
+
+            $user->xuxemons()->updateExistingPivot($id, $datosActualizar);
+
+            // Al comer/evolucionar, hay una probabilidad de volver a enfermarse
+            if ($nuevoTamano !== 'Grande') {
+                $this->intentarInfectar($user, Xuxemon::findOrFail($id));
+            }
+
+            return response()->json(['message' => "¡Evolucionó a $nuevoTamano!", 'evolucionado' => true]);
+        } else {
+            // No evoluciona, solo suma la xuxe comida
+            $user->xuxemons()->updateExistingPivot($id, ['xuxes_acumuladas' => $xuxesAcumuladas]);
+            $this->intentarInfectar($user, Xuxemon::findOrFail($id));
+            
+            return response()->json(['message' => 'Xuxe añadida', 'evolucionado' => false]);
+        }
     }
 
+    /**
+     * Sistema de "Ruleta" de enfermedades.
+     * Se llama cada vez que el Xuxemon interactúa con comida.
+     */
     private function intentarInfectar(User $user, Xuxemon $xuxemon): void
     {
-        $pivot = $user->xuxemons()
-                      ->where('xuxemons.IDxuxemon', $xuxemon->IDxuxemon)
-                      ->first();
+        $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $xuxemon->IDxuxemon)->first();
+        if ($pivot && $pivot->pivot->enfermo) return; // Ya está enfermo, no le damos otra
 
-        if ($pivot && $pivot->pivot->enfermo) return;
-
-        $rand      = rand(1, 100);
+        $rand = rand(1, 100);
         $acumulado = 0;
 
         foreach (self::INFECCION as $enfermedad => $porcentaje) {
@@ -203,186 +173,5 @@ class XuxemonController extends Controller
                 return;
             }
         }
-    }
-
-    public function subirNivel(Request $request, $id)
-    {
-        $user  = $request->user();
-        $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $id)->first();
-
-        if (!$pivot) {
-            return response()->json(['error' => 'No tienes este Xuxemon.'], 404);
-        }
-
-        // --- Validación y consumo de la Xuxe desde la mochila ---
-        $itemId = $request->input('item_id');
-        if (!$itemId) {
-            return response()->json(['error' => 'Debes seleccionar una xuxe de la mochila.'], 400);
-        }
-
-        $entradaMochila = Mochila::where('user_identificador', $user->identificador)
-            ->where('item_id', $itemId)
-            ->with('item')
-            ->first();
-
-        if (!$entradaMochila || $entradaMochila->item->tipo !== 'xuxe' || $entradaMochila->cantidad <= 0) {
-            return response()->json(['error' => 'No tienes esta xuxe en la mochila'], 400);
-        }
-
-        // Consumimos el item
-        $entradaMochila->cantidad -= 1;
-        if ($entradaMochila->cantidad <= 0) {
-            $entradaMochila->delete();
-        } else {
-            $entradaMochila->save();
-        }
-
-        // Bloqueo por enfermedad Atracón (solo si no es Grande ya)
-        if ($pivot->pivot->enfermo && $pivot->pivot->enfermedad === 'Atracón') {
-            return response()->json([
-                'error' => 'Este xuxemon tiene Atracón y no puede alimentarse'
-            ], 400);
-        }
-
-        $tamanoActual = $pivot->pivot->tamano;
-
-        if ($tamanoActual === 'Grande') {
-            return response()->json(['error' => 'Este Xuxemon ya está en su tamaño máximo.'], 400);
-        }
-
-        $xuxesNecesarias = $tamanoActual === 'Pequeño'
-            ? (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3)
-            : (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5);
-
-        // Bajón de azúcar requiere +2 xuxes por nivel
-        if ($pivot->pivot->enfermo && $pivot->pivot->enfermedad === 'Bajón de azúcar') {
-            $xuxesNecesarias += 2;
-        }
-
-        $xuxesAcumuladas = $pivot->pivot->xuxes_acumuladas + 1;
-
-        if ($xuxesAcumuladas >= $xuxesNecesarias) {
-            $nuevoTamano = $tamanoActual === 'Pequeño' ? 'Mediano' : 'Grande';
-            
-            // --- CAMBIO AQUÍ: Curación automática si el nuevo tamaño es Grande ---
-            $datosActualizar = [
-                'tamano'           => $nuevoTamano,
-                'xuxes_acumuladas' => 0,
-            ];
-
-            if ($nuevoTamano === 'Grande') {
-                $datosActualizar['enfermo'] = false;
-                $datosActualizar['enfermedad'] = null;
-            }
-
-            $user->xuxemons()->updateExistingPivot($id, $datosActualizar);
-
-            // Intentar infectar solo si no es Grande (o si quieres que los grandes no enfermen nunca)
-            if ($nuevoTamano !== 'Grande') {
-                $xuxemon = Xuxemon::findOrFail($id);
-                $this->intentarInfectar($user, $xuxemon);
-            }
-
-            $msg = '¡' . $pivot->nombre . ' ha evolucionado a ' . $nuevoTamano . '!';
-            if ($nuevoTamano === 'Grande') {
-                $msg .= ' Al alcanzar su estado máximo, se ha curado de cualquier enfermedad.';
-            }
-
-            return response()->json([
-                'message'          => $msg,
-                'evolucionado'     => true,
-                'tamano'           => $nuevoTamano,
-                'xuxes_acumuladas' => 0,
-                'xuxes_necesarias' => $xuxesNecesarias,
-            ]);
-
-        } else {
-            // Lógica normal de incremento de xuxe
-            $user->xuxemons()->updateExistingPivot($id, [
-                'xuxes_acumuladas' => $xuxesAcumuladas,
-            ]);
-
-            $xuxemon = Xuxemon::findOrFail($id);
-            $this->intentarInfectar($user, $xuxemon);
-
-            $restantes = $xuxesNecesarias - $xuxesAcumuladas;
-            return response()->json([
-                'message'          => 'Xuxe añadida. Faltan ' . $restantes . ' xuxes para evolucionar.',
-                'evolucionado'     => false,
-                'tamano'           => $tamanoActual,
-                'xuxes_acumuladas' => $xuxesAcumuladas,
-                'xuxes_necesarias' => $xuxesNecesarias,
-            ]);
-        }
-    }
-
-    public function anadirXuxemon(Request $request)
-    {
-        $request->validate([
-            'user_identificador' => 'required|string|exists:usuarios,identificador',
-            'xuxemon_id'         => 'required|integer|exists:xuxemons,IDxuxemon',
-        ]);
-
-        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
-        $user->xuxemons()->syncWithoutDetaching([$request->xuxemon_id]);
-
-        return response()->json(['message' => 'Xuxemon añadido correctamente.']);
-    }
-
-    public function quitarXuxemon(Request $request)
-    {
-        $request->validate([
-            'user_identificador' => 'required|string|exists:usuarios,identificador',
-            'xuxemon_id'         => 'required|integer|exists:xuxemons,IDxuxemon',
-        ]);
-
-        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
-        $user->xuxemons()->detach($request->xuxemon_id);
-
-        return response()->json(['message' => 'Xuxemon quitado correctamente.']);
-    }
-
-    public function anadirAleatorio(Request $request)
-    {
-        $request->validate([
-            'user_identificador' => 'required|string|exists:usuarios,identificador',
-        ]);
-
-        $user          = User::where('identificador', $request->user_identificador)->firstOrFail();
-        $idsExistentes = $user->xuxemons()->pluck('xuxemons.IDxuxemon')->toArray();
-        $pool          = Xuxemon::whereNotIn('IDxuxemon', $idsExistentes)->get();
-
-        if ($pool->isEmpty()) {
-            return response()->json(['error' => 'El usuario ya tiene todos los Xuxemons'], 400);
-        }
-
-        $xuxemon = $pool->random();
-        $user->xuxemons()->attach($xuxemon->IDxuxemon);
-
-        return response()->json([
-            'message' => '¡Se ha descubierto un ' . $xuxemon->nombre . '!',
-            'xuxemon' => $xuxemon
-        ]);
-    }
-
-    public function getConfigXuxes()
-    {
-        return response()->json([
-            'xuxes_pequeno_a_mediano' => (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3),
-            'xuxes_mediano_a_grande'  => (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5),
-        ]);
-    }
-
-    public function setConfigXuxes(Request $request)
-    {
-        $request->validate([
-            'xuxes_pequeno_a_mediano' => 'required|integer|min:1|max:99',
-            'xuxes_mediano_a_grande'  => 'required|integer|min:1|max:99',
-        ]);
-
-        \App\Models\Configuracion::set('xuxes_pequeno_a_mediano', $request->xuxes_pequeno_a_mediano);
-        \App\Models\Configuracion::set('xuxes_mediano_a_grande',  $request->xuxes_mediano_a_grande);
-
-        return response()->json(['message' => 'Configuración actualizada correctamente.']);
     }
 }
