@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
+/* ── Keyframe animations ── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
 /* ── Wrapper ── */
 .dboard-wrapper {
     font-family: 'Nunito', sans-serif;
@@ -13,6 +25,7 @@
 .dboard-header {
     background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
     padding: 36px 24px 28px;
+    animation: fadeIn 0.5s ease both;
 }
 
 .dboard-header-content h1 {
@@ -47,6 +60,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    animation: fadeSlideUp 0.5s ease 0.1s both;
 }
 
 .mochila-search-icon {
@@ -91,6 +105,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    animation: fadeSlideUp 0.5s ease 0.2s both;
 }
 
 .mochila-slots-info {
@@ -212,6 +227,7 @@
     padding: 26px 24px;
     box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
     border: 1px solid rgba(200, 210, 240, 0.6);
+    animation: fadeSlideUp 0.5s ease 0.3s both;
 }
 
 .dboard-section-title {
@@ -490,6 +506,7 @@
     font-size: 16px;
     color: #505070;
     font-weight: 600;
+    animation: fadeIn 0.5s ease 0.5s both;
 }
 
 /* ── Bottom Nav ── */

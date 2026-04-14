@@ -19,6 +19,7 @@ export class Registro {
   formSubmitted = false;           // Bandera para saber si el usuario intentó enviar el form
   isSubmitting = false;            // Bandera de carga (loading) durante la petición
   identificadorGenerado: string | null = null; // Almacena el ID retornado por el servidor tras el éxito
+  errorRegistro: string | null = null; // Mensaje de error del servidor (usuario duplicado, etc.)
 
   constructor(
     private fb: FormBuilder, 
@@ -79,6 +80,7 @@ export class Registro {
 
     if (this.form.valid) {
       this.isSubmitting = true;
+      this.errorRegistro = null; // Limpiamos errores previos
       this.cdr.detectChanges(); // Forzamos detección de cambios para mostrar estados de carga
 
       // Mapeo de los nombres de campos del formulario a los que espera la API de Laravel
@@ -94,6 +96,7 @@ export class Registro {
       this.authService.registro(datos).subscribe({
         next: (res) => {
           this.isSubmitting = false;
+          this.errorRegistro = null;
           // Guardamos el identificador único que genera el backend (importante para tu lógica)
           this.identificadorGenerado = res.user.identificador;
           this.cdr.detectChanges();
@@ -101,6 +104,23 @@ export class Registro {
         error: (err) => {
           this.isSubmitting = false;
           console.error('Error registro:', err);
+
+          // Manejar errores de validación del backend (422)
+          if (err.status === 422 && err.error?.errors) {
+            const errores = err.error.errors;
+            if (errores.email) {
+              this.errorRegistro = 'Este correo electrónico ya está registrado. Prueba con otro o inicia sesión.';
+            } else {
+              // Mostrar el primer error de validación disponible
+              const primerCampo = Object.keys(errores)[0];
+              this.errorRegistro = errores[primerCampo][0];
+            }
+          } else if (err.status === 409) {
+            this.errorRegistro = 'Este usuario ya está registrado. Prueba a iniciar sesión.';
+          } else {
+            this.errorRegistro = 'Ha ocurrido un error al crear la cuenta. Inténtalo de nuevo.';
+          }
+
           this.cdr.detectChanges();
         }
       });

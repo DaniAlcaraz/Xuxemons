@@ -18,6 +18,13 @@
         </div>
       }
 
+      @if (errorRegistro) {
+        <div role="alert" aria-live="polite" class="form-error-summary">
+          <span aria-hidden="true">🚫</span>
+          {{ errorRegistro }}
+        </div>
+      }
+
       <form [formGroup]="form" class="form" (ngSubmit)="onSubmit()" novalidate aria-describedby="registro-desc">
 
         <!-- Nombre -->

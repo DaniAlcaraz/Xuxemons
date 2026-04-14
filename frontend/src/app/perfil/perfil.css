@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
+/* ── Keyframe animations ── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -16,13 +27,14 @@
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
   background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
-  padding-bottom: 84px;
+  padding-bottom: 96px;
   box-sizing: border-box;
 }
 
 .perfil-header {
   background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
   padding: 36px 24px 28px;
+  animation: fadeIn 0.5s ease both;
 }
 
 .perfil-header-content h1 {
@@ -56,6 +68,7 @@
   padding: 26px 22px;
   box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
   border: 1px solid rgba(200, 210, 240, 0.6);
+  animation: fadeSlideUp 0.5s ease 0.3s both;
 }
 
 .perfil-section-title {
@@ -442,10 +455,11 @@
 
 .perfil-footer {
   text-align: center;
-  padding: 12px;
-  font-size: 15px;
+  padding: 16px;
+  font-size: 16px;
   color: #505070;
   font-weight: 600;
+  animation: fadeIn 0.5s ease 0.5s both;
 }
 
 .perfil-bottom-nav {
@@ -458,7 +472,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 10px 2px 14px;
+  padding: 12px 4px 16px;
   box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
   z-index: 100;
 }
@@ -467,15 +481,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   text-decoration: none;
   color: #505070;
-  font-size: 13px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
   font-weight: 700;
-  padding: 6px 8px;
-  border-radius: 10px;
-  min-width: 44px;
-  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  min-width: 54px;
+  min-height: 54px;
   justify-content: center;
   transition: color 0.18s, background 0.18s;
 }
@@ -494,7 +509,7 @@
 }
 
 .perfil-nav-icon {
-  font-size: 24px;
+  font-size: 28px;
   line-height: 1;
 }
 
@@ -522,7 +537,7 @@
   box-shadow: 0 4px 16px rgba(100,120,200,0.18); font-size: 34px;
 }
 .perfil-avatar-name { font-size: 22px; font-weight: 900; color: #0f0f1e; margin: 8px 0 0; }
-.perfil-avatar-id   { font-size: 14px; font-weight: 700; color: #707090; margin: 0; }
+.perfil-avatar-id   { font-size: 16px; font-weight: 700; color: #707090; margin: 0; }
 
 .perfil-form { display: flex; flex-direction: column; gap: 20px; }
 .perfil-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -555,7 +570,7 @@
 }
 .perfil-copy-btn:hover { transform: scale(1.15); }
 
-.perfil-hint { font-size: 13px; font-weight: 600; color: #505070; margin: 0; }
+.perfil-hint { font-size: 16px; font-weight: 600; color: #505070; margin: 0; }
 
 .perfil-error-msg {
   font-size: 14px; font-weight: 700; color: #7f1d1d;

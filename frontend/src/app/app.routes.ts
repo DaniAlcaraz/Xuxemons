@@ -30,7 +30,7 @@ export const routes: Routes = [
   {
     path: 'perfil',
     component: Perfil,
-    canActivate: [AuthGuard]
+    //anActivate: [AuthGuard]
   },
   {
     path: 'xuxemons',
