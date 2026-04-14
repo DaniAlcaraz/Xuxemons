@@ -302,7 +302,7 @@
 /* ── Forms grid ── */
 .admin-forms-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   align-items: stretch;
   animation: fadeSlideUp 0.5s ease 0.4s both;
@@ -311,6 +311,7 @@
 .admin-form-card {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
 }
 
 .admin-form-desc {

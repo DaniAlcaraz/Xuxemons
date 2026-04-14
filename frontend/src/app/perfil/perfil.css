@@ -537,7 +537,7 @@
   box-shadow: 0 4px 16px rgba(100,120,200,0.18); font-size: 34px;
 }
 .perfil-avatar-name { font-size: 22px; font-weight: 900; color: #0f0f1e; margin: 8px 0 0; }
-.perfil-avatar-id   { font-size: 14px; font-weight: 700; color: #707090; margin: 0; }
+.perfil-avatar-id   { font-size: 16px; font-weight: 700; color: #707090; margin: 0; }
 
 .perfil-form { display: flex; flex-direction: column; gap: 20px; }
 .perfil-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -570,7 +570,7 @@
 }
 .perfil-copy-btn:hover { transform: scale(1.15); }
 
-.perfil-hint { font-size: 13px; font-weight: 600; color: #505070; margin: 0; }
+.perfil-hint { font-size: 16px; font-weight: 600; color: #505070; margin: 0; }
 
 .perfil-error-msg {
   font-size: 14px; font-weight: 700; color: #7f1d1d;

@@ -152,26 +152,165 @@ class XuxemonController extends Controller
     }
 
     /**
-     * Sistema de "Ruleta" de enfermedades.
-     * Se llama cada vez que el Xuxemon interactúa con comida.
+     * Admin: Descubrir un xuxemon específico para un usuario.
+     * Lo añade a la tabla pivote xuxemon_usuario en tamaño Pequeño.
      */
-    private function intentarInfectar(User $user, Xuxemon $xuxemon): void
+    public function anadirXuxemon(Request $request)
     {
-        $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $xuxemon->IDxuxemon)->first();
-        if ($pivot && $pivot->pivot->enfermo) return; // Ya está enfermo, no le damos otra
+        $request->validate([
+            'user_identificador' => 'required|string',
+            'xuxemon_id'         => 'required|integer',
+        ]);
 
-        $rand = rand(1, 100);
-        $acumulado = 0;
+        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
+        $xuxemon = Xuxemon::findOrFail($request->xuxemon_id);
 
-        foreach (self::INFECCION as $enfermedad => $porcentaje) {
-            $acumulado += $porcentaje;
-            if ($rand <= $acumulado) {
-                $user->xuxemons()->updateExistingPivot($xuxemon->IDxuxemon, [
-                    'enfermo'    => true,
-                    'enfermedad' => $enfermedad,
-                ]);
-                return;
-            }
+        // Comprobar si ya lo tiene descubierto
+        if ($user->xuxemons()->where('xuxemons.IDxuxemon', $xuxemon->IDxuxemon)->exists()) {
+            return response()->json(['error' => 'Este usuario ya tiene este xuxemon descubierto.'], 400);
         }
+
+        $user->xuxemons()->attach($xuxemon->IDxuxemon, [
+            'tamano'           => 'Pequeño',
+            'xuxes_acumuladas' => 0,
+            'enfermo'          => false,
+            'enfermedad'       => null,
+        ]);
+
+        return response()->json(['message' => "¡{$xuxemon->nombre} descubierto!"]);
+    }
+
+    /**
+     * Admin: Ocultar (quitar) un xuxemon de la colección de un usuario.
+     */
+    public function quitarXuxemon(Request $request)
+    {
+        $request->validate([
+            'user_identificador' => 'required|string',
+            'xuxemon_id'         => 'required|integer',
+        ]);
+
+        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
+        $user->xuxemons()->detach($request->xuxemon_id);
+
+        return response()->json(['message' => 'Xuxemon ocultado correctamente.']);
+    }
+
+    /**
+     * Admin: Descubrir un xuxemon aleatorio (no descubierto) para un usuario.
+     */
+    public function anadirAleatorio(Request $request)
+    {
+        $request->validate([
+            'user_identificador' => 'required|string',
+        ]);
+
+        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
+        $descubiertos = $user->xuxemons()->pluck('xuxemons.IDxuxemon')->toArray();
+        $noDescubiertos = Xuxemon::whereNotIn('IDxuxemon', $descubiertos)->get();
+
+        if ($noDescubiertos->isEmpty()) {
+            return response()->json(['error' => 'Este usuario ya ha descubierto todos los xuxemons.'], 400);
+        }
+
+        $aleatorio = $noDescubiertos->random();
+        $user->xuxemons()->attach($aleatorio->IDxuxemon, [
+            'tamano'           => 'Pequeño',
+            'xuxes_acumuladas' => 0,
+            'enfermo'          => false,
+            'enfermedad'       => null,
+        ]);
+
+        return response()->json(['message' => "¡{$aleatorio->nombre} descubierto aleatoriamente!"]);
+    }
+
+    /**
+     * Admin: Forzar una enfermedad a un xuxemon de un usuario.
+     */
+    public function enfermarXuxemon(Request $request)
+    {
+        $request->validate([
+            'user_identificador' => 'required|string',
+            'xuxemon_id'         => 'required|integer',
+            'enfermedad'         => 'required|string',
+        ]);
+
+        $user = User::where('identificador', $request->user_identificador)->firstOrFail();
+        $pivot = $user->xuxemons()->where('xuxemons.IDxuxemon', $request->xuxemon_id)->first();
+
+        if (!$pivot) {
+            return response()->json(['error' => 'Este usuario no tiene este xuxemon.'], 400);
+        }
+
+        $user->xuxemons()->updateExistingPivot($request->xuxemon_id, [
+            'enfermo'    => true,
+            'enfermedad' => $request->enfermedad,
+        ]);
+
+        return response()->json(['message' => 'Xuxemon enfermado con ' . $request->enfermedad]);
+    }
+
+    /**
+     * Descubrimiento diario automático: Si el usuario tiene activado el
+     * descubrimiento diario y ya es la hora, le descubre uno aleatorio.
+     */
+    private function descubrirXuxemonDiarioSiToca(User $user): void
+    {
+        if (!($user->xuxemons_diarios_activo ?? true)) return;
+
+        $hora = $user->xuxemons_diarios_hora ?? '09:00:00';
+        $ahora = Carbon::now();
+
+        // Verificar que ya pasó la hora configurada
+        $horaConfig = Carbon::today()->setTimeFromTimeString($hora);
+        if ($ahora->lt($horaConfig)) return;
+
+        // Verificar que no se haya hecho ya hoy
+        $ultimoDesc = $user->xuxemons_diarios_ultimo_descubrimiento;
+        if ($ultimoDesc && Carbon::parse($ultimoDesc)->isToday()) return;
+
+        // Buscar un xuxemon no descubierto
+        $descubiertos = $user->xuxemons()->pluck('xuxemons.IDxuxemon')->toArray();
+        $noDescubiertos = Xuxemon::whereNotIn('IDxuxemon', $descubiertos)->get();
+
+        if ($noDescubiertos->isEmpty()) return;
+
+        $aleatorio = $noDescubiertos->random();
+        $user->xuxemons()->attach($aleatorio->IDxuxemon, [
+            'tamano'           => 'Pequeño',
+            'xuxes_acumuladas' => 0,
+            'enfermo'          => false,
+            'enfermedad'       => null,
+        ]);
+
+        $user->xuxemons_diarios_ultimo_descubrimiento = Carbon::today();
+        $user->save();
+    }
+
+    /**
+     * Obtiene la configuración global de xuxes necesarias para evolucionar.
+     */
+    public function getConfigXuxes()
+    {
+        return response()->json([
+            'xuxes_pequeno_a_mediano' => (int) Configuracion::get('xuxes_pequeno_a_mediano', 3),
+            'xuxes_mediano_a_grande'  => (int) Configuracion::get('xuxes_mediano_a_grande', 5),
+        ]);
+    }
+
+    /**
+     * Actualiza la configuración global de xuxes necesarias para evolucionar.
+     */
+    public function setConfigXuxes(Request $request)
+    {
+        $request->validate([
+            'xuxes_pequeno_a_mediano' => 'required|integer|min:1|max:99',
+            'xuxes_mediano_a_grande'  => 'required|integer|min:1|max:99',
+        ]);
+
+        Configuracion::set('xuxes_pequeno_a_mediano', $request->xuxes_pequeno_a_mediano);
+        Configuracion::set('xuxes_mediano_a_grande',  $request->xuxes_mediano_a_grande);
+
+        return response()->json(['message' => 'Configuración de evolución actualizada.']);
     }
 }
