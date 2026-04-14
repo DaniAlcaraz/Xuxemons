@@ -1,192 +1,97 @@
-<h2 class="visually-hidden">Panell principal de Xuxemons</h2>
-
 <div class="dboard-wrapper">
 
-  <!-- HEADER -->
   <header class="dboard-header">
     <div class="dboard-header-content">
       <h1>Dashboard</h1>
-      <p>Benvingut, {{ usuarioNombre }}!</p>
+      <p>¡Bienvenido, entrenador!</p>
     </div>
   </header>
 
-  <!-- LOADING -->
-  @if (cargando) {
-  <div class="dboard-loading" aria-live="polite">
-    <div class="dboard-spinner"></div>
-    <p>Carregant els teus Xuxemons…</p>
-  </div>
-  }
-
-  <!-- ERROR -->
-  @if (error && !cargando) {
-  <div class="dboard-error-banner" role="alert">
-    <span>⚠️ {{ error }}</span>
-    <button class="dboard-retry-btn" (click)="recargar()">Tornar a intentar</button>
-  </div>
-  }
-
-  <!-- CONTENIDO PRINCIPAL -->
-  @if (!cargando) {
   <main class="dboard-main" id="main-content">
 
-    <!-- STATS -->
     <section class="dboard-stats-section" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" class="visually-hidden">Les teves estadístiques</h2>
+      <h2 id="stats-heading" class="visually-hidden">Tus estadísticas</h2>
       <div class="dboard-stats-grid">
-
         <article class="dboard-stat-card">
           <span class="dboard-stat-icon" aria-hidden="true">🏆</span>
           <div class="dboard-stat-info">
-            <span class="dboard-stat-number">{{ totalXuxemons }}</span>
-            <span class="dboard-stat-label">Xuxemons capturats</span>
+            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-label">Xuxemons capturados</span>
           </div>
         </article>
-
+        <article class="dboard-stat-card">
+          <span class="dboard-stat-icon" aria-hidden="true">🎮</span>
+          <div class="dboard-stat-info">
+            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-label">Batallas ganadas</span>
+          </div>
+        </article>
         <article class="dboard-stat-card">
           <span class="dboard-stat-icon" aria-hidden="true">👥</span>
           <div class="dboard-stat-info">
-            <span class="dboard-stat-number">{{ totalAmigos }}</span>
-            <span class="dboard-stat-label">Amics</span>
+            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-label">Amigos</span>
           </div>
         </article>
-
-        <article class="dboard-stat-card" [class.dboard-stat-card--alert]="solicitudesPendientes.length > 0">
-          <span class="dboard-stat-icon" aria-hidden="true">📬</span>
-          <div class="dboard-stat-info">
-            <span class="dboard-stat-number">{{ solicitudesPendientes.length }}</span>
-            <span class="dboard-stat-label">Sol·licituds</span>
-            @if (solicitudesPendientes.length > 0) {
-            <span class="dboard-badge-alert">Pendents!</span>
-            }
-          </div>
-        </article>
-
       </div>
     </section>
 
-    <!-- SOL·LICITUDS PENDENTS -->
-    @if (solicitudesPendientes.length > 0) {
-    <section class="dboard-card dboard-card--solicitudes" aria-labelledby="sol-heading">
-      <h2 id="sol-heading" class="dboard-section-title">
-        ⚔️ Sol·licituds d'amistat
-        <span class="dboard-count-badge">{{ solicitudesPendientes.length }}</span>
-      </h2>
-      @for (s of solicitudesPendientes; track s.id) {
-      <article class="dboard-solicitud-item">
-        <div class="dboard-solicitud-avatar" aria-hidden="true">
-          {{ s.solicitante.nombre[0] }}{{ s.solicitante.apellidos[0] }}
-        </div>
-        <div class="dboard-solicitud-info">
-          <p class="dboard-solicitud-name">{{ s.solicitante.nombre }} {{ s.solicitante.apellidos }}</p>
-          <p class="dboard-solicitud-id">&#64;{{ s.solicitante.identificador }}</p>
-        </div>
-        <div class="dboard-solicitud-actions">
-          <button class="dboard-btn dboard-btn--accept" (click)="aceptarSolicitud(s.id)"
-            [attr.aria-label]="'Acceptar sol·licitud de ' + s.solicitante.nombre">✓</button>
-          <button class="dboard-btn dboard-btn--reject" (click)="rechazarSolicitud(s.id)"
-            [attr.aria-label]="'Rebutjar sol·licitud de ' + s.solicitante.nombre">✕</button>
-        </div>
-      </article>
-      }
-    </section>
-    }
-
-    <!-- ELS MEUS XUXEMONS -->
     <section class="dboard-card" aria-labelledby="xuxemons-heading">
-      <div class="dboard-section-header">
-        <h2 id="xuxemons-heading" class="dboard-section-title">Els meus Xuxemons</h2>
-        <button class="dboard-refresh-btn" (click)="recargar()" aria-label="Actualitzar">🔄</button>
-      </div>
-
-      @if (xuxemons.length === 0) {
-      <div class="dboard-empty-state">
-        <p>Encara no tens cap Xuxemon. ¡Comença a capturar!</p>
-      </div>
-      }
-
+      <h2 id="xuxemons-heading" class="dboard-section-title">Els meus xuxemons</h2>
       <ul class="dboard-xuxemon-grid" role="list">
-        @for (x of xuxemons; track trackById($index, x)) {
-        <li class="dboard-xuxemon-card" [class.dboard-xuxemon-card--new]="x.isNew" tabindex="0"
-          [attr.aria-label]="x.name + ', tipus ' + x.type">
-
-          @if (x.isNew) {
-          <span class="dboard-new-badge">NOU</span>
-          }
-
-          <!-- Imagen real del xuxemon desde storage, emoji como fallback -->
-          @if (x.archivo) {
-          <img class="dboard-xuxemon-img" [src]="imagenUrl(x.archivo)" [alt]="x.name" (error)="x.archivo = ''" />
-          } @else {
-          <span class="dboard-xuxemon-emoji" aria-hidden="true">{{ x.emoji }}</span>
-          }
-
-          <p class="dboard-xuxemon-name">{{ x.name }}</p>
-          <span class="dboard-badge" [ngClass]="x.type">{{ x.type }}</span>
-
-          <div class="dboard-xuxemon-stats" aria-hidden="true">
-            <div class="dboard-stat-row">
-              <span>Tamany</span>
-              <span class="dboard-val">{{ x.tamano }}</span>
+        @for (x of xuxemons; track x.name) {
+          <li class="dboard-xuxemon-card" tabindex="0"
+            [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'">
+            <span class="dboard-xuxemon-emoji" aria-hidden="true">{{ x.emoji }}</span>
+            <p class="dboard-xuxemon-name">{{ x.name }}</p>
+            <span class="dboard-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
+            <div class="dboard-xuxemon-stats" aria-hidden="true">
+              <div class="dboard-stat-row">
+                <span>Nivel</span>
+                <span class="dboard-val">{{ x.level }}</span>
+              </div>
+              <div class="dboard-stat-row">
+                <span>Vida</span>
+                <span class="dboard-val">{{ x.hp }}%</span>
+              </div>
+              <div class="dboard-hp-bar" role="progressbar"
+                [attr.aria-valuenow]="x.hp" aria-valuemin="0" aria-valuemax="100"
+                [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'">
+                <div class="dboard-hp-fill" [style.width.%]="x.hp"></div>
+              </div>
             </div>
-          </div>
-
-        </li>
+          </li>
         }
       </ul>
     </section>
 
-    <!-- NOTIFICACIONES -->
     <section class="dboard-card" aria-labelledby="notif-heading">
-      <div class="dboard-section-header">
-        <h2 id="notif-heading" class="dboard-section-title">
-          Notificacions
-          @if (notifNoLeidas > 0) {
-          <span class="dboard-count-badge">{{ notifNoLeidas }}</span>
-          }
-        </h2>
-      </div>
-
-      @if (notificaciones.length === 0) {
-      <p class="dboard-empty-notif">Cap notificació per ara. Tot tranquil! 🎉</p>
-      }
-
-      @for (n of notificaciones; track trackByNotifId($index, n)) {
-      <article class="dboard-notif" [ngClass]="'dboard-notif-' + n.tipo" [class.dboard-notif--leida]="n.leida"
-        (click)="marcarLeida(n.id)" role="button" tabindex="0">
-
-        <div class="dboard-notif-top">
-          <p class="dboard-notif-title">{{ n.titulo }}</p>
-          <button class="dboard-notif-close" (click)="$event.stopPropagation(); descartarNotificacion(n.id)"
-            aria-label="Tancar">×</button>
-        </div>
-        <p class="dboard-notif-body">{{ n.cuerpo }}</p>
-
-        @if (n.accion) {
-        <button class="dboard-notif-action-btn" (click)="$event.stopPropagation(); n.accion!()">
-          Acceptar
-        </button>
-        }
-
+      <h2 id="notif-heading" class="dboard-section-title">Notificaciones</h2>
+      <article class="dboard-notif dboard-notif-blue">
+        <p class="dboard-notif-title">Nuevo Xuxemon disponible</p>
+        <p class="dboard-notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
       </article>
-      }
+      <article class="dboard-notif dboard-notif-pink">
+        <p class="dboard-notif-title">Desafío recibido</p>
+        <p class="dboard-notif-body">Marc te desafía a una batalla</p>
+      </article>
     </section>
 
   </main>
-  }
 
   <footer class="dboard-footer">
     <p>&copy; 2026 Xuxemons</p>
   </footer>
 
-  <!-- BOTTOM NAV -->
-  <nav class="dboard-bottom-nav" aria-label="Navegació principal">
+  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
     @for (item of navItems; track item.route) {
-    <a class="dboard-nav-item" [class.active]="item.route === '/dashboard'" [routerLink]="item.route"
-      [attr.aria-current]="item.route === '/dashboard' ? 'page' : null">
-      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-      <span>{{ item.label }}</span>
-    </a>
+      <a class="dboard-nav-item" [class.active]="item.route === '/dashboard'"
+        [routerLink]="item.route"
+        [attr.aria-current]="item.route === '/dashboard' ? 'page' : null"
+        [attr.aria-label]="item.label">
+        <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
     }
   </nav>
 
