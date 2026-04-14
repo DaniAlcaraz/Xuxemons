@@ -1,6 +1,7 @@
-/* dashboard.css */
+/* dashboard.css — sin :host, prefijos únicos dboard- */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
+/* ── Utilidad accesibilidad: oculta visualmente pero legible por lectores ── */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -13,11 +14,12 @@
   border: 0;
 }
 
+/* ── Wrapper ── */
 .dboard-wrapper {
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
   background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
-  padding-bottom: 96px;
+  padding-bottom: 96px; /* Aumentado un poco para acomodar el nav más grande */
   box-sizing: border-box;
 }
 
@@ -25,78 +27,30 @@
 .dboard-header {
   background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
   padding: 36px 24px 28px;
-  animation: heroReveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .dboard-header-content h1 {
   font-family: 'Baloo 2', cursive;
-  font-size: 52px;
+  font-size: 52px; /* Mapeado a .title del login */
   font-weight: 900;
   color: #ffffff;
   margin: 0;
+  letter-spacing: -0.5px; /* Ajuste de kerning para títulos grandes */
   line-height: 1.1;
 }
 
 .dboard-header-content p {
   margin: 6px 0 0;
-  font-size: 22px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px; /* Mapeado a .subtitle del login */
   color: rgba(255, 255, 255, 0.95);
   font-weight: 700;
 }
 
-/* ── Loading ── */
-.dboard-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 24px;
-  gap: 20px;
-  color: #505070;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.dboard-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #d0d4f0;
-  border-top-color: #6c7fe8;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-/* ── Error ── */
-.dboard-error-banner {
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
-  border-radius: 14px;
-  margin: 16px 18px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #991b1b;
-}
-
-.dboard-retry-btn {
-  background: #dc2626;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 8px 16px;
-  font-size: 15px;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.dboard-retry-btn:hover {
-  background: #b91c1c;
+.dboard-xuxemon-emoji {
+  font-size: 3.5rem;
+  display: block;
+  text-align: center;
 }
 
 /* ── Main ── */
@@ -104,7 +58,7 @@
   padding: 24px 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 24px; /* Mayor espacio para respirar con letras más grandes */
   max-width: 1300px;
   margin: 0 auto;
 }
@@ -127,19 +81,6 @@
   box-shadow: 0 2px 16px rgba(100, 120, 200, 0.10);
   border: 1px solid rgba(200, 210, 240, 0.6);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
-  animation: countUp 0.45s ease both;
-}
-
-.dboard-stats-grid .dboard-stat-card:nth-child(1) {
-  animation-delay: 0.08s;
-}
-
-.dboard-stats-grid .dboard-stat-card:nth-child(2) {
-  animation-delay: 0.16s;
-}
-
-.dboard-stats-grid .dboard-stat-card:nth-child(3) {
-  animation-delay: 0.24s;
 }
 
 .dboard-stat-card:hover {
@@ -147,13 +88,8 @@
   box-shadow: 0 6px 24px rgba(100, 120, 200, 0.16);
 }
 
-.dboard-stat-card--alert {
-  border-color: #f97316;
-  animation: countUp 0.45s ease both, pulseAlert 2s ease infinite;
-}
-
 .dboard-stat-icon {
-  font-size: 36px;
+  font-size: 36px; /* Aumentado para acompañar al nuevo tamaño de número */
   line-height: 1;
   flex-shrink: 0;
 }
@@ -165,28 +101,19 @@
 }
 
 .dboard-stat-number {
-  font-size: 36px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 36px; /* Mapeado a .brand-name del login */
   font-weight: 900;
   color: #0f0f1e;
   line-height: 1;
 }
 
 .dboard-stat-label {
-  font-size: 18px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px; /* Mapeado a .error-msg del login */
   font-weight: 700;
   color: #505070;
   line-height: 1.3;
-}
-
-.dboard-badge-alert {
-  display: inline-block;
-  background: #f97316;
-  color: #fff;
-  border-radius: 20px;
-  padding: 2px 10px;
-  font-size: 14px;
-  font-weight: 800;
-  margin-top: 4px;
 }
 
 /* ── Cards ── */
@@ -196,137 +123,14 @@
   padding: 26px 24px;
   box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
   border: 1px solid rgba(200, 210, 240, 0.6);
-  animation: cardFloat 0.44s ease both;
-}
-
-.dboard-card--solicitudes {
-  border-color: #f97316;
-  box-shadow: 0 2px 20px rgba(249, 115, 22, 0.12);
-}
-
-.dboard-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
 }
 
 .dboard-section-title {
-  font-size: 26px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 26px; /* Mapeado a .submit-btn del login */
   font-weight: 900;
   color: #0f0f1e;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.dboard-count-badge {
-  background: #6c7fe8;
-  color: #fff;
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.dboard-refresh-btn {
-  background: transparent;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 10px;
-  transition: transform 0.3s, background 0.15s;
-}
-
-.dboard-refresh-btn:hover {
-  background: #f0f0fa;
-  transform: rotate(180deg);
-}
-
-/* ── Sol·licituds ── */
-.dboard-solicitud-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f8;
-  animation: slideIn 0.3s ease both;
-}
-
-.dboard-solicitud-item:last-child {
-  border-bottom: none;
-}
-
-.dboard-solicitud-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c7fe8, #a050c8);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.dboard-solicitud-info {
-  flex: 1;
-}
-
-.dboard-solicitud-name {
-  font-size: 17px;
-  font-weight: 800;
-  color: #0f0f1e;
-  margin: 0;
-}
-
-.dboard-solicitud-id {
-  font-size: 14px;
-  color: #505070;
-  margin: 2px 0 0;
-}
-
-.dboard-solicitud-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.dboard-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  font-size: 18px;
-  font-weight: 900;
-  cursor: pointer;
-  transition: transform 0.15s, background 0.15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dboard-btn--accept {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.dboard-btn--accept:hover {
-  background: #bbf7d0;
-  transform: scale(1.1);
-}
-
-.dboard-btn--reject {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.dboard-btn--reject:hover {
-  background: #fecaca;
-  transform: scale(1.1);
+  margin: 0 0 20px;
 }
 
 /* ── Xuxemons ── */
@@ -349,21 +153,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  position: relative;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
-  animation: cardFloat 0.4s ease both;
-}
-
-.dboard-xuxemon-grid .dboard-xuxemon-card:nth-child(1) {
-  animation-delay: 0.10s;
-}
-
-.dboard-xuxemon-grid .dboard-xuxemon-card:nth-child(2) {
-  animation-delay: 0.18s;
-}
-
-.dboard-xuxemon-grid .dboard-xuxemon-card:nth-child(3) {
-  animation-delay: 0.26s;
 }
 
 .dboard-xuxemon-card:hover {
@@ -374,48 +164,23 @@
 .dboard-xuxemon-card:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 2px;
+  border-color: #2563eb;
 }
 
-.dboard-xuxemon-card--new {
-  border-color: #6c7fe8;
-  animation: cardFloat 0.4s ease both, newGlow 1.5s ease 3;
-}
-
-/* Imagen real del xuxemon */
 .dboard-xuxemon-img {
-  width: 80px;
-  height: 80px;
+  width: 72px; /* Aumentado ligeramente para balancear la tipografía mayor */
+  height: 72px;
   object-fit: contain;
-  animation: floatEmoji 3s ease-in-out infinite;
   transition: transform 0.18s ease;
 }
 
 .dboard-xuxemon-card:hover .dboard-xuxemon-img {
-  transform: scale(1.08);
-}
-
-/* Emoji fallback */
-.dboard-xuxemon-emoji {
-  font-size: 48px;
-  line-height: 1;
-  animation: floatEmoji 3s ease-in-out infinite;
-}
-
-.dboard-new-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #6c7fe8;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 900;
-  padding: 2px 8px;
-  border-radius: 999px;
-  animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform: scale(1.07);
 }
 
 .dboard-xuxemon-name {
-  font-size: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px; /* Mapeado a .field-label del login */
   font-weight: 800;
   color: #0f0f1e;
   text-align: center;
@@ -425,36 +190,27 @@
 .dboard-badge {
   padding: 4px 12px;
   border-radius: 30px;
-  font-size: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; /* Aumentado para legibilidad */
   font-weight: 800;
   color: #ffffff;
 }
 
-.dboard-badge.agua {
-  background: #1565c0;
-}
-
-.dboard-badge.tierra {
-  background: #2e7d32;
-}
-
-.dboard-badge.aire {
-  background: #00695c;
-}
-
-.dboard-badge.fuego {
-  background: #b71c1c;
-}
+.dboard-badge.agua   { background: #1565c0; }
+.dboard-badge.tierra { background: #2e7d32; }
+.dboard-badge.aire   { background: #00695c; }
+.dboard-badge.fuego  { background: #b71c1c; }
 
 .dboard-xuxemon-stats {
   width: 100%;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .dboard-stat-row {
   display: flex;
   justify-content: space-between;
-  font-size: 15px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; /* Aumentado para legibilidad */
   font-weight: 700;
   color: #505070;
   margin-bottom: 2px;
@@ -463,41 +219,36 @@
 .dboard-val {
   color: #0f0f1e;
   font-weight: 900;
+  font-family: 'Nunito', sans-serif;
 }
 
-/* ── Empty states ── */
-.dboard-empty-state,
-.dboard-empty-notif {
-  text-align: center;
-  color: #505070;
-  font-size: 17px;
-  font-weight: 600;
-  padding: 24px 0;
+.dboard-hp-bar {
+  height: 8px; /* Un poco más gruesa */
+  background: #d0d4f0;
+  border-radius: 10px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.dboard-hp-fill {
+  height: 100%;
+  background: #1b7a3e;
+  border-radius: 10px;
+  transition: width 0.5s ease;
 }
 
 /* ── Notificaciones ── */
 .dboard-notif {
   border-radius: 14px;
-  padding: 14px 18px;
-  margin-bottom: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.2s;
-  animation: notifSlide 0.38s ease both;
+  transition: transform 0.15s ease;
 }
 
-.dboard-notif:last-child {
-  margin-bottom: 0;
-}
-
-.dboard-notif:hover {
-  transform: translateX(3px);
-}
-
-.dboard-notif--leida {
-  opacity: 0.5;
-}
+.dboard-notif:last-child { margin-bottom: 0; }
+.dboard-notif:hover { transform: translateX(2px); }
 
 .dboard-notif::before {
   content: '';
@@ -505,115 +256,36 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 6px;
+  width: 6px; /* Más grueso acorde al nuevo tamaño */
   border-radius: 4px 0 0 4px;
 }
 
-.dboard-notif-blue {
-  background: #eef1fb;
-}
-
-.dboard-notif-blue::before {
-  background: #3d4faa;
-}
-
-.dboard-notif-pink {
-  background: #fceef8;
-}
-
-.dboard-notif-pink::before {
-  background: #8e2468;
-}
-
-.dboard-notif-green {
-  background: #f0fdf4;
-}
-
-.dboard-notif-green::before {
-  background: #16a34a;
-}
-
-.dboard-notif-orange {
-  background: #fff7ed;
-}
-
-.dboard-notif-orange::before {
-  background: #ea580c;
-}
-
-.dboard-notif:nth-child(1) {
-  animation-delay: 0.10s;
-}
-
-.dboard-notif:nth-child(2) {
-  animation-delay: 0.18s;
-}
-
-.dboard-notif:nth-child(3) {
-  animation-delay: 0.26s;
-}
-
-.dboard-notif-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
+.dboard-notif-blue { background: #eef1fb; }
+.dboard-notif-blue::before { background: #3d4faa; }
+.dboard-notif-pink { background: #fceef8; }
+.dboard-notif-pink::before { background: #8e2468; }
 
 .dboard-notif-title {
-  font-size: 18px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px; /* Mapeado a .field-label del login */
   font-weight: 800;
   color: #0f0f1e;
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .dboard-notif-body {
-  font-size: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px; /* Mapeado al texto base mínimo del login */
   font-weight: 600;
   color: #505070;
   margin: 0;
-}
-
-.dboard-notif-close {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  color: #9090b0;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 2px;
-  transition: color 0.15s;
-  flex-shrink: 0;
-}
-
-.dboard-notif-close:hover {
-  color: #0f0f1e;
-}
-
-.dboard-notif-action-btn {
-  margin-top: 10px;
-  background: #6c7fe8;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 7px 16px;
-  font-size: 15px;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-
-.dboard-notif-action-btn:hover {
-  background: #4f63d2;
-  transform: scale(0.98);
 }
 
 /* ── Footer ── */
 .dboard-footer {
   text-align: center;
   padding: 16px;
-  font-size: 16px;
+  font-size: 16px; /* Aumentado de 13 a 16 */
   color: #505070;
   font-weight: 600;
 }
@@ -632,7 +304,6 @@
   padding: 12px 4px 16px;
   box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
   z-index: 100;
-  animation: navPop 0.4s ease 0.35s both;
 }
 
 .dboard-nav-item {
@@ -642,7 +313,8 @@
   gap: 4px;
   text-decoration: none;
   color: #505070;
-  font-size: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; /* Aumentado considerablemente desde 11px */
   font-weight: 700;
   padding: 8px 10px;
   border-radius: 12px;
@@ -660,132 +332,12 @@
   font-weight: 900;
 }
 
+.dboard-nav-item:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .dboard-nav-icon {
-  font-size: 26px;
+  font-size: 28px; /* Subido de 22 a 28 para acompañar el nuevo tamaño de texto */
   line-height: 1;
-}
-
-/* ══ KEYFRAMES ══ */
-@keyframes heroReveal {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes countUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes cardFloat {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes navPop {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes notifSlide {
-  from {
-    opacity: 0;
-    transform: translateX(-18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes floatEmoji {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes pop {
-  from {
-    transform: scale(0);
-  }
-
-  to {
-    transform: scale(1);
-  }
-}
-
-@keyframes pulseAlert {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
-  }
-
-  50% {
-    box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.2);
-  }
-}
-
-@keyframes newGlow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 3px rgba(108, 127, 232, 0);
-  }
-
-  50% {
-    box-shadow: 0 0 12px 4px rgba(108, 127, 232, 0.4);
-  }
 }
