@@ -9,15 +9,32 @@
 /* ── Utilidad accesibilidad ── */
 .visually-hidden {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
 }
 
-/* ── Wrapper ── */
+/* Respeta preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ══════════════════════════════════════════
+   WRAPPER
+══════════════════════════════════════════ */
+
 .amigos-wrapper {
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
@@ -26,7 +43,10 @@
   box-sizing: border-box;
 }
 
-/* ── Header ── */
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
+
 .amigos-header {
   background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
   padding: 36px 24px 28px;
@@ -50,7 +70,10 @@
   font-weight: 700;
 }
 
-/* ── Main ── */
+/* ══════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════ */
+
 .amigos-main {
   padding: 24px 18px 20px;
   display: flex;
@@ -60,25 +83,35 @@
   margin: 0 auto;
 }
 
-/* ── Toasts ── */
+/* ══════════════════════════════════════════
+   TOASTS
+══════════════════════════════════════════ */
+
 .amigos-toast {
   border-radius: 14px;
   padding: 14px 20px;
   font-size: 18px;
   font-weight: 700;
   text-align: center;
-  animation: fadeIn 0.25s ease;
+  animation: toastDrop 0.4s cubic-bezier(0.22, 0.68, 0, 1.15) both;
 }
 
-.amigos-toast--ok  { background: #d4edda; color: #1b7a3e; border: 1.5px solid #a3d9b1; }
-.amigos-toast--err { background: #fdecea; color: #b71c1c; border: 1.5px solid #f5b7b1; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+.amigos-toast--ok {
+  background: #d4edda;
+  color: #1b7a3e;
+  border: 1.5px solid #a3d9b1;
 }
 
-/* ── Tabs ── */
+.amigos-toast--err {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1.5px solid #f5b7b1;
+}
+
+/* ══════════════════════════════════════════
+   TABS
+══════════════════════════════════════════ */
+
 .amigos-tabs {
   display: flex;
   gap: 8px;
@@ -106,7 +139,6 @@
   color: #505070;
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
-  position: relative;
 }
 
 .amigos-tab:hover {
@@ -118,7 +150,7 @@
   background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 100%);
   color: #ffffff;
   font-weight: 900;
-  box-shadow: 0 2px 12px rgba(108, 127, 232, 0.30);
+  animation: tabPulse 0.5s ease forwards;
 }
 
 .amigos-tab:focus-visible {
@@ -127,7 +159,7 @@
 }
 
 .amigos-tab-count {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 20px;
   padding: 1px 8px;
   font-size: 14px;
@@ -135,11 +167,14 @@
 }
 
 .amigos-tab--active .amigos-tab-count {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255, 255, 255, 0.30);
   color: #fff;
 }
 
-/* Badge de notificaciones (solicitudes pendientes) */
+/* ══════════════════════════════════════════
+   BADGE
+══════════════════════════════════════════ */
+
 .amigos-badge {
   background: #e53935;
   color: #ffffff;
@@ -149,9 +184,13 @@
   font-weight: 900;
   min-width: 20px;
   text-align: center;
+  animation: badgeBounce 0.5s cubic-bezier(0.22, 0.68, 0, 1.3) both;
 }
 
-/* ── Card / sección ── */
+/* ══════════════════════════════════════════
+   CARD
+══════════════════════════════════════════ */
+
 .amigos-card {
   background: #ffffff;
   border-radius: 22px;
@@ -169,7 +208,10 @@
   margin: 0 0 20px;
 }
 
-/* ── Lista ── */
+/* ══════════════════════════════════════════
+   LISTA DE AMIGOS
+══════════════════════════════════════════ */
+
 .amigos-lista {
   list-style: none;
   margin: 0;
@@ -188,7 +230,29 @@
   border-radius: 14px;
   padding: 14px 16px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  animation: slideIn 0.2s ease;
+  /* La animación y el delay se aplican por posición */
+  animation: slideInLeft 0.4s cubic-bezier(0.22, 0.68, 0, 1.15) both;
+}
+
+/* Delays escalonados para cada item */
+.amigos-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.amigos-item:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.amigos-item:nth-child(3) {
+  animation-delay: 0.19s;
+}
+
+.amigos-item:nth-child(4) {
+  animation-delay: 0.26s;
+}
+
+.amigos-item:nth-child(5) {
+  animation-delay: 0.33s;
 }
 
 .amigos-item:hover {
@@ -196,12 +260,10 @@
   box-shadow: 0 4px 16px rgba(108, 127, 232, 0.12);
 }
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
+/* ══════════════════════════════════════════
+   AVATAR
+══════════════════════════════════════════ */
 
-/* Avatar con inicial */
 .amigos-avatar {
   width: 46px;
   height: 46px;
@@ -215,7 +277,32 @@
   justify-content: center;
   flex-shrink: 0;
   user-select: none;
+  animation: avatarPop 0.45s cubic-bezier(0.22, 0.68, 0, 1.3) both;
 }
+
+.amigos-item:nth-child(1) .amigos-avatar {
+  animation-delay: 0.08s;
+}
+
+.amigos-item:nth-child(2) .amigos-avatar {
+  animation-delay: 0.15s;
+}
+
+.amigos-item:nth-child(3) .amigos-avatar {
+  animation-delay: 0.22s;
+}
+
+.amigos-item:nth-child(4) .amigos-avatar {
+  animation-delay: 0.29s;
+}
+
+.amigos-item:nth-child(5) .amigos-avatar {
+  animation-delay: 0.36s;
+}
+
+/* ══════════════════════════════════════════
+   INFO E ACCIONES
+══════════════════════════════════════════ */
 
 .amigos-info {
   display: flex;
@@ -246,7 +333,10 @@
   flex-shrink: 0;
 }
 
-/* ── Botones ── */
+/* ══════════════════════════════════════════
+   BOTONES
+══════════════════════════════════════════ */
+
 .amigos-btn {
   font-family: 'Nunito', sans-serif;
   font-size: 15px;
@@ -255,18 +345,22 @@
   border-radius: 10px;
   padding: 8px 16px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
 .amigos-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
 .amigos-btn:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 2px;
+}
+
+.amigos-btn:active {
+  animation: btnConfirm 0.3s ease;
 }
 
 .amigos-btn--primary {
@@ -290,7 +384,10 @@
   border: 1.5px solid #d0d4f0;
 }
 
-/* ── Búsqueda ── */
+/* ══════════════════════════════════════════
+   BÚSQUEDA
+══════════════════════════════════════════ */
+
 .amigos-search-group {
   display: flex;
   flex-direction: column;
@@ -312,7 +409,7 @@
   border: 2px solid #d0d4f0;
   border-radius: 14px;
   padding: 0 16px;
-  transition: border-color 0.18s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .amigos-search-wrap:focus-within {
@@ -320,7 +417,9 @@
   box-shadow: 0 0 0 3px rgba(108, 127, 232, 0.15);
 }
 
-.amigos-search-icon { font-size: 20px; }
+.amigos-search-icon {
+  font-size: 20px;
+}
 
 .amigos-search-input {
   flex: 1;
@@ -334,7 +433,9 @@
   outline: none;
 }
 
-.amigos-search-input::placeholder { color: #b0b0c8; }
+.amigos-search-input::placeholder {
+  color: #b0b0c8;
+}
 
 .amigos-search-hint {
   font-size: 14px;
@@ -343,24 +444,25 @@
   margin: 0;
 }
 
+/* ══════════════════════════════════════════
+   ESTADO CARGANDO (shimmer)
+══════════════════════════════════════════ */
+
 .amigos-cargando {
-  font-size: 16px;
-  font-weight: 700;
-  color: #6c7fe8;
-  text-align: center;
-  padding: 12px 0;
+  border-radius: 10px;
+  height: 20px;
+  background: linear-gradient(90deg,
+      #e8eaf6 25%,
+      #d0d4f0 50%,
+      #e8eaf6 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
 }
 
-.amigos-no-resultados {
-  font-size: 16px;
-  font-weight: 700;
-  color: #8080a0;
-  text-align: center;
-  padding: 16px;
-  list-style: none;
-}
+/* ══════════════════════════════════════════
+   ESTADO VACÍO
+══════════════════════════════════════════ */
 
-/* ── Estado vacío ── */
 .amigos-empty {
   display: flex;
   flex-direction: column;
@@ -370,7 +472,10 @@
   color: #8080a0;
 }
 
-.amigos-empty-icon { font-size: 48px; }
+.amigos-empty-icon {
+  font-size: 48px;
+  animation: floatIdle 2.6s ease-in-out infinite;
+}
 
 .amigos-empty p {
   font-size: 18px;
@@ -379,7 +484,10 @@
   margin: 0;
 }
 
-/* ── Modal / Overlay ── */
+/* ══════════════════════════════════════════
+   MODAL / OVERLAY
+══════════════════════════════════════════ */
+
 .amigos-overlay {
   position: fixed;
   inset: 0;
@@ -389,7 +497,7 @@
   justify-content: center;
   z-index: 200;
   padding: 24px;
-  animation: fadeIn 0.2s ease;
+  animation: overlayIn 0.25s ease both;
 }
 
 .amigos-modal {
@@ -402,6 +510,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  animation: modalPop 0.45s cubic-bezier(0.22, 0.68, 0, 1.2) both;
 }
 
 .amigos-modal-title {
@@ -428,7 +537,10 @@
   margin-top: 8px;
 }
 
-/* ── Footer ── */
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+
 .amigos-footer {
   text-align: center;
   padding: 16px;
@@ -438,10 +550,15 @@
   animation: fadeIn 0.5s ease 0.5s both;
 }
 
-/* ── Bottom Nav (reutiliza clases del dashboard) ── */
+/* ══════════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════════ */
+
 .dboard-bottom-nav {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: #ffffff;
   border-top: 2px solid #d0d4f0;
   display: flex;
@@ -483,4 +600,7 @@
   outline-offset: 2px;
 }
 
-.dboard-nav-icon { font-size: 28px; line-height: 1; }
+.dboard-nav-icon {
+  font-size: 28px;
+  line-height: 1;
+}
