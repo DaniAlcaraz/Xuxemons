@@ -263,7 +263,7 @@ class XuxemonController extends Controller
 
         if ($xuxesAcumuladas >= $xuxesNecesarias) {
             $nuevoTamano = $tamanoActual === 'Pequeño' ? 'Mediano' : 'Grande';
-            
+           
             // --- CAMBIO AQUÍ: Curación automática si el nuevo tamaño es Grande ---
             $datosActualizar = [
                 'tamano'           => $nuevoTamano,
