@@ -30,7 +30,7 @@ export const routes: Routes = [
   {
     path: 'perfil',
     component: Perfil,
-    //anActivate: [AuthGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'xuxemons',
@@ -50,7 +50,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: Admin,
-    canActivate: [AdminGuard]
+   canActivate: [AdminGuard]
   },
   {
     path: 'no-autorizado',
