@@ -97,7 +97,7 @@ export class Amigos implements OnInit, OnDestroy {
   configurarBusqueda(): void {
     this.busqueda$
       .pipe(
-        debounceTime(300),
+        debounceTime(300), // Deb
         distinctUntilChanged(),
         filter((q) => q.length >= 3),
         switchMap((q) => {
