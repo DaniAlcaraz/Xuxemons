@@ -7,18 +7,26 @@
     </div>
   </header>
 
-  <main class="perfil-main" id="main-content">
+  <main class="perfil-main" id="main-content" role="main">
 
     <!-- Banner + avatar -->
     <section class="perfil-card perfil-avatar-card" aria-labelledby="avatar-heading">
       <h2 id="avatar-heading" class="visually-hidden">Foto de perfil</h2>
+
       <div class="perfil-avatar-banner" role="presentation"></div>
+
       <div class="perfil-avatar-body">
         <div class="perfil-avatar" role="img" [attr.aria-label]="'Foto de perfil de ' + form.value.nombre">
           <span aria-hidden="true">👤</span>
         </div>
-        <p class="perfil-avatar-name">{{ form.value.nombre }} {{ form.value.apellidos }}</p>
-        <p class="perfil-avatar-id">{{ identificador }}</p>
+
+        <p class="perfil-avatar-name">
+          {{ form.value.nombre }} {{ form.value.apellidos }}
+        </p>
+
+        <p class="perfil-avatar-id" [attr.aria-label]="'Identificador ' + identificador">
+          {{ identificador }}
+        </p>
       </div>
     </section>
 
@@ -26,89 +34,147 @@
     <section class="perfil-card" aria-labelledby="datos-heading">
       <h2 id="datos-heading" class="perfil-section-title">Datos personales</h2>
 
-      <form [formGroup]="form" class="perfil-form" (ngSubmit)="onSubmit()" novalidate>
+      <form [formGroup]="form" class="perfil-form" (ngSubmit)="onSubmit()" novalidate role="form">
 
         @if (formSubmitted && form.invalid) {
-          <div role="alert" aria-live="polite" class="perfil-alert perfil-alert-error">
-            <span aria-hidden="true">⚠</span> Por favor, revisa los campos marcados antes de guardar.
-          </div>
-        }
-        @if (guardadoOk) {
-          <div role="alert" class="perfil-alert perfil-alert-ok">
-            ✅ Cambios guardados correctamente.
-          </div>
-        }
-        @if (errorGuardado) {
-          <div role="alert" class="perfil-alert perfil-alert-error">
-            <span aria-hidden="true">⚠</span> Error al guardar los cambios.
-          </div>
+        <div role="alert" aria-live="polite" class="perfil-alert perfil-alert-error">
+          <span aria-hidden="true">⚠</span>
+          Por favor, revisa los campos marcados antes de guardar.
+        </div>
         }
 
+        @if (guardadoOk) {
+        <div role="alert" aria-live="polite" class="perfil-alert perfil-alert-ok">
+          ✅ Cambios guardados correctamente.
+        </div>
+        }
+
+        @if (errorGuardado) {
+        <div role="alert" aria-live="assertive" class="perfil-alert perfil-alert-error">
+          <span aria-hidden="true">⚠</span>
+          Error al guardar los cambios.
+        </div>
+        }
+
+        <!-- Nombre / Apellidos -->
         <div class="perfil-form-row">
+
           <div class="perfil-form-group">
-            <label for="p-nombre" class="perfil-label">Nombre <span aria-hidden="true" class="perfil-required">*</span></label>
-            <input id="p-nombre" type="text" class="perfil-input" placeholder="Tu nombre"
-              formControlName="nombre" autocomplete="given-name"
-              [attr.aria-invalid]="isInvalid('nombre') ? 'true' : 'false'" />
+            <label for="p-nombre" class="perfil-label">
+              Nombre
+              <span aria-hidden="true" class="perfil-required">*</span>
+            </label>
+
+            <input id="p-nombre" type="text" class="perfil-input" placeholder="Tu nombre" formControlName="nombre"
+              autocomplete="given-name" [attr.aria-invalid]="isInvalid('nombre') ? 'true' : 'false'"
+              aria-describedby="error-nombre" />
+
             @if (isInvalid('nombre')) {
-              <p class="perfil-error-msg" role="alert">El nombre es obligatorio</p>
+            <p id="error-nombre" class="perfil-error-msg" role="alert" aria-live="polite">
+              El nombre es obligatorio
+            </p>
             }
           </div>
+
           <div class="perfil-form-group">
-            <label for="p-apellidos" class="perfil-label">Apellidos <span aria-hidden="true" class="perfil-required">*</span></label>
+            <label for="p-apellidos" class="perfil-label">
+              Apellidos
+              <span aria-hidden="true" class="perfil-required">*</span>
+            </label>
+
             <input id="p-apellidos" type="text" class="perfil-input" placeholder="Tus apellidos"
               formControlName="apellidos" autocomplete="family-name"
-              [attr.aria-invalid]="isInvalid('apellidos') ? 'true' : 'false'" />
+              [attr.aria-invalid]="isInvalid('apellidos') ? 'true' : 'false'" aria-describedby="error-apellidos" />
+
             @if (isInvalid('apellidos')) {
-              <p class="perfil-error-msg" role="alert">Los apellidos son obligatorios</p>
+            <p id="error-apellidos" class="perfil-error-msg" role="alert" aria-live="polite">
+              Los apellidos son obligatorios
+            </p>
             }
           </div>
+
         </div>
 
+        <!-- ID -->
         <div class="perfil-form-group">
           <label class="perfil-label">Tu identificador</label>
+
           <div class="perfil-input-wrap">
-            <input type="text" class="perfil-input" [value]="identificador" readonly />
-            <button type="button" class="perfil-copy-btn" (click)="copiarIdentificador()" aria-label="Copiar identificador">📋</button>
+            <input type="text" class="perfil-input" [value]="identificador" readonly aria-readonly="true"
+              [attr.aria-label]="'Identificador ' + identificador" />
+
+            <button type="button" class="perfil-copy-btn" (click)="copiarIdentificador()"
+              aria-label="Copiar identificador">
+              📋
+            </button>
           </div>
-          <p class="perfil-hint">Este es tu ID de acceso. Úsalo para iniciar sesión.</p>
+
+          <p class="perfil-hint">
+            Este es tu ID de acceso. Úsalo para iniciar sesión.
+          </p>
         </div>
 
+        <!-- Email -->
         <div class="perfil-form-group">
-          <label for="p-correo" class="perfil-label">Correo electrónico <span aria-hidden="true" class="perfil-required">*</span></label>
+          <label for="p-correo" class="perfil-label">
+            Correo electrónico
+            <span aria-hidden="true" class="perfil-required">*</span>
+          </label>
+
           <input id="p-correo" type="email" class="perfil-input" placeholder="entrenador@xuxemons.com"
-            formControlName="correo" autocomplete="email"
-            [attr.aria-invalid]="isInvalid('correo') ? 'true' : 'false'" />
+            formControlName="correo" autocomplete="email" [attr.aria-invalid]="isInvalid('correo') ? 'true' : 'false'"
+            aria-describedby="error-correo" />
+
           @if (isInvalid('correo')) {
-            <p class="perfil-error-msg" role="alert">Introduce un correo electrónico válido</p>
+          <p id="error-correo" class="perfil-error-msg" role="alert" aria-live="polite">
+            Introduce un correo electrónico válido
+          </p>
           }
         </div>
 
+        <!-- Contraseña -->
         <div class="perfil-form-group">
-          <label for="p-contrasena" class="perfil-label">Nueva contraseña</label>
+          <label for="p-contrasena" class="perfil-label">
+            Nueva contraseña
+          </label>
+
           <div class="perfil-input-wrap">
-            <input id="p-contrasena" [type]="mostrarPassword ? 'text' : 'password'"
-              class="perfil-input" placeholder="Dejar en blanco para no cambiar"
-              formControlName="contrasena" autocomplete="new-password"
-              [attr.aria-invalid]="isInvalid('contrasena') ? 'true' : 'false'" />
-            <button type="button" class="perfil-copy-btn"
-              (click)="mostrarPassword = !mostrarPassword"
-              [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <input id="p-contrasena" [type]="mostrarPassword ? 'text' : 'password'" class="perfil-input"
+              placeholder="Dejar en blanco para no cambiar" formControlName="contrasena" autocomplete="new-password"
+              [attr.aria-invalid]="isInvalid('contrasena') ? 'true' : 'false'" aria-describedby="error-pass" />
+
+            <button type="button" class="perfil-copy-btn" (click)="mostrarPassword = !mostrarPassword"
+              [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-pressed]="mostrarPassword">
               {{ mostrarPassword ? '🙈' : '👁️' }}
             </button>
           </div>
-          <p class="perfil-hint">Déjalo en blanco para mantener tu contraseña. Mínimo 6 caracteres.</p>
+
+          <p class="perfil-hint">
+            Déjalo en blanco para mantener tu contraseña. Mínimo 6 caracteres.
+          </p>
+
           @if (isInvalid('contrasena')) {
-            <p class="perfil-error-msg" role="alert">La contraseña debe tener al menos 6 caracteres</p>
+          <p id="error-pass" class="perfil-error-msg" role="alert" aria-live="polite">
+            La contraseña debe tener al menos 6 caracteres
+          </p>
           }
         </div>
 
+        <!-- Acciones -->
         <div class="perfil-actions">
-          <button type="submit" class="perfil-btn perfil-btn-guardar" [disabled]="isSubmitting">
+          <button type="submit" class="perfil-btn perfil-btn-guardar" [disabled]="isSubmitting"
+            [attr.aria-busy]="isSubmitting">
             {{ isSubmitting ? 'Guardando...' : 'Guardar cambios' }}
           </button>
-          <button type="button" class="perfil-btn perfil-btn-cerrar" (click)="cerrarSesion()">Cerrar sesión</button>
-          <button type="button" class="perfil-btn perfil-btn-eliminar" (click)="eliminarCuenta()">Eliminar cuenta</button>
+
+          <button type="button" class="perfil-btn perfil-btn-cerrar" (click)="cerrarSesion()">
+            Cerrar sesión
+          </button>
+
+          <button type="button" class="perfil-btn perfil-btn-eliminar" (click)="eliminarCuenta()">
+            Eliminar cuenta
+          </button>
         </div>
 
       </form>
@@ -120,16 +186,18 @@
     <p>&copy; 2026 Xuxemons</p>
   </footer>
 
-  <nav class="perfil-bottom-nav" aria-label="Navegación principal">
+  <nav class="perfil-bottom-nav" aria-label="Navegación principal" role="navigation">
+
     @for (item of navItems; track item.route) {
-      <a class="perfil-nav-item" [class.active]="item.route === '/perfil'"
-        [routerLink]="item.route"
-        [attr.aria-current]="item.route === '/perfil' ? 'page' : null"
-        [attr.aria-label]="item.label">
-        <span class="perfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-        <span>{{ item.label }}</span>
-      </a>
+    <a class="perfil-nav-item" [class.active]="item.route === '/perfil'" [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/perfil' ? 'page' : null" [attr.aria-label]="item.label">
+
+      <span class="perfil-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+
+    </a>
     }
+
   </nav>
 
 </div>

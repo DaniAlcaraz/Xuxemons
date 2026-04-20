@@ -8,182 +8,191 @@
     </div>
   </header>
 
-  <main class="amigos-main" id="main-content">
+  <main class="amigos-main" id="main-content" role="main">
 
     <!-- ── Toast mensajes ───────────────────────────────────────────────── -->
     @if (mensajeExito) {
-      <div class="amigos-toast amigos-toast--ok" role="alert" aria-live="polite">
-        ✅ {{ mensajeExito }}
-      </div>
+    <div class="amigos-toast amigos-toast--ok" role="alert" aria-live="polite">
+      ✅ {{ mensajeExito }}
+    </div>
     }
+
     @if (mensajeError) {
-      <div class="amigos-toast amigos-toast--err" role="alert" aria-live="assertive">
-        ❌ {{ mensajeError }}
-      </div>
+    <div class="amigos-toast amigos-toast--err" role="alert" aria-live="assertive">
+      ❌ {{ mensajeError }}
+    </div>
     }
 
     <!-- ── Tabs ─────────────────────────────────────────────────────────── -->
     <nav class="amigos-tabs" role="tablist" aria-label="Secciones de amigos">
-      <button class="amigos-tab" role="tab"
-        [class.amigos-tab--active]="tabActiva === 'amigos'"
-        [attr.aria-selected]="tabActiva === 'amigos'"
-        (click)="cambiarTab('amigos')">
+
+      <button class="amigos-tab" role="tab" [class.amigos-tab--active]="tabActiva === 'amigos'"
+        [attr.aria-selected]="tabActiva === 'amigos'" (click)="cambiarTab('amigos')">
         👥 Mis amigos
-        <span class="amigos-tab-count">{{ amigos.length }}</span>
+        <span class="amigos-tab-count" [attr.aria-label]="amigos.length + ' amigos'">
+          {{ amigos.length }}
+        </span>
       </button>
 
-      <button class="amigos-tab" role="tab"
-        [class.amigos-tab--active]="tabActiva === 'solicitudes'"
-        [attr.aria-selected]="tabActiva === 'solicitudes'"
-        (click)="cambiarTab('solicitudes')">
+      <button class="amigos-tab" role="tab" [class.amigos-tab--active]="tabActiva === 'solicitudes'"
+        [attr.aria-selected]="tabActiva === 'solicitudes'" (click)="cambiarTab('solicitudes')">
         📩 Solicitudes
         @if (numSolicitudesPendientes > 0) {
-          <span class="amigos-badge" [attr.aria-label]="numSolicitudesPendientes + ' solicitudes pendientes'">
-            {{ numSolicitudesPendientes }}
-          </span>
+        <span class="amigos-badge" [attr.aria-label]="numSolicitudesPendientes + ' solicitudes pendientes'">
+          {{ numSolicitudesPendientes }}
+        </span>
         }
       </button>
 
-      <button class="amigos-tab" role="tab"
-        [class.amigos-tab--active]="tabActiva === 'buscar'"
-        [attr.aria-selected]="tabActiva === 'buscar'"
-        (click)="cambiarTab('buscar')">
+      <button class="amigos-tab" role="tab" [class.amigos-tab--active]="tabActiva === 'buscar'"
+        [attr.aria-selected]="tabActiva === 'buscar'" (click)="cambiarTab('buscar')">
         🔍 Buscar
       </button>
+
     </nav>
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- TAB: MIS AMIGOS                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     @if (tabActiva === 'amigos') {
-      <section class="amigos-card" aria-labelledby="lista-amigos-heading">
-        <h2 id="lista-amigos-heading" class="amigos-section-title">Mis amigos</h2>
+    <section class="amigos-card" aria-labelledby="lista-amigos-heading">
+      <h2 id="lista-amigos-heading" class="amigos-section-title">Mis amigos</h2>
 
-        @if (amigos.length === 0) {
-          <div class="amigos-empty">
-            <span class="amigos-empty-icon" aria-hidden="true">😢</span>
-            <p>Todavía no tienes amigos. ¡Busca usuarios y envía solicitudes!</p>
+      @if (amigos.length === 0) {
+      <div class="amigos-empty">
+        <span class="amigos-empty-icon" aria-hidden="true">😢</span>
+        <p>Todavía no tienes amigos. ¡Busca usuarios y envía solicitudes!</p>
+      </div>
+      }
+
+      <ul class="amigos-lista" role="list">
+        @for (amigo of amigos; track amigo.amistad_id) {
+        <li class="amigos-item" role="listitem">
+          <div class="amigos-avatar" aria-hidden="true">
+            {{ amigo.nombre.charAt(0).toUpperCase() }}
           </div>
-        }
 
-        <ul class="amigos-lista" role="list">
-          @for (amigo of amigos; track amigo.amistad_id) {
-            <li class="amigos-item">
-              <div class="amigos-avatar" aria-hidden="true">
-                {{ amigo.nombre.charAt(0).toUpperCase() }}
-              </div>
-              <div class="amigos-info">
-                <span class="amigos-nombre">{{ amigo.nombre }} {{ amigo.apellidos }}</span>
-                <span class="amigos-id">{{ amigo.identificador }}</span>
-              </div>
-              <button class="amigos-btn amigos-btn--danger"
-                (click)="confirmarEliminar(amigo)"
-                [attr.aria-label]="'Eliminar a ' + amigo.nombre + ' de amigos'">
-                Eliminar
-              </button>
-            </li>
-          }
-        </ul>
-      </section>
+          <div class="amigos-info">
+            <span class="amigos-nombre">{{ amigo.nombre }} {{ amigo.apellidos }}</span>
+            <span class="amigos-id">{{ amigo.identificador }}</span>
+          </div>
+
+          <button class="amigos-btn amigos-btn--danger" (click)="confirmarEliminar(amigo)"
+            [attr.aria-label]="'Eliminar a ' + amigo.nombre + ' de amigos'">
+            Eliminar
+          </button>
+        </li>
+        }
+      </ul>
+    </section>
     }
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- TAB: SOLICITUDES                                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     @if (tabActiva === 'solicitudes') {
-      <section class="amigos-card" aria-labelledby="solicitudes-heading">
-        <h2 id="solicitudes-heading" class="amigos-section-title">Solicitudes recibidas</h2>
+    <section class="amigos-card" aria-labelledby="solicitudes-heading">
+      <h2 id="solicitudes-heading" class="amigos-section-title">Solicitudes recibidas</h2>
 
-        @if (solicitudesRecibidas.length === 0) {
-          <div class="amigos-empty">
-            <span class="amigos-empty-icon" aria-hidden="true">📭</span>
-            <p>No tienes solicitudes pendientes.</p>
+      @if (solicitudesRecibidas.length === 0) {
+      <div class="amigos-empty">
+        <span class="amigos-empty-icon" aria-hidden="true">📭</span>
+        <p>No tienes solicitudes pendientes.</p>
+      </div>
+      }
+
+      <ul class="amigos-lista" role="list">
+        @for (sol of solicitudesRecibidas; track sol.id) {
+        <li class="amigos-item" role="listitem">
+          <div class="amigos-avatar" aria-hidden="true">
+            {{ sol.solicitante.nombre.charAt(0).toUpperCase() }}
           </div>
-        }
 
-        <ul class="amigos-lista" role="list">
-          @for (sol of solicitudesRecibidas; track sol.id) {
-            <li class="amigos-item">
-              <div class="amigos-avatar" aria-hidden="true">
-                {{ sol.solicitante.nombre.charAt(0).toUpperCase() }}
-              </div>
-              <div class="amigos-info">
-                <span class="amigos-nombre">{{ sol.solicitante.nombre }} {{ sol.solicitante.apellidos }}</span>
-                <span class="amigos-id">{{ sol.solicitante.identificador }}</span>
-              </div>
-              <div class="amigos-acciones">
-                <button class="amigos-btn amigos-btn--ok"
-                  (click)="aceptarSolicitud(sol)"
-                  [attr.aria-label]="'Aceptar solicitud de ' + sol.solicitante.nombre">
-                  Aceptar
-                </button>
-                <button class="amigos-btn amigos-btn--danger"
-                  (click)="rechazarSolicitud(sol)"
-                  [attr.aria-label]="'Rechazar solicitud de ' + sol.solicitante.nombre">
-                  Rechazar
-                </button>
-              </div>
-            </li>
-          }
-        </ul>
-      </section>
+          <div class="amigos-info">
+            <span class="amigos-nombre">
+              {{ sol.solicitante.nombre }} {{ sol.solicitante.apellidos }}
+            </span>
+            <span class="amigos-id">{{ sol.solicitante.identificador }}</span>
+          </div>
+
+          <div class="amigos-acciones">
+            <button class="amigos-btn amigos-btn--ok" (click)="aceptarSolicitud(sol)"
+              [attr.aria-label]="'Aceptar solicitud de ' + sol.solicitante.nombre">
+              Aceptar
+            </button>
+
+            <button class="amigos-btn amigos-btn--danger" (click)="rechazarSolicitud(sol)"
+              [attr.aria-label]="'Rechazar solicitud de ' + sol.solicitante.nombre">
+              Rechazar
+            </button>
+          </div>
+        </li>
+        }
+      </ul>
+    </section>
     }
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- TAB: BUSCAR                                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     @if (tabActiva === 'buscar') {
-      <section class="amigos-card" aria-labelledby="buscar-heading">
-        <h2 id="buscar-heading" class="amigos-section-title">Buscar usuarios</h2>
+    <section class="amigos-card" aria-labelledby="buscar-heading">
+      <h2 id="buscar-heading" class="amigos-section-title">Buscar usuarios</h2>
 
-        <div class="amigos-search-group">
-          <label for="search-input" class="amigos-search-label">Busca por ID de jugador</label>
-          <div class="amigos-search-wrap">
-            <span class="amigos-search-icon" aria-hidden="true">🔍</span>
-            <input
-              id="search-input"
-              type="search"
-              class="amigos-search-input"
-              placeholder="Mínimo 3 caracteres, ej: #Marc"
-              [(ngModel)]="textoBusqueda"
-              (input)="onInputBusqueda()"
-              autocomplete="off"
-              aria-describedby="search-hint"
-            />
-          </div>
-          <p id="search-hint" class="amigos-search-hint">
-            Introduce al menos 3 caracteres del ID (#Nombre1234) para buscar.
-          </p>
+      <div class="amigos-search-group">
+        <label for="search-input" class="amigos-search-label">
+          Busca por ID de jugador
+        </label>
+
+        <div class="amigos-search-wrap">
+          <span class="amigos-search-icon" aria-hidden="true">🔍</span>
+
+          <input id="search-input" type="search" class="amigos-search-input"
+            placeholder="Mínimo 3 caracteres, ej: #Marc" [(ngModel)]="textoBusqueda" (input)="onInputBusqueda()"
+            autocomplete="off" aria-describedby="search-hint" />
         </div>
 
-        <!-- Spinner -->
-        @if (cargandoBusqueda) {
-          <p class="amigos-cargando" aria-live="polite">Buscando...</p>
+        <p id="search-hint" class="amigos-search-hint">
+          Introduce al menos 3 caracteres del ID (#Nombre1234) para buscar.
+        </p>
+      </div>
+
+      <!-- Spinner -->
+      @if (cargandoBusqueda) {
+      <p class="amigos-cargando" aria-live="polite">Buscando...</p>
+      }
+
+      <!-- Resultados -->
+      <ul class="amigos-lista" role="list" aria-live="polite" aria-label="Resultados de búsqueda">
+
+        @for (usuario of resultadosBusqueda; track usuario.identificador) {
+        <li class="amigos-item" role="listitem">
+          <div class="amigos-avatar" aria-hidden="true">
+            {{ usuario.nombre.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="amigos-info">
+            <span class="amigos-nombre">
+              {{ usuario.nombre }} {{ usuario.apellidos }}
+            </span>
+            <span class="amigos-id">{{ usuario.identificador }}</span>
+          </div>
+
+          <button class="amigos-btn amigos-btn--primary" (click)="enviarSolicitud(usuario.identificador)"
+            [attr.aria-label]="'Enviar solicitud de amistad a ' + usuario.nombre">
+            Añadir amigo
+          </button>
+        </li>
         }
 
-        <!-- Resultados -->
-        <ul class="amigos-lista" role="list" aria-live="polite" aria-label="Resultados de búsqueda">
-          @for (usuario of resultadosBusqueda; track usuario.identificador) {
-            <li class="amigos-item">
-              <div class="amigos-avatar" aria-hidden="true">
-                {{ usuario.nombre.charAt(0).toUpperCase() }}
-              </div>
-              <div class="amigos-info">
-                <span class="amigos-nombre">{{ usuario.nombre }} {{ usuario.apellidos }}</span>
-                <span class="amigos-id">{{ usuario.identificador }}</span>
-              </div>
-              <button class="amigos-btn amigos-btn--primary"
-                (click)="enviarSolicitud(usuario.identificador)"
-                [attr.aria-label]="'Enviar solicitud de amistad a ' + usuario.nombre">
-                Añadir amigo
-              </button>
-            </li>
-          }
-          @if (!cargandoBusqueda && textoBusqueda.length >= 3 && resultadosBusqueda.length === 0) {
-            <li class="amigos-no-resultados">No se encontraron usuarios con ese ID.</li>
-          }
-        </ul>
-      </section>
+        @if (!cargandoBusqueda && textoBusqueda.length >= 3 && resultadosBusqueda.length === 0) {
+        <li class="amigos-no-resultados" role="listitem">
+          No se encontraron usuarios con ese ID.
+        </li>
+        }
+
+      </ul>
+    </section>
     }
 
   </main>
@@ -193,39 +202,46 @@
   </footer>
 
   <!-- ── Bottom Nav ──────────────────────────────────────────────────────── -->
-  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
+  <nav class="dboard-bottom-nav" aria-label="Navegación principal" role="navigation">
+
     @for (item of navItems; track item.route) {
-      <a class="dboard-nav-item"
-        [class.active]="item.route === '/amigos'"
-        [routerLink]="item.route"
-        [attr.aria-current]="item.route === '/amigos' ? 'page' : null"
-        [attr.aria-label]="item.label">
-        <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-        <span>{{ item.label }}</span>
-      </a>
+    <a class="dboard-nav-item" [class.active]="item.route === '/amigos'" [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/amigos' ? 'page' : null" [attr.aria-label]="item.label">
+
+      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+
+    </a>
     }
+
   </nav>
 
   <!-- ── Modal confirmación eliminar ────────────────────────────────────── -->
   @if (amigoAEliminar) {
-    <div class="amigos-overlay" role="dialog" aria-modal="true"
-      [attr.aria-label]="'Confirmar eliminación de ' + amigoAEliminar.nombre">
-      <div class="amigos-modal">
-        <p class="amigos-modal-title">¿Eliminar amigo?</p>
-        <p class="amigos-modal-body">
-          Se eliminará a <strong>{{ amigoAEliminar.nombre }} {{ amigoAEliminar.apellidos }}</strong>
-          de tu lista y tú de la suya.
-        </p>
-        <div class="amigos-modal-btns">
-          <button class="amigos-btn amigos-btn--ghost" (click)="cancelarEliminar()">
-            Cancelar
-          </button>
-          <button class="amigos-btn amigos-btn--danger" (click)="eliminarAmigo()">
-            Sí, eliminar
-          </button>
-        </div>
+  <div class="amigos-overlay" role="dialog" aria-modal="true"
+    [attr.aria-label]="'Confirmar eliminación de ' + amigoAEliminar.nombre">
+
+    <div class="amigos-modal">
+      <p class="amigos-modal-title">¿Eliminar amigo?</p>
+
+      <p class="amigos-modal-body">
+        Se eliminará a
+        <strong>{{ amigoAEliminar.nombre }} {{ amigoAEliminar.apellidos }}</strong>
+        de tu lista y tú de la suya.
+      </p>
+
+      <div class="amigos-modal-btns">
+        <button class="amigos-btn amigos-btn--ghost" (click)="cancelarEliminar()">
+          Cancelar
+        </button>
+
+        <button class="amigos-btn amigos-btn--danger" (click)="eliminarAmigo()">
+          Sí, eliminar
+        </button>
       </div>
     </div>
+
+  </div>
   }
 
 </div>
