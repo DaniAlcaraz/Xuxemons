@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Item;
 use App\Models\Mochila;
 use Illuminate\Http\Request;
@@ -8,28 +10,37 @@ use Illuminate\Support\Carbon;
 
 class MochilaController extends Controller {
 
-    const MAX_ESPACIOS = 20;
-    const MAX_STACK    = 5;
+    // Constantes para gestionar el peso y tamaño de la mochila
+    const MAX_ESPACIOS = 20; // Capacidad total de la mochila
+    const MAX_STACK    = 5;  // Cuántas 'xuxes' caben en un solo espacio (slot)
 
-    // GET /mochila — mochila del usuario logueado
+    /**
+     * Muestra el inventario del usuario autenticado.
+     * Antes de devolver los datos, comprueba si le toca recibir las xuxes diarias.
+     */
     public function index(Request $request) {
         $this->repartirXuxesDiariosSiToca($request->user());
 
         $mochila = $request->user()
             ->mochila()
-            ->with('item')
+            ->with('item') // Carga la relación para saber qué objeto es (nombre, tipo, etc.)
             ->get();
+            
         return response()->json($mochila);
     }
 
-
-    
-    // GET /items — catálogo de ítems (para que el admin los vea)
+    /**
+     * Devuelve todos los ítems disponibles en el juego.
+     * Útil para que el administrador seleccione qué regalar o quitar.
+     */
     public function catalogoItems() {
         return response()->json(Item::all());
     }
 
-    // POST /mochila/anadir — admin añade ítems a un usuario
+    /**
+     * Endpoint para que el administrador añada ítems a la mochila de un usuario.
+     * Valida existencia de usuario, ítem y que la cantidad sea positiva.
+     */
     public function anadir(Request $request) {
         $request->validate([
             'user_identificador' => 'required|string|exists:usuarios,identificador',
@@ -37,12 +48,15 @@ class MochilaController extends Controller {
             'cantidad'           => 'required|integer|min:1',
         ]);
 
-        $item     = Item::findOrFail($request->item_id);
+        $item = Item::findOrFail($request->item_id);
+        
+        // Ejecuta la lógica compleja de inserción respetando los límites de espacio
         $resultado = $this->anadirConLimites($request->user_identificador, $item, (int) $request->cantidad);
 
         if ($resultado['anadidos'] <= 0) {
             return response()->json(['error' => 'La mochila del usuario está llena'], 400);
         }
+
         return response()->json([
             'message'     => 'Añadidos ' . $resultado['anadidos'] . ' ' . $item->nombre . ($resultado['descartados'] > 0 ? ' (' . $resultado['descartados'] . ' descartados por espacio)' : ''),
             'añadidos'    => $resultado['anadidos'],
@@ -50,7 +64,10 @@ class MochilaController extends Controller {
         ]);
     }
 
-    // POST /mochila/quitar — admin quita ítems de un usuario
+    /**
+     * Permite al administrador quitar una cantidad específica de ítems a un usuario.
+     * Si la cantidad llega a 0, elimina el registro de la tabla mochila.
+     */
     public function quitar(Request $request) {
         $request->validate([
             'user_identificador' => 'required|string|exists:usuarios,identificador',
@@ -64,16 +81,23 @@ class MochilaController extends Controller {
 
         if (!$entrada) return response()->json(['error' => 'El usuario no tiene ese ítem'], 404);
 
+        // No podemos quitar más de lo que el usuario tiene
         $quitados = min($request->cantidad, $entrada->cantidad);
         $entrada->cantidad -= $quitados;
-        if ($entrada->cantidad <= 0) $entrada->delete();
-        else $entrada->save();
+        
+        if ($entrada->cantidad <= 0) {
+            $entrada->delete();
+        } else {
+            $entrada->save();
+        }
 
         return response()->json(['message' => 'Quitados ' . $quitados, 'quitados' => $quitados]);
     }
 
-
-    //Permite añadir xuxes a la mochila del usuario poniendo un limite de stack 
+    /**
+     * Lógica central de la Mochila: Calcula el espacio libre y gestiona el stacking.
+     * Las 'xuxes' se apilan (5 por slot), las 'vacunas' ocupan 1 slot cada una.
+     */
     private function anadirConLimites(string $userIdentificador, Item $item, int $cantidad): array
     {
         $mochila = Mochila::where('user_identificador', $userIdentificador)->with('item')->get(); //Selecciona la mochila según el ID del usuario
@@ -81,10 +105,11 @@ class MochilaController extends Controller {
         //Ocupan 1 espacio por cada MAX_STACK unidades
         //Ejemplo: Si un stack es de 50 y tengo 100 xuxes, entonces habrán dos stacks de 50.
 
+        // Cálculo de espacios ocupados actualmente
         $espaciosUsados = $mochila->sum(function ($m) {
             return $m->item->tipo === 'xuxe'
-                ? (int) ceil($m->cantidad / self::MAX_STACK)
-                : (int) $m->cantidad;
+                ? (int) ceil($m->cantidad / self::MAX_STACK) // Ejemplo: 7 xuxes = 2 slots
+                : (int) $m->cantidad;                        // Ejemplo: 2 vacunas = 2 slots
         });
 
         //Si MAX_ESPACIOS = 100 y acumulo 80, me quedan 20 libres.
@@ -100,14 +125,14 @@ class MochilaController extends Controller {
             ->where('item_id', $item->id)
             ->first();
 
+        // Calcular cuántas unidades reales caben según el tipo de ítem
         if ($item->tipo === 'xuxe') {
-            //Calcula cuantos items caben
+            // Aprovecha el hueco del último slot incompleto + los slots vacíos
             $hueco = $entrada ? (self::MAX_STACK - ($entrada->cantidad % self::MAX_STACK)) % self::MAX_STACK : 0;
-            $caben = $hueco + $espaciosLibres * self::MAX_STACK;
-            
-            //Para otros items, que no apilan
+            $caben = $hueco + ($espaciosLibres * self::MAX_STACK);
             $anadir = min($cantidad, $caben);
         } else {
+            // Las vacunas simplemente se limitan a los slots libres
             $anadir = min($cantidad, $espaciosLibres);
         }
 
@@ -116,7 +141,7 @@ class MochilaController extends Controller {
             return ['anadidos' => 0, 'descartados' => $cantidad];
         }
 
-        //Actualiza o crea el registro
+        // Actualiza o crea el registro en la base de datos
         if ($entrada) {
             $entrada->cantidad += $anadir;
             $entrada->save();
@@ -132,13 +157,14 @@ class MochilaController extends Controller {
         return ['anadidos' => $anadir, 'descartados' => max(0, $cantidad - $anadir)];
     }
 
-    // Regala xuxes diarios al usuario si toca, como un login diario en juegos.
+    /**
+     * Sistema de recompensas diarias.
+     * Verifica si ha pasado el tiempo configurado por el admin y reparte las xuxes.
+     */
     private function repartirXuxesDiariosSiToca(User $user): void
     {
-        //Verifica si la función está habilitada (Si el usuario desactivó los xuxes diarios, se va).
-        if (!$user->xuxes_diarios_activo) {
-            return;
-        }
+        // Si el admin desactivó el reparto para este usuario, no hacemos nada
+        if (!$user->xuxes_diarios_activo) return;
 
         //Obtiene la configuración del usuario
         $cantidad = max(1, (int) ($user->xuxes_diarios_cantidad ?? 5));
@@ -146,25 +172,20 @@ class MochilaController extends Controller {
         $ahora = Carbon::now();
         $hoy = $ahora->toDateString();
 
-        //Verifica si ya se repartió hoy (Si el último reparto fue hoy mismo, se va (evita múltiples repartos diarios))
-        if ($user->xuxes_diarios_ultimo_reparto?->toDateString() === $hoy) {
-            return;
-        }
+        // Si ya recibió el regalo hoy, salimos
+        if ($user->xuxes_diarios_ultimo_reparto?->toDateString() === $hoy) return;
 
-        //Verifica si ya pasó la hora de reparto
+        // Comprobamos si ya hemos pasado la hora programada del día actual
         $horaMinutos = substr($horaConfig, 0, 5);
         $instanteReparto = Carbon::createFromFormat('Y-m-d H:i', $hoy . ' ' . $horaMinutos);
-        if ($ahora->lt($instanteReparto)) {
-            return;
-        }
+        
+        if ($ahora->lt($instanteReparto)) return;
 
-        //Obtiene el item "xuxe" (Busca el item de tipo "xuxe" (si no existe, se va)).
+        // Buscamos el primer ítem tipo xuxe disponible para regalar
         $itemXuxe = Item::where('tipo', 'xuxe')->orderBy('id')->first();
-        if (!$itemXuxe) {
-            return;
-        }
+        if (!$itemXuxe) return;
 
-        //Añade las xuxes a la mochila (Intenta añadir los xuxes con los límites de espacio que vimos antes.)
+        // Intentamos añadir. Si tiene éxito, marcamos la fecha de último reparto
         $resultado = $this->anadirConLimites($user->identificador, $itemXuxe, $cantidad);
 
         //Si se añadireo, actualiza el registro (Marca que se repartió hoy para evitar duplicados mañana)
@@ -173,6 +194,4 @@ class MochilaController extends Controller {
             $user->save();
         }
     }
-
-    
 }

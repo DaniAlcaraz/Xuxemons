@@ -7,75 +7,148 @@
     </div>
   </header>
 
-  <main class="dboard-main" id="main-content">
+  <main class="dboard-main" id="main-content" role="main">
 
+    <!-- ── Estado de carga / error ── -->
+    @if (cargando) {
+    <div class="dboard-loading" role="status" aria-live="polite">
+      <span>Cargando tu equipo…</span>
+    </div>
+    }
+
+    @if (errorCarga) {
+    <div class="dboard-error" role="alert">
+      <p>No se han podido cargar los datos. ¿Estás conectado?</p>
+      <button class="dboard-retry-btn" (click)="cargarDatos()">Reintentar</button>
+    </div>
+    }
+
+    @if (!cargando && !errorCarga) {
+
+    <!-- ── Estadísticas ── -->
     <section class="dboard-stats-section" aria-labelledby="stats-heading">
       <h2 id="stats-heading" class="visually-hidden">Tus estadísticas</h2>
       <div class="dboard-stats-grid">
+
+        <!-- Xuxemons capturados -->
         <article class="dboard-stat-card">
           <span class="dboard-stat-icon" aria-hidden="true">🏆</span>
           <div class="dboard-stat-info">
-            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-number" [attr.aria-label]="misXuxemons.length + ' Xuxemons capturados'">
+              {{ misXuxemons.length }}
+            </span>
             <span class="dboard-stat-label">Xuxemons capturados</span>
           </div>
         </article>
-        <article class="dboard-stat-card">
-          <span class="dboard-stat-icon" aria-hidden="true">🎮</span>
-          <div class="dboard-stat-info">
-            <span class="dboard-stat-number">3</span>
-            <span class="dboard-stat-label">Batallas ganadas</span>
-          </div>
-        </article>
+
+        <!-- Amigos -->
         <article class="dboard-stat-card">
           <span class="dboard-stat-icon" aria-hidden="true">👥</span>
           <div class="dboard-stat-info">
-            <span class="dboard-stat-number">3</span>
+            <span class="dboard-stat-number" [attr.aria-label]="numAmigos + ' amigos'">
+              {{ numAmigos }}
+            </span>
             <span class="dboard-stat-label">Amigos</span>
           </div>
         </article>
+
       </div>
     </section>
 
+    <!-- ── Mis Xuxemons ── -->
     <section class="dboard-card" aria-labelledby="xuxemons-heading">
       <h2 id="xuxemons-heading" class="dboard-section-title">Els meus xuxemons</h2>
+
+      <!-- Felicitación si los tienes todos -->
+      @if (tienesTodos) {
+      <div class="dboard-all-caught" role="status">
+        🎊 ¡Increíble! ¡Tienes todos los xuxemons! Eres un maestro entrenador.
+      </div>
+      }
+
+      <!-- Sin xuxemons -->
+      @if (misXuxemons.length === 0) {
+      <div class="dboard-empty" role="status">
+        <span class="dboard-empty-icon" aria-hidden="true">🥚</span>
+        <p>Todavía no tienes ningún xuxemon.</p>
+        <p>¡Explora el mundo para capturar el primero!</p>
+      </div>
+      }
+
+      <!-- Grid de xuxemons -->
+      @if (misXuxemons.length > 0) {
       <ul class="dboard-xuxemon-grid" role="list">
-        @for (x of xuxemons; track x.name) {
-          <li class="dboard-xuxemon-card" tabindex="0"
-            [attr.aria-label]="x.name + ', tipus ' + x.type + ', nivell ' + x.level + ', vida ' + x.hp + '%'">
-            <span class="dboard-xuxemon-emoji" aria-hidden="true">{{ x.emoji }}</span>
-            <p class="dboard-xuxemon-name">{{ x.name }}</p>
-            <span class="dboard-badge" [ngClass]="x.type.toLowerCase()">{{ x.type }}</span>
-            <div class="dboard-xuxemon-stats" aria-hidden="true">
-              <div class="dboard-stat-row">
-                <span>Nivel</span>
-                <span class="dboard-val">{{ x.level }}</span>
-              </div>
-              <div class="dboard-stat-row">
-                <span>Vida</span>
-                <span class="dboard-val">{{ x.hp }}%</span>
-              </div>
-              <div class="dboard-hp-bar" role="progressbar"
-                [attr.aria-valuenow]="x.hp" aria-valuemin="0" aria-valuemax="100"
-                [attr.aria-label]="'Vida de ' + x.name + ': ' + x.hp + '%'">
-                <div class="dboard-hp-fill" [style.width.%]="x.hp"></div>
+        @for (x of misXuxemons; track x.IDxuxemon) {
+        <li class="dboard-xuxemon-card" [class.dboard-xuxemon-enfermo]="x.enfermo" tabindex="0" role="listitem"
+          [attr.aria-label]="x.nombre + ', tipo ' + x.tipo + ', tamaño ' + x.tamano + (x.enfermo ? ', enfermo de ' + x.enfermedad : '')">
+
+          <!-- Imagen del xuxemon -->
+          @if (imagenUrl(x.archivo)) {
+          <img class="dboard-xuxemon-img" [src]="imagenUrl(x.archivo)" [alt]="x.nombre" loading="lazy"
+            (error)="$any($event.target).style.display='none'" />
+          } @else {
+          <span class="dboard-xuxemon-emoji" aria-hidden="true">🐾</span>
+          }
+
+          <!-- Icono de enfermo -->
+          @if (x.enfermo) {
+          <span class="dboard-enfermo-badge" title="{{ x.enfermedad ?? 'Enfermo' }}">🤒</span>
+          }
+
+          <p class="dboard-xuxemon-name">{{ x.nombre }}</p>
+
+          <!-- Badge de tipo -->
+          <span class="dboard-badge" [ngClass]="tipoBadgeClass(x.tipo)" [attr.aria-label]="'Tipo ' + x.tipo">
+            {{ x.tipo }}
+          </span>
+
+          <!-- Badge de tamaño -->
+          <span class="dboard-tamano-badge">{{ x.tamano }}</span>
+
+          <!-- Stats -->
+          <div class="dboard-xuxemon-stats">
+            <div class="dboard-stat-row">
+              <span>Tamaño</span>
+              <span class="dboard-val">{{ x.tamano }}</span>
+            </div>
+            <div class="dboard-stat-row">
+              <span>Xuxes</span>
+              <span class="dboard-val">{{ x.xuxes_acumuladas }}</span>
+            </div>
+
+            <!-- Barra de vida -->
+            <div class="dboard-hp-bar" role="progressbar" [attr.aria-valuenow]="vidaPorcentaje(x)" aria-valuemin="0"
+              aria-valuemax="100" [attr.aria-label]="'Estado de ' + x.nombre">
+              <div class="dboard-hp-fill" [style.width.%]="vidaPorcentaje(x)"
+                [style.background]="colorVida(vidaPorcentaje(x))">
               </div>
             </div>
-          </li>
+
+            @if (x.enfermo) {
+            <p class="dboard-enfermedad-texto">🤒 {{ x.enfermedad }}</p>
+            }
+          </div>
+
+        </li>
         }
       </ul>
+      }
     </section>
 
+    <!-- ── Notificaciones ── -->
     <section class="dboard-card" aria-labelledby="notif-heading">
       <h2 id="notif-heading" class="dboard-section-title">Notificaciones</h2>
-      <article class="dboard-notif dboard-notif-blue">
-        <p class="dboard-notif-title">Nuevo Xuxemon disponible</p>
-        <p class="dboard-notif-body">Un xuxemon de agua ha aparecido cerca de ti</p>
+
+      @for (n of notificaciones; track n.titulo) {
+      <article class="dboard-notif" [class.dboard-notif-blue]="n.tipo === 'azul'"
+        [class.dboard-notif-pink]="n.tipo === 'rosa'" role="article">
+        <p class="dboard-notif-title">{{ n.titulo }}</p>
+        <p class="dboard-notif-body">{{ n.cuerpo }}</p>
       </article>
-      <article class="dboard-notif dboard-notif-pink">
-        <p class="dboard-notif-title">Desafío recibido</p>
-        <p class="dboard-notif-body">Marc te desafía a una batalla</p>
-      </article>
+      }
     </section>
+
+    }<!-- fin !cargando && !errorCarga -->
 
   </main>
 
@@ -83,15 +156,14 @@
     <p>&copy; 2026 Xuxemons</p>
   </footer>
 
-  <nav class="dboard-bottom-nav" aria-label="Navegación principal">
+  <!-- ── Navegación inferior ── -->
+  <nav class="dboard-bottom-nav" aria-label="Navegación principal" role="navigation">
     @for (item of navItems; track item.route) {
-      <a class="dboard-nav-item" [class.active]="item.route === '/dashboard'"
-        [routerLink]="item.route"
-        [attr.aria-current]="item.route === '/dashboard' ? 'page' : null"
-        [attr.aria-label]="item.label">
-        <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
-        <span>{{ item.label }}</span>
-      </a>
+    <a class="dboard-nav-item" [class.active]="item.route === '/dashboard'" [routerLink]="item.route"
+      [attr.aria-current]="item.route === '/dashboard' ? 'page' : null" [attr.aria-label]="item.label">
+      <span class="dboard-nav-icon" aria-hidden="true">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
     }
   </nav>
 

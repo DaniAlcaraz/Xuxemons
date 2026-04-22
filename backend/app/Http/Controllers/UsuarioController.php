@@ -9,11 +9,19 @@ use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {
+    /**
+     * Muestra la lista de todos los usuarios registrados.
+     * Útil para que el administrador tenga una visión global de la base de datos.
+     */
     public function index()
     {
         return response()->json(User::all());
     }
 
+    /**
+     * Busca un usuario específico por su ID.
+     * Devuelve error 404 si el usuario no existe.
+     */
     public function show($id)
     {
         $user = User::find($id);
@@ -23,6 +31,10 @@ class UsuarioController extends Controller
         return response()->json($user);
     }
 
+    /**
+     * Eliminación física de un usuario por ID.
+     * Borra permanentemente el registro de la tabla 'usuarios'.
+     */
     public function destroy($id)
     {
         $user = User::find($id);
@@ -33,49 +45,63 @@ class UsuarioController extends Controller
         return response()->json(['message' => 'Usuario eliminado']);
     }
 
+    /**
+     * Baja de cuenta iniciada por el propio usuario.
+     * Primero revoca todos sus tokens de acceso (Sanctum) para cerrar su sesión 
+     * en todos los dispositivos y luego deshabilita el registro.
+     */
     public function deshabilitarCuenta(Request $request) {
         $user = $request->user();
         
-        // 1. Invalidamos sus tokens actuales para que lo "eche" de la app
+        // 1. Invalidamos sus tokens actuales para que lo "eche" de la app inmediatamente
         $user->tokens()->delete(); 
         
-        // 2. Marcamos la cuenta como borrada (lógicamente)
+        // 2. Marcamos la cuenta como borrada
         $user->delete(); 
 
         return response()->json(['message' => 'Cuenta deshabilitada.']);
     }
 
-
+    /**
+     * Actualiza el perfil del usuario autenticado.
+     * Gestiona la validación de email único (ignorando el propio email del usuario)
+     * y permite actualizar la contraseña solo si se proporciona una nueva.
+     */
     public function update(Request $request)
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
-    $validated = $request->validate([
-        'nombre'    => 'required|string|max:255',
-        'apellidos' => 'required|string|max:255',
-        'email'     => [
-            'required', 'email',
-            Rule::unique('usuarios', 'email')->ignore($user->identificador, 'identificador'),
-        ],
-        'password'  => 'nullable|string|min:6',
-    ]);
+        $validated = $request->validate([
+            'nombre'    => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'email'     => [
+                'required', 'email',
+                // Asegura que el correo no esté duplicado, ignorando al usuario actual
+                Rule::unique('usuarios', 'email')->ignore($user->identificador, 'identificador'),
+            ],
+            'password'  => 'nullable|string|min:6',
+        ]);
 
-    $user->nombre    = $validated['nombre'];
-    $user->apellidos = $validated['apellidos'];
-    $user->email     = $validated['email'];
+        $user->nombre    = $validated['nombre'];
+        $user->apellidos = $validated['apellidos'];
+        $user->email     = $validated['email'];
 
-    if (!empty($validated['password'])) {
-        $user->password = Hash::make($validated['password']);
+        // Solo encriptamos y guardamos la contraseña si el usuario escribió algo en el campo
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return response()->json(['user' => $user]);
     }
 
-    $user->save();
+    // --- CONFIGURACIÓN DE XUXES DIARIOS (REGALO DE OBJETOS) ---
 
-    return response()->json(['user' => $user]);
-}
-
-    //LOGICA XUXES
-
-    //Obtiene xuxes
+    /**
+     * Obtiene los ajustes de regalo diario de xuxes para un usuario.
+     * Incluye cantidad, hora programada y si la función está activa.
+     */
     public function obtenerXuxesDiariosConfig($identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -86,12 +112,14 @@ class UsuarioController extends Controller
         return response()->json([
             'activo' => (bool) ($user->xuxes_diarios_activo ?? true),
             'cantidad' => (int) ($user->xuxes_diarios_cantidad ?? 5),
-            'hora' => substr((string) ($user->xuxes_diarios_hora ?? '09:00:00'), 0, 5),
+            'hora' => substr((string) ($user->xuxes_diarios_hora ?? '09:00:00'), 0, 5), // Formato HH:MM
             'ultimo_reparto' => $user->xuxes_diarios_ultimo_reparto?->toDateString(),
         ]);
     }
 
-    //Actualiza xuxes
+    /**
+     * Permite al admin cambiar cuántas xuxes recibe el usuario y a qué hora.
+     */
     public function actualizarXuxesDiariosConfig(Request $request, $identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -107,22 +135,17 @@ class UsuarioController extends Controller
 
         $user->xuxes_diarios_activo = (bool) $validated['activo'];
         $user->xuxes_diarios_cantidad = (int) $validated['cantidad'];
-        $user->xuxes_diarios_hora = $validated['hora'] . ':00';
+        $user->xuxes_diarios_hora = $validated['hora'] . ':00'; // Añade segundos para la DB
         $user->save();
 
-        return response()->json([
-            'message' => 'Configuración de xuxes diarios actualizada.',
-            'config' => [
-                'activo' => (bool) $user->xuxes_diarios_activo,
-                'cantidad' => (int) $user->xuxes_diarios_cantidad,
-                'hora' => substr((string) $user->xuxes_diarios_hora, 0, 5),
-            ],
-        ]);
+        return response()->json(['message' => 'Configuración de xuxes diarios actualizada.']);
     }
 
-    //LOGICA PARA XUXEMONS
+    // --- CONFIGURACIÓN DE XUXEMONS DIARIOS (REGALO DE CRIATURAS) ---
 
-    //Obtiene xuxemons
+    /**
+     * Obtiene los ajustes de descubrimiento diario de Xuxemons.
+     */
     public function obtenerXuxemonsDiariosConfig($identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -137,7 +160,9 @@ class UsuarioController extends Controller
         ]);
     }
 
-    //Actualiza xuxemons
+    /**
+     * Actualiza el horario y estado del descubrimiento diario automático.
+     */
     public function actualizarXuxemonsDiariosConfig(Request $request, $identificador)
     {
         $user = User::where('identificador', $identificador)->first();
@@ -154,13 +179,6 @@ class UsuarioController extends Controller
         $user->xuxemons_diarios_hora = $validated['hora'] . ':00';
         $user->save();
 
-        return response()->json([
-            'message' => 'Configuración de xuxemons diarios actualizada.',
-            'config' => [
-                'activo' => (bool) $user->xuxemons_diarios_activo,
-                'hora' => substr((string) $user->xuxemons_diarios_hora, 0, 5),
-            ],
-        ]);
+        return response()->json(['message' => 'Configuración de xuxemons diarios actualizada.']);
     }
-
 }

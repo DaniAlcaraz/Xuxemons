@@ -30,6 +30,17 @@
   border: 0;
 }
 
+/* ── Keyframe animations ── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .registro-container {
   min-height: 100vh;
   display: flex;
@@ -55,6 +66,7 @@
   position: relative;
   z-index: 10;
   box-sizing: border-box;
+  animation: fadeSlideUp 0.6s ease both;
 }
 
 .card::before {

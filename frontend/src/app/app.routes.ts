@@ -9,9 +9,10 @@ import { Admin } from './admin/admin';
 import { Amigos } from './amigos/amigos';
 import { AuthGuard } from './guards/auth-guard';
 import { LoginGuard } from './guards/login-guard';
+import { AdminGuard } from './guards/admin-guard';
+import { NoAutorizado } from './no-autorizado/no-autorizado';
 
 export const routes: Routes = [
- 
   {
     path: 'login',
     component: LoginComponent,
@@ -20,7 +21,6 @@ export const routes: Routes = [
   {
     path: 'registro',
     component: Registro,
-    
   },
   {
     path: 'dashboard',
@@ -42,24 +42,25 @@ export const routes: Routes = [
     component: Mochila,
     canActivate: [AuthGuard]
   },
-  { path: 'amigos',
+  {
+    path: 'amigos',
     component: Amigos,
     canActivate: [AuthGuard]
   },
   {
     path: 'admin',
     component: Admin,
-    canActivate: [AuthGuard]
+   canActivate: [AdminGuard]
   },
-
-  
+  {
+    path: 'no-autorizado',
+    component: NoAutorizado
+  },
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },
-
-  
   {
     path: '**',
     redirectTo: 'login'

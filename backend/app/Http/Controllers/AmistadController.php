@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class AmistadController extends Controller
 {
-    // ── Buscar usuarios por ID (mínimo 3 caracteres) ──────────────────────────
+    // ── Buscar usuarios por ID (mínimo 3 caracteres)
     public function buscar(Request $request)
     {
         $query = $request->query('q', '');
@@ -28,7 +28,7 @@ class AmistadController extends Controller
         return response()->json($usuarios);
     }
 
-    // ── Enviar solicitud de amistad ───────────────────────────────────────────
+    // ── Enviar solicitud de amistad 
     public function enviarSolicitud(Request $request)
     {
         $request->validate([
@@ -70,7 +70,7 @@ class AmistadController extends Controller
         return response()->json(['message' => 'Solicitud enviada.'], 201);
     }
 
-    // ── Solicitudes recibidas pendientes ──────────────────────────────────────
+    // ── Solicitudes recibidas pendientes 
     public function solicitudesRecibidas(Request $request)
     {
         $yo = $request->user()->identificador;
@@ -83,7 +83,7 @@ class AmistadController extends Controller
         return response()->json($solicitudes);
     }
 
-    // ── Aceptar solicitud ─────────────────────────────────────────────────────
+    // ── Aceptar solicitud 
     public function aceptar(Request $request, $id)
     {
         $yo = $request->user()->identificador;
@@ -98,7 +98,7 @@ class AmistadController extends Controller
         return response()->json(['message' => 'Amistad aceptada.']);
     }
 
-    // ── Rechazar solicitud ────────────────────────────────────────────────────
+    // ── Rechazar solicitud 
     public function rechazar(Request $request, $id)
     {
         $yo = $request->user()->identificador;
@@ -113,7 +113,7 @@ class AmistadController extends Controller
         return response()->json(['message' => 'Solicitud rechazada y eliminada.']);
     }
 
-    // ── Lista de amigos ───────────────────────────────────────────────────────
+    // ── Lista de amigos 
     public function listaAmigos(Request $request)
     {
         $yo = $request->user()->identificador;
@@ -142,7 +142,7 @@ class AmistadController extends Controller
         return response()->json($amigos);
     }
 
-    // ── Eliminar amigo (bidireccional) ────────────────────────────────────────
+    // ── Eliminar amigo (bidireccional) 
     public function eliminarAmigo(Request $request, $id)
     {
         $yo = $request->user()->identificador;
