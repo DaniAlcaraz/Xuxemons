@@ -63,223 +63,7 @@
   margin: 0 auto;
 }
 
-/* ── Stats ── */
-.dboard-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
 
-.dboard-stat-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 20px 18px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 2px 16px rgba(100, 120, 200, 0.10);
-  border: 1px solid rgba(200, 210, 240, 0.6);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.dboard-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(100, 120, 200, 0.16);
-}
-
-.dboard-stat-icon {
-  font-size: 36px; /* Aumentado para acompañar al nuevo tamaño de número */
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.dboard-stat-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.dboard-stat-number {
-  font-family: 'Nunito', sans-serif;
-  font-size: 36px; /* Mapeado a .brand-name del login */
-  font-weight: 900;
-  color: #0f0f1e;
-  line-height: 1;
-}
-
-.dboard-stat-label {
-  font-family: 'Nunito', sans-serif;
-  font-size: 18px; /* Mapeado a .error-msg del login */
-  font-weight: 700;
-  color: #505070;
-  line-height: 1.3;
-}
-
-/* ── Cards ── */
-.dboard-card {
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 26px 24px;
-  box-shadow: 0 2px 20px rgba(100, 120, 200, 0.10);
-  border: 1px solid rgba(200, 210, 240, 0.6);
-}
-
-.dboard-section-title {
-  font-family: 'Nunito', sans-serif;
-  font-size: 26px; /* Mapeado a .submit-btn del login */
-  font-weight: 900;
-  color: #0f0f1e;
-  margin: 0 0 20px;
-}
-
-/* ── Xuxemons ── */
-.dboard-xuxemon-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.dboard-xuxemon-card {
-  background: #f8f9fe;
-  border: 2px solid #d0d4f0;
-  border-radius: 14px;
-  padding: 18px 12px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.dboard-xuxemon-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(108, 127, 232, 0.15);
-}
-
-.dboard-xuxemon-card:focus-visible {
-  outline: 3px solid #2563eb;
-  outline-offset: 2px;
-  border-color: #2563eb;
-}
-
-.dboard-xuxemon-img {
-  width: 72px; /* Aumentado ligeramente para balancear la tipografía mayor */
-  height: 72px;
-  object-fit: contain;
-  transition: transform 0.18s ease;
-}
-
-.dboard-xuxemon-card:hover .dboard-xuxemon-img {
-  transform: scale(1.07);
-}
-
-.dboard-xuxemon-name {
-  font-family: 'Nunito', sans-serif;
-  font-size: 20px; /* Mapeado a .field-label del login */
-  font-weight: 800;
-  color: #0f0f1e;
-  text-align: center;
-  margin: 0;
-}
-
-.dboard-badge {
-  padding: 4px 12px;
-  border-radius: 30px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 16px; /* Aumentado para legibilidad */
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.dboard-badge.agua   { background: #1565c0; }
-.dboard-badge.tierra { background: #2e7d32; }
-.dboard-badge.aire   { background: #00695c; }
-.dboard-badge.fuego  { background: #b71c1c; }
-
-.dboard-xuxemon-stats {
-  width: 100%;
-  margin-top: 6px;
-}
-
-.dboard-stat-row {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'Nunito', sans-serif;
-  font-size: 16px; /* Aumentado para legibilidad */
-  font-weight: 700;
-  color: #505070;
-  margin-bottom: 2px;
-}
-
-.dboard-val {
-  color: #0f0f1e;
-  font-weight: 900;
-  font-family: 'Nunito', sans-serif;
-}
-
-.dboard-hp-bar {
-  height: 8px; /* Un poco más gruesa */
-  background: #d0d4f0;
-  border-radius: 10px;
-  margin-top: 6px;
-  overflow: hidden;
-}
-
-.dboard-hp-fill {
-  height: 100%;
-  background: #1b7a3e;
-  border-radius: 10px;
-  transition: width 0.5s ease;
-}
-
-/* ── Notificaciones ── */
-.dboard-notif {
-  border-radius: 14px;
-  padding: 16px 20px;
-  margin-bottom: 12px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.15s ease;
-}
-
-.dboard-notif:last-child { margin-bottom: 0; }
-.dboard-notif:hover { transform: translateX(2px); }
-
-.dboard-notif::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 6px; /* Más grueso acorde al nuevo tamaño */
-  border-radius: 4px 0 0 4px;
-}
-
-.dboard-notif-blue { background: #eef1fb; }
-.dboard-notif-blue::before { background: #3d4faa; }
-.dboard-notif-pink { background: #fceef8; }
-.dboard-notif-pink::before { background: #8e2468; }
-
-.dboard-notif-title {
-  font-family: 'Nunito', sans-serif;
-  font-size: 20px; /* Mapeado a .field-label del login */
-  font-weight: 800;
-  color: #0f0f1e;
-  margin: 0 0 6px;
-}
-
-.dboard-notif-body {
-  font-family: 'Nunito', sans-serif;
-  font-size: 18px; /* Mapeado al texto base mínimo del login */
-  font-weight: 600;
-  color: #505070;
-  margin: 0;
-}
 
 /* ── Footer ── */
 .dboard-footer {
@@ -337,122 +121,40 @@
   outline-offset: 2px;
 }
 
+/* ── Bienvenida ── */
+.dboard-welcome-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+.dboard-welcome-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 80px;
+  font-weight: 900;
+  color: #0f0f1e;
+  margin: 0;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.dboard-welcome-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #505070;
+  margin: 0;
+}
+
 .dboard-nav-icon {
   font-size: 28px; /* Subido de 22 a 28 para acompañar el nuevo tamaño de texto */
   line-height: 1;
 
-/* ── Estado de carga ── */
-.dboard-loading {
-  text-align: center;
-  padding: 48px 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #505070;
-  font-family: 'Nunito', sans-serif;
-}
 
-/* ── Error de carga ── */
-.dboard-error {
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
-  border-radius: 14px;
-  padding: 24px;
-  text-align: center;
-  font-family: 'Nunito', sans-serif;
-}
-
-.dboard-error p {
-  margin: 0 0 16px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #dc2626;
-}
-
-.dboard-retry-btn {
-  background: #6c7fe8;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 24px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.18s ease;
-}
-
-.dboard-retry-btn:hover { background: #5a6dd4; }
-
-/* ── Felicitación "tienes todos" ── */
-.dboard-all-caught {
-  background: linear-gradient(135deg, #fef9c3, #fef3c7);
-  border: 2px solid #fbbf24;
-  border-radius: 14px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  color: #92400e;
-  text-align: center;
-}
-
-/* ── Estado vacío (sin xuxemons) ── */
-.dboard-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 40px 0;
-  font-family: 'Nunito', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #505070;
-  text-align: center;
-}
-
-.dboard-empty-icon { font-size: 56px; }
-.dboard-empty p    { margin: 0; }
-
-/* ── Card de xuxemon enfermo ── */
-.dboard-xuxemon-enfermo {
-  border-color: #fca5a5 !important;
-  background: #fff5f5 !important;
-}
-
-/* ── Icono de enfermo encima de la tarjeta ── */
-.dboard-enfermo-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  line-height: 1;
-}
-
-/* Para que el icono se posicione bien hay que poner relative en la card */
-.dboard-xuxemon-card { position: relative; }
-
-/* ── Texto de enfermedad debajo de la barra ── */
-.dboard-enfermedad-texto {
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #dc2626;
-  margin: 6px 0 0;
-  text-align: center;
-}
-
-/* ── Badge de tamaño ── */
-.dboard-tamano-badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 20px;
-  background: #e0e4f8;
-  color: #3d4faa;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-}
 
 /* ── Stats con solo 2 columnas cuando hay mucho contenido ── */
 @media (max-width: 600px) {
