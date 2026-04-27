@@ -1,5 +1,13 @@
 <div class="dboard-wrapper">
 
+  <!-- Blobs animados de fondo -->
+  <div class="dboard-bg-shapes" aria-hidden="true">
+    <span class="dboard-shape dboard-shape-1"></span>
+    <span class="dboard-shape dboard-shape-2"></span>
+    <span class="dboard-shape dboard-shape-3"></span>
+    <span class="dboard-shape dboard-shape-4"></span>
+  </div>
+
   <header class="dboard-header">
     <div class="dboard-header-content">
       <h1>Dashboard</h1>
@@ -10,12 +18,50 @@
   <main class="dboard-main" id="main-content" role="main">
 
     <section class="dboard-welcome-section" aria-labelledby="welcome-heading">
+
+      <!-- Sparkles -->
+      <div class="dboard-sparkles" aria-hidden="true">
+        <span class="dboard-sparkle dboard-sparkle-1">✦</span>
+        <span class="dboard-sparkle dboard-sparkle-2">✧</span>
+        <span class="dboard-sparkle dboard-sparkle-3">✦</span>
+        <span class="dboard-sparkle dboard-sparkle-4">✧</span>
+        <span class="dboard-sparkle dboard-sparkle-5">✦</span>
+        <span class="dboard-sparkle dboard-sparkle-6">✧</span>
+      </div>
+
+      <!-- Zona de criaturas -->
+      <div class="dboard-creatures-area" aria-hidden="true">
+
+        <!-- Mini xuxemons flotando alrededor -->
+        <span class="dboard-mini-creature dboard-mini-1">🦀</span>
+        <span class="dboard-mini-creature dboard-mini-2">🐔</span>
+        <span class="dboard-mini-creature dboard-mini-3">🐍</span>
+        <span class="dboard-mini-creature dboard-mini-4">🐷</span>
+        <span class="dboard-mini-creature dboard-mini-5">🐬</span>
+        <span class="dboard-mini-creature dboard-mini-6">🐧</span>
+
+        <!-- Xuxemon principal -->
+        <div class="dboard-hero-creature">
+          <div class="dboard-creature-glow"></div>
+          <span class="dboard-creature-emoji">🦊</span>
+          <div class="dboard-creature-shadow"></div>
+        </div>
+
+      </div>
+
       <h2 id="welcome-heading" class="dboard-welcome-title">
-        Bienvenido a Xuxemons
+        Bienvenido a <span class="dboard-title-accent">Xuxemons</span>
       </h2>
+
       <p class="dboard-welcome-subtitle">
         Tu aventura como entrenador empieza aquí
       </p>
+
+      <a class="dboard-cta-btn" routerLink="/xuxemons">
+        <span class="dboard-cta-icon" aria-hidden="true"></span>
+        ¡Empieza tu aventura!
+      </a>
+
     </section>
 
   </main>
