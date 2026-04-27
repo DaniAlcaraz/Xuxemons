@@ -1,80 +1,439 @@
-/* dashboard.css — sin :host, prefijos únicos dboard- */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap');
 
-/* ── Utilidad accesibilidad: oculta visualmente pero legible por lectores ── */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+/* ============ KEYFRAMES ============ */
+
+@keyframes dboard-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ── Wrapper ── */
+@keyframes dboard-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dboard-float-slow {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  33% {
+    transform: translate(25px, -30px);
+  }
+
+  66% {
+    transform: translate(-18px, 18px);
+  }
+}
+
+@keyframes dboard-creature-bob {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+
+  50% {
+    transform: translateY(-18px) rotate(3deg);
+  }
+}
+
+@keyframes dboard-creature-glow {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes dboard-shadow-pulse {
+
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.25;
+  }
+
+  50% {
+    transform: scaleX(0.7);
+    opacity: 0.15;
+  }
+}
+
+@keyframes dboard-sparkle {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3) rotate(180deg);
+  }
+}
+
+@keyframes dboard-gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes dboard-pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 8px 24px rgba(255, 64, 129, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 12px 36px rgba(255, 64, 129, 0.6);
+  }
+}
+
+/* ============ WRAPPER + FONDO ============ */
+
 .dboard-wrapper {
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
-  background: linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
-  padding-bottom: 96px; /* Aumentado un poco para acomodar el nav más grande */
+  background:
+    radial-gradient(circle at 20% 10%, #d8e4ff 0%, transparent 40%),
+    radial-gradient(circle at 80% 60%, #f3d6ff 0%, transparent 45%),
+    linear-gradient(160deg, #c5d4f5 0%, #d4c8f0 40%, #e8d8f8 100%);
+  padding-bottom: 96px;
   box-sizing: border-box;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* ── Header ── */
+.dboard-bg-shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.dboard-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+}
+
+.dboard-shape-1 {
+  width: 360px;
+  height: 360px;
+  background: #ffc8e4;
+  top: 15%;
+  left: -120px;
+  animation: dboard-float-slow 14s ease-in-out infinite;
+}
+
+.dboard-shape-2 {
+  width: 300px;
+  height: 300px;
+  background: #b8c8ff;
+  top: 50%;
+  right: -100px;
+  animation: dboard-float-slow 17s ease-in-out infinite reverse;
+}
+
+.dboard-shape-3 {
+  width: 240px;
+  height: 240px;
+  background: #fff3b0;
+  top: 70%;
+  left: 25%;
+  animation: dboard-float-slow 11s ease-in-out infinite;
+}
+
+.dboard-shape-4 {
+  width: 220px;
+  height: 220px;
+  background: #e0baff;
+  top: 25%;
+  right: 20%;
+  animation: dboard-float-slow 15s ease-in-out infinite reverse;
+}
+
+/* ============ HEADER ============ */
+
 .dboard-header {
+  position: relative;
+  z-index: 2;
   background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 50%, #a050c8 100%);
+  background-size: 200% 200%;
+  animation: dboard-gradient-shift 12s ease infinite;
   padding: 36px 24px 28px;
+  box-shadow: 0 6px 28px rgba(108, 80, 200, 0.18);
 }
 
 .dboard-header-content h1 {
   font-family: 'Baloo 2', cursive;
-  font-size: 52px; /* Mapeado a .title del login */
+  font-size: 52px;
   font-weight: 900;
   color: #ffffff;
   margin: 0;
-  letter-spacing: -0.5px; /* Ajuste de kerning para títulos grandes */
+  letter-spacing: -0.5px;
   line-height: 1.1;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .dboard-header-content p {
   margin: 6px 0 0;
   font-family: 'Nunito', sans-serif;
-  font-size: 22px; /* Mapeado a .subtitle del login */
+  font-size: 22px;
   color: rgba(255, 255, 255, 0.95);
   font-weight: 700;
 }
 
-.dboard-xuxemon-emoji {
-  font-size: 3.5rem;
-  display: block;
-  text-align: center;
-}
+/* ============ MAIN ============ */
 
-/* ── Main ── */
 .dboard-main {
+  position: relative;
+  z-index: 2;
   padding: 24px 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px; /* Mayor espacio para respirar con letras más grandes */
   max-width: 1300px;
   margin: 0 auto;
 }
 
+/* ============ SECCIÓN DE BIENVENIDA ============ */
 
+.dboard-welcome-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px 40px;
+  gap: 24px;
+  position: relative;
+  min-height: 70vh;
+}
 
-/* ── Footer ── */
+/* ─── Sparkles ─── */
+.dboard-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.dboard-sparkle {
+  position: absolute;
+  color: #ffb800;
+  font-size: 28px;
+  text-shadow: 0 0 14px rgba(255, 184, 77, 0.9);
+  animation: dboard-sparkle 2.8s ease-in-out infinite;
+}
+
+.dboard-sparkle-1 {
+  top: 15%;
+  left: 22%;
+  animation-delay: 0s;
+  font-size: 32px;
+}
+
+.dboard-sparkle-2 {
+  top: 8%;
+  right: 25%;
+  animation-delay: 0.6s;
+  color: #ff80c8;
+}
+
+.dboard-sparkle-3 {
+  top: 35%;
+  left: 12%;
+  animation-delay: 1.1s;
+  font-size: 22px;
+  color: #8b5fd4;
+}
+
+.dboard-sparkle-4 {
+  top: 28%;
+  right: 15%;
+  animation-delay: 1.7s;
+  font-size: 26px;
+  color: #6c7fe8;
+}
+
+.dboard-sparkle-5 {
+  top: 50%;
+  left: 18%;
+  animation-delay: 2.2s;
+  font-size: 20px;
+  color: #ff80c8;
+}
+
+.dboard-sparkle-6 {
+  top: 45%;
+  right: 20%;
+  animation-delay: 0.3s;
+  font-size: 24px;
+  color: #ffb800;
+}
+
+/* ─── Xuxemon central ─── */
+.dboard-hero-creature {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: dboard-fade-in 0.8s ease-out 0.2s forwards;
+}
+
+.dboard-creature-glow {
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(circle,
+      rgba(255, 184, 77, 0.6) 0%,
+      rgba(255, 128, 200, 0.3) 40%,
+      transparent 70%);
+  border-radius: 50%;
+  animation: dboard-creature-glow 3s ease-in-out infinite;
+  filter: blur(8px);
+}
+
+.dboard-creature-emoji {
+  font-size: 140px;
+  position: relative;
+  z-index: 1;
+  animation: dboard-creature-bob 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 12px 24px rgba(255, 100, 0, 0.3));
+  line-height: 1;
+}
+
+.dboard-creature-shadow {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 18px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.3), transparent 70%);
+  border-radius: 50%;
+  animation: dboard-shadow-pulse 3.5s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* ─── Título ─── */
+.dboard-welcome-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 72px;
+  font-weight: 900;
+  color: #0f0f1e;
+  margin: 0;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  opacity: 0;
+  animation: dboard-fade-up 0.8s ease-out 0.4s forwards;
+}
+
+.dboard-title-accent {
+  background: linear-gradient(135deg, #6c7fe8 0%, #8b5fd4 40%, #ff4081 100%);
+  background-size: 200% 200%;
+  animation: dboard-gradient-shift 6s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.dboard-welcome-subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #505070;
+  margin: 0;
+  max-width: 520px;
+  opacity: 0;
+  animation: dboard-fade-up 0.8s ease-out 0.6s forwards;
+}
+
+.dboard-cta-btn {
+  margin-top: 16px;
+  background: linear-gradient(135deg, #ff4081 0%, #ff6b9d 50%, #ff8800 100%);
+  background-size: 200% 200%;
+  color: #ffffff;
+  border: none;
+  padding: 16px 36px;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  opacity: 0;
+  animation:
+    dboard-fade-up 0.8s ease-out 0.8s forwards,
+    dboard-pulse-glow 2.6s ease-in-out 1.6s infinite,
+    dboard-gradient-shift 5s ease 1.6s infinite;
+  transition: transform 0.2s ease;
+}
+
+.dboard-cta-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.dboard-cta-btn:active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.dboard-cta-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ============ FOOTER ============ */
+
 .dboard-footer {
+  position: relative;
+  z-index: 2;
   text-align: center;
   padding: 16px;
-  font-size: 16px; /* Aumentado de 13 a 16 */
+  font-size: 14px;
   color: #505070;
   font-weight: 600;
 }
 
-/* ── Bottom Nav ── */
+/* ============ BOTTOM NAV ============ */
+
 .dboard-bottom-nav {
   position: fixed;
   bottom: 0;
@@ -86,7 +445,7 @@
   justify-content: space-around;
   align-items: center;
   padding: 12px 4px 16px;
-  box-shadow: 0 -2px 20px rgba(100, 120, 200, 0.10);
+  box-shadow: 0 -4px 24px rgba(100, 120, 200, 0.12);
   z-index: 100;
 }
 
@@ -98,17 +457,20 @@
   text-decoration: none;
   color: #505070;
   font-family: 'Nunito', sans-serif;
-  font-size: 16px; /* Aumentado considerablemente desde 11px */
+  font-size: 14px;
   font-weight: 700;
   padding: 8px 10px;
   border-radius: 12px;
   min-width: 54px;
   min-height: 54px;
   justify-content: center;
-  transition: color 0.18s ease, background 0.18s ease;
+  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
 
-.dboard-nav-item:hover,
+.dboard-nav-item:hover {
+  transform: translateY(-2px);
+}
+
 .dboard-nav-item.active,
 .dboard-nav-item[aria-current="page"] {
   color: #2a3a9a;
@@ -121,44 +483,207 @@
   outline-offset: 2px;
 }
 
-/* ── Bienvenida ── */
-.dboard-welcome-section {
+.dboard-nav-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* ============ MINI XUXEMONS ============ */
+
+@keyframes dboard-mini-float-a {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(0, -14px) rotate(8deg);
+  }
+}
+
+@keyframes dboard-mini-float-b {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(0, 12px) rotate(-7deg);
+  }
+}
+
+@keyframes dboard-mini-float-c {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-3deg);
+  }
+
+  50% {
+    transform: translate(8px, -10px) rotate(5deg);
+  }
+}
+
+.dboard-creatures-area {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  height: 320px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 24px;
-  text-align: center;
-  gap: 16px;
+  margin-bottom: 8px;
 }
 
-.dboard-welcome-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 80px;
-  font-weight: 900;
-  color: #0f0f1e;
-  margin: 0;
-  letter-spacing: -1px;
-  line-height: 1.1;
+.dboard-creatures-area .dboard-hero-creature {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 0;
 }
 
-.dboard-welcome-subtitle {
-  font-family: 'Nunito', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: #505070;
-  margin: 0;
-}
-
-.dboard-nav-icon {
-  font-size: 28px; /* Subido de 22 a 28 para acompañar el nuevo tamaño de texto */
+.dboard-mini-creature {
+  position: absolute;
   line-height: 1;
-
-
-
-/* ── Stats con solo 2 columnas cuando hay mucho contenido ── */
-@media (max-width: 600px) {
-  .dboard-stats-grid     { grid-template-columns: repeat(2, 1fr); }
-  .dboard-xuxemon-grid   { grid-template-columns: repeat(2, 1fr); }
+  filter: drop-shadow(0 6px 14px rgba(80, 40, 120, 0.25));
+  opacity: 0;
+  z-index: 1;
 }
+
+.dboard-mini-1 {
+  top: 6%;
+  left: 8%;
+  font-size: 58px;
+  animation:
+    dboard-fade-in 0.6s ease-out 0.5s forwards,
+    dboard-mini-float-a 4s ease-in-out 1.1s infinite;
+}
+
+.dboard-mini-2 {
+  top: 2%;
+  right: 12%;
+  font-size: 64px;
+  animation:
+    dboard-fade-in 0.6s ease-out 0.7s forwards,
+    dboard-mini-float-b 4.6s ease-in-out 1.3s infinite;
+}
+
+.dboard-mini-3 {
+  top: 40%;
+  left: 0%;
+  font-size: 50px;
+  animation:
+    dboard-fade-in 0.6s ease-out 0.9s forwards,
+    dboard-mini-float-c 3.8s ease-in-out 1.5s infinite;
+}
+
+.dboard-mini-4 {
+  top: 38%;
+  right: 2%;
+  font-size: 56px;
+  animation:
+    dboard-fade-in 0.6s ease-out 1s forwards,
+    dboard-mini-float-a 4.2s ease-in-out 1.7s infinite reverse;
+}
+
+.dboard-mini-5 {
+  bottom: 5%;
+  left: 18%;
+  font-size: 52px;
+  animation:
+    dboard-fade-in 0.6s ease-out 1.2s forwards,
+    dboard-mini-float-b 5s ease-in-out 1.9s infinite;
+}
+
+.dboard-mini-6 {
+  bottom: 2%;
+  right: 16%;
+  font-size: 60px;
+  animation:
+    dboard-fade-in 0.6s ease-out 1.4s forwards,
+    dboard-mini-float-c 4.4s ease-in-out 2.1s infinite reverse;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 700px) {
+  .dboard-header-content h1 {
+    font-size: 38px;
+  }
+
+  .dboard-header-content p {
+    font-size: 18px;
+  }
+
+  .dboard-welcome-title {
+    font-size: 44px;
+  }
+
+  .dboard-welcome-subtitle {
+    font-size: 18px;
+  }
+
+  .dboard-creatures-area {
+    height: 240px;
+    max-width: 380px;
+  }
+
+  .dboard-hero-creature {
+    width: 140px;
+    height: 140px;
+  }
+
+  .dboard-creature-emoji {
+    font-size: 100px;
+  }
+
+  .dboard-mini-1 {
+    font-size: 38px;
+  }
+
+  .dboard-mini-2 {
+    font-size: 42px;
+  }
+
+  .dboard-mini-3 {
+    font-size: 34px;
+  }
+
+  .dboard-mini-4 {
+    font-size: 38px;
+  }
+
+  .dboard-mini-5 {
+    font-size: 34px;
+  }
+
+  .dboard-mini-6 {
+    font-size: 40px;
+  }
+
+  .dboard-cta-btn {
+    font-size: 16px;
+    padding: 14px 28px;
+  }
+
+  .dboard-nav-item {
+    font-size: 11px;
+  }
+
+  .dboard-nav-icon {
+    font-size: 20px;
+  }
+}
+
+/* ============ ACCESIBILIDAD ============ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
