@@ -1,6 +1,5 @@
 <div class="dboard-wrapper">
 
-  <!-- Blobs animados de fondo -->
   <div class="dboard-bg-shapes" aria-hidden="true">
     <span class="dboard-shape dboard-shape-1"></span>
     <span class="dboard-shape dboard-shape-2"></span>
@@ -19,7 +18,7 @@
 
     <section class="dboard-welcome-section" aria-labelledby="welcome-heading">
 
-      <!-- Sparkles -->
+      <!-- Destellos decorativos -->
       <div class="dboard-sparkles" aria-hidden="true">
         <span class="dboard-sparkle dboard-sparkle-1">✦</span>
         <span class="dboard-sparkle dboard-sparkle-2">✧</span>
@@ -27,20 +26,44 @@
         <span class="dboard-sparkle dboard-sparkle-4">✧</span>
         <span class="dboard-sparkle dboard-sparkle-5">✦</span>
         <span class="dboard-sparkle dboard-sparkle-6">✧</span>
+        <span class="dboard-sparkle dboard-sparkle-7">✦</span>
+        <span class="dboard-sparkle dboard-sparkle-8">✧</span>
       </div>
 
-      <!-- Zona de criaturas -->
+      <!-- Xuxemons flotando libres por toda la sección -->
+      <div class="dboard-floaters" aria-hidden="true">
+        <span class="dboard-float df-1">🐬</span>
+        <span class="dboard-float df-2">🦁</span>
+        <span class="dboard-float df-3">🐲</span>
+        <span class="dboard-float df-4">🦅</span>
+        <span class="dboard-float df-5">🐢</span>
+        <span class="dboard-float df-6">🦌</span>
+        <span class="dboard-float df-7">🐷</span>
+        <span class="dboard-float df-8">🐍</span>
+        <span class="dboard-float df-9">🐺</span>
+        <span class="dboard-float df-10">🦈</span>
+      </div>
+
+      <!-- Sistema orbital central -->
       <div class="dboard-creatures-area" aria-hidden="true">
 
-        <!-- Mini xuxemons flotando alrededor -->
-        <span class="dboard-mini-creature dboard-mini-1">🦀</span>
-        <span class="dboard-mini-creature dboard-mini-2">🐔</span>
-        <span class="dboard-mini-creature dboard-mini-3">🐍</span>
-        <span class="dboard-mini-creature dboard-mini-4">🐷</span>
-        <span class="dboard-mini-creature dboard-mini-5">🐬</span>
-        <span class="dboard-mini-creature dboard-mini-6">🐧</span>
+        <!-- Órbita interior: 3 xuxemons, sentido horario, 8s -->
+        <div class="dboard-ring dboard-ring-inner">
+          <span class="dboard-r dboard-r-i0">🐸</span>
+          <span class="dboard-r dboard-r-i1">🦋</span>
+          <span class="dboard-r dboard-r-i2">🐡</span>
+        </div>
 
-        <!-- Xuxemon principal -->
+        <!-- Órbita exterior: 5 xuxemons, antihorario, 14s -->
+        <div class="dboard-ring dboard-ring-outer">
+          <span class="dboard-r dboard-r-o0">🦀</span>
+          <span class="dboard-r dboard-r-o1">🦜</span>
+          <span class="dboard-r dboard-r-o2">🐔</span>
+          <span class="dboard-r dboard-r-o3">🐙</span>
+          <span class="dboard-r dboard-r-o4">🦎</span>
+        </div>
+
+        <!-- Xuxemon héroe central -->
         <div class="dboard-hero-creature">
           <div class="dboard-creature-glow"></div>
           <span class="dboard-creature-emoji">🦊</span>
@@ -57,10 +80,7 @@
         Tu aventura como entrenador empieza aquí
       </p>
 
-      <a class="dboard-cta-btn" routerLink="/xuxemons">
-        <span class="dboard-cta-icon" aria-hidden="true"></span>
-        ¡Empieza tu aventura!
-      </a>
+
 
     </section>
 

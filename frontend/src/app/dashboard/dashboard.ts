@@ -20,8 +20,9 @@ export class Dashboard {
     { icon: '🏠', label: 'Inicio', route: '/dashboard' },
     { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
     { icon: '🎒', label: 'Mochila', route: '/mochila' },
-    { icon: '👥', label: 'Amigos', route: '/amigos' },
-    { icon: '💬', label: 'Chat', route: '/chat' },
+    { icon: '👥', label: 'Amigos',   route: '/amigos' },
+    { icon: '⚔️', label: 'Batallas', route: '/batallas' },
+    { icon: '💬', label: 'Chat',     route: '/chat' },
     { icon: '👤', label: 'Perfil', route: '/perfil' },
     { icon: '🛡️', label: 'Admin', route: '/admin' },
   ];

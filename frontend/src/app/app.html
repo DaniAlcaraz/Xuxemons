@@ -1,1 +1,9 @@
+<a href="#main-content" class="skip-link">Saltar al contingut</a>
+
+@if (loadingService.loading()) {
+  <div class="global-loading" role="status" aria-label="Carregant..." aria-live="polite">
+    <div class="loading-bar"></div>
+  </div>
+}
+
 <router-outlet></router-outlet>
