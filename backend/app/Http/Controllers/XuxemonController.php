@@ -47,6 +47,8 @@ class XuxemonController extends Controller
         return response()->json($xuxemons);
     }
 
+
+    //Desubre un xuxemons diario a la hora indicada
     private function descubrirXuxemonDiarioSiToca(User $user): void
     {
         if (!$user->xuxemons_diarios_activo) {
@@ -85,6 +87,7 @@ class XuxemonController extends Controller
         $user->save();
     }
 
+    //permite curar un xuxemon
     public function curarXuxemon(Request $request)
     {
         $request->validate([
@@ -160,6 +163,7 @@ class XuxemonController extends Controller
         ]);
     }
 
+    //enferma un xuxemon mediante solicitud
     public function enfermarXuxemon(Request $request)
     {
         $request->validate([
@@ -182,6 +186,7 @@ class XuxemonController extends Controller
         return response()->json(['message' => 'Xuxemon enfermado: ' . $request->enfermedad]);
     }
 
+    //intenta enfermar un xuxemon con probabilidades
     private function intentarInfectar(User $user, Xuxemon $xuxemon): void
     {
         $pivot = $user->xuxemons()
@@ -205,6 +210,7 @@ class XuxemonController extends Controller
         }
     }
 
+    //para que los xuxemons puedan subir de nivel en varios casos
     public function subirNivel(Request $request, $id)
     {
         $user  = $request->user();
@@ -316,6 +322,7 @@ class XuxemonController extends Controller
         }
     }
 
+    //El admin puede descubrir un xuxemon seleccionado
     public function anadirXuxemon(Request $request)
     {
         $request->validate([
@@ -329,6 +336,7 @@ class XuxemonController extends Controller
         return response()->json(['message' => 'Xuxemon añadido correctamente.']);
     }
 
+    //El admin puede eliminar un xuxemon de un usuario
     public function quitarXuxemon(Request $request)
     {
         $request->validate([
@@ -342,6 +350,7 @@ class XuxemonController extends Controller
         return response()->json(['message' => 'Xuxemon quitado correctamente.']);
     }
 
+    //El admin puede añadir aleatoriamente un xuxmeon
     public function anadirAleatorio(Request $request)
     {
         $request->validate([

@@ -11,10 +11,10 @@ class User extends Authenticatable
 {
     use SoftDeletes, HasFactory, Notifiable, HasApiTokens;
 
-    protected $table = 'usuarios';
-    protected $primaryKey = 'identificador';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    protected $table = 'usuarios';     //Indica que el modelo usa la tabla usuarios
+    protected $primaryKey = 'identificador'; //Define la clave primaria
+    public $incrementing = false; //Dice que esa clave no se incrementa
+    protected $keyType = 'string'; //Indica que la clave primaria es de tipo texto.
 
     protected $fillable = [
         'identificador',
@@ -37,7 +37,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
+    protected function casts(): array // le dice a Laravel cómo convertir automáticamente los valores de ciertos campos cuando los lee o los guarda en el modelo.
     {
         return [
             'email_verified_at' => 'datetime',
@@ -50,11 +50,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function mochila() {
+    public function mochila() { //Laravel usa user_identificador en la tabla de Mochila para buscar las filas que pertenecen al usuario cuyo identificador coincide.
         return $this->hasMany(Mochila::class, 'user_identificador', 'identificador');
     }
 
-    public function xuxemons() {
+    public function xuxemons() { //define una relación muchos a muchos entre User y Xuxemon, usando la tabla intermedia xuxemon_usuario.
         return $this->belongsToMany(
             Xuxemon::class,
             'xuxemon_usuario',
@@ -63,6 +63,8 @@ class User extends Authenticatable
             'identificador',
             'IDxuxemon'
         )
+
+        //Además, incluye campos extra de esa tabla con withPivot() y también carga sus timestamps con withTimestamps().
         ->withPivot('tamano', 'xuxes_acumuladas', 'enfermo', 'enfermedad')
         ->withTimestamps();
     }

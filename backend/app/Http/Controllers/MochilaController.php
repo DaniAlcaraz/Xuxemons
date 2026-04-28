@@ -100,7 +100,10 @@ class MochilaController extends Controller {
      */
     private function anadirConLimites(string $userIdentificador, Item $item, int $cantidad): array
     {
-        $mochila = Mochila::where('user_identificador', $userIdentificador)->with('item')->get();
+        $mochila = Mochila::where('user_identificador', $userIdentificador)->with('item')->get(); //Selecciona la mochila según el ID del usuario
+
+        //Ocupan 1 espacio por cada MAX_STACK unidades
+        //Ejemplo: Si un stack es de 50 y tengo 100 xuxes, entonces habrán dos stacks de 50.
 
         // Cálculo de espacios ocupados actualmente
         $espaciosUsados = $mochila->sum(function ($m) {
@@ -108,13 +111,16 @@ class MochilaController extends Controller {
                 ? (int) ceil($m->cantidad / self::MAX_STACK) // Ejemplo: 7 xuxes = 2 slots
                 : (int) $m->cantidad;                        // Ejemplo: 2 vacunas = 2 slots
         });
-        
+
+        //Si MAX_ESPACIOS = 100 y acumulo 80, me quedan 20 libres.
         $espaciosLibres = self::MAX_ESPACIOS - $espaciosUsados;
 
+        //Si no hay espacio, rechaza todo
         if ($espaciosLibres <= 0) {
             return ['anadidos' => 0, 'descartados' => $cantidad];
         }
 
+        //Busca si ya existe ese item en la mochila
         $entrada = Mochila::where('user_identificador', $userIdentificador)
             ->where('item_id', $item->id)
             ->first();
@@ -130,6 +136,7 @@ class MochilaController extends Controller {
             $anadir = min($cantidad, $espaciosLibres);
         }
 
+        //Si no cabe nada, rechaza
         if ($anadir <= 0) {
             return ['anadidos' => 0, 'descartados' => $cantidad];
         }
@@ -146,6 +153,7 @@ class MochilaController extends Controller {
             ]);
         }
 
+        //Devuelve el resultado
         return ['anadidos' => $anadir, 'descartados' => max(0, $cantidad - $anadir)];
     }
 
@@ -158,6 +166,7 @@ class MochilaController extends Controller {
         // Si el admin desactivó el reparto para este usuario, no hacemos nada
         if (!$user->xuxes_diarios_activo) return;
 
+        //Obtiene la configuración del usuario
         $cantidad = max(1, (int) ($user->xuxes_diarios_cantidad ?? 5));
         $horaConfig = (string) ($user->xuxes_diarios_hora ?? '09:00:00');
         $ahora = Carbon::now();
@@ -178,6 +187,8 @@ class MochilaController extends Controller {
 
         // Intentamos añadir. Si tiene éxito, marcamos la fecha de último reparto
         $resultado = $this->anadirConLimites($user->identificador, $itemXuxe, $cantidad);
+
+        //Si se añadireo, actualiza el registro (Marca que se repartió hoy para evitar duplicados mañana)
         if ($resultado['anadidos'] > 0) {
             $user->xuxes_diarios_ultimo_reparto = $hoy;
             $user->save();

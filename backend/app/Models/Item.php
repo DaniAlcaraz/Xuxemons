@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-    protected $fillable = ['nombre', 'tipo', 'descripcion', 'rareza'];
+    protected $fillable = ['nombre', 'tipo', 'descripcion', 'rareza']; //Lista blanca de atributos que pueden ser asignados masvamente en Laravel
 
 }
