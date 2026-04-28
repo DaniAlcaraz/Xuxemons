@@ -17,12 +17,12 @@ interface NavItem {
 export class Dashboard {
 
   navItems: NavItem[] = [
-    { icon: '🏠', label: 'Inicio',   route: '/dashboard' },
-    { icon: '📖', label: 'Xuxemons', route: '/xuxemons'  },
-    { icon: '🎒', label: 'Mochila',  route: '/mochila'   },
-    { icon: '👥', label: 'Amigos',   route: '/amigos'    },
-    { icon: '💬', label: 'Chat',     route: '/chat'       },
-    { icon: '👤', label: 'Perfil',   route: '/perfil'    },
-    { icon: '🛡️', label: 'Admin',    route: '/admin'     },
+    { icon: '🏠', label: 'Inicio', route: '/dashboard' },
+    { icon: '📖', label: 'Xuxemons', route: '/xuxemons' },
+    { icon: '🎒', label: 'Mochila', route: '/mochila' },
+    { icon: '👥', label: 'Amigos', route: '/amigos' },
+    { icon: '💬', label: 'Chat', route: '/chat' },
+    { icon: '👤', label: 'Perfil', route: '/perfil' },
+    { icon: '🛡️', label: 'Admin', route: '/admin' },
   ];
 }
