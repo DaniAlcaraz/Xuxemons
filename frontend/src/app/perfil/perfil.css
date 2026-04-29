@@ -604,3 +604,24 @@
 @media (max-width: 520px) {
   .perfil-form-row { grid-template-columns: 1fr; }
 }
+
+/* ── Nav scroll móvil ── */
+@media (max-width: 540px) {
+  .perfil-bottom-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    padding: 8px 4px 12px;
+  }
+  .perfil-bottom-nav::-webkit-scrollbar { display: none; }
+  .perfil-nav-item {
+    font-size: 11px;
+    padding: 6px 8px;
+    min-width: 48px;
+    min-height: 44px;
+    flex-shrink: 0;
+  }
+  .perfil-nav-icon { font-size: 22px; }
+}

@@ -611,3 +611,24 @@
     color: #c62828 !important;
   }
 }
+
+/* ── Nav scroll móvil ── */
+@media (max-width: 540px) {
+  .dboard-bottom-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    padding: 8px 4px 12px;
+  }
+  .dboard-bottom-nav::-webkit-scrollbar { display: none; }
+  .dboard-nav-item {
+    font-size: 11px;
+    padding: 6px 8px;
+    min-width: 48px;
+    min-height: 44px;
+    flex-shrink: 0;
+  }
+  .dboard-nav-icon { font-size: 22px; }
+}
