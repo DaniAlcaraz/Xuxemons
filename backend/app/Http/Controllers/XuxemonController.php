@@ -136,7 +136,7 @@ class XuxemonController extends Controller
         if ($entradaMochila->cantidad <= 0) $entradaMochila->delete();
         else $entradaMochila->save();
 
-        // ── FIX: clamp xuxes_acumuladas al máximo base (sin enfermedad) ──
+        // xuxes_acumuladas al máximo base (sin enfermedad) ──
         // Si el xuxemon tenía Bajón de azúcar, puede haber acumulado más xuxes
         // de las que el tope base permite. Al curar, recortamos para evitar
         // que la barra quede rota (>100%) o que evolucione sin querer.
@@ -147,7 +147,7 @@ class XuxemonController extends Controller
             ? (int) \App\Models\Configuracion::get('xuxes_pequeno_a_mediano', 3)
             : (int) \App\Models\Configuracion::get('xuxes_mediano_a_grande', 5);
 
-        // min - 1 para que no evolucione automáticamente al curar.
+        // para que no evolucione automáticamente al curar.
         // Si prefieres que evolucione al instante cuando ya llegó al tope,
         // cambia ($maxSinEnfermedad - 1) por $maxSinEnfermedad.
         $xuxesAjustadas = min($xuxesAcumuladas, $maxSinEnfermedad - 1);
