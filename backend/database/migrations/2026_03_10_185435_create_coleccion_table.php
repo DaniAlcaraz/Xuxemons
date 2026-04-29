@@ -8,17 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
+        //
         Schema::create('coleccion', function (Blueprint $table) {
-            $table->id();
+            $table->id(); //ID autoincremental
             $table->string('usuario_id'); // FK a usuarios.identificador (string)
-            $table->unsignedBigInteger('xuxemon_id'); // FK a xuxemons.IDxuxemon
+            $table->unsignedBigInteger('xuxemon_id'); //Crea una columna numerica para el ID de Xuxemon. Coincide con el tipo IDxuxemon definido.
             $table->timestamps();
 
+            //Vincula usuario_id con la columna identificador de la tabla usuarios.
             $table->foreign('usuario_id')
                   ->references('identificador')
                   ->on('usuarios')
                   ->onDelete('cascade');
 
+            //Vincula xuxemon_id con la columna IDxuxemon de la tabla xuxemons.
             $table->foreign('xuxemon_id')
                   ->references('IDxuxemon')
                   ->on('xuxemons')
@@ -28,6 +31,14 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('coleccion');
+        /*
+         * Este es un parámetro crítico. 
+         * Si un usuario elimina su cuenta o un Xuxemon es borrado del sistema, 
+         * todas las entradas relacionadas en la tabla coleccion se eliminarán 
+         * automáticamente para evitar errores de base de datos.
+         */
+        
+        Schema::dropIfExists('coleccion'); 
+        
     }
 };

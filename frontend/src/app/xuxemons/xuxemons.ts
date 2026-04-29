@@ -22,6 +22,7 @@ export interface Xuxemon {
 
 interface NavItem { icon: string; label: string; route: string; }
 
+//Xuxmeons: nombre y emoji
 const EMOJIS: Record<string, string> = {
   'Apleki': '🐌', 'Avecrem': '🐔', 'Bambino': '🦌',
   'Beeboo': '🐝', 'Boo-hoot': '🦉', 'Cabrales': '🐐',

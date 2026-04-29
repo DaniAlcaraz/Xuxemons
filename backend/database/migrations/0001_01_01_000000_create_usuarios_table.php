@@ -10,14 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+    {   
+        //Donde se guardan los usuarios registrados
         Schema::create('usuarios', function (Blueprint $table) {
-             $table->string('identificador')->primary(); // <- clave primaria personalizada
+            $table->string('identificador')->primary(); // <- clave primaria personalizada
             $table->string('nombre');
             $table->string('apellidos');
-            $table->string('email')->unique();
+            $table->string('email')->unique(); //Que sea irrepetible
             $table->string('password');
-            $table->string('rol')->default('jugador'); 
+            $table->string('rol')->default('jugador'); //Por defecto, el rol del usuario sera de jugador
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
