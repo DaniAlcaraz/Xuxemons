@@ -35,7 +35,7 @@ export class Registro {
       contrasena: ['', [Validators.required, Validators.minLength(6)]],
       repetirContrasena: ['', Validators.required]
     }, { 
-      // Validador personalizado para comparar campos entre sí
+      // Validador personalizado para comparar campos de contraseña entre sí
       validators: this.passwordsMatch 
     });
   }
@@ -50,7 +50,7 @@ export class Registro {
     return pass === repeat ? null : { noCoinciden: true };
   }
 
-  /**
+  /*
    * Gestión de mensajes de error para la vista.
    * Retorna el texto del error según la validación que falle.
    */
