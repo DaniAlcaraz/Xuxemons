@@ -23,7 +23,7 @@ export class LoginComponent {
   // para mostrar errores de validación aunque no haya tocado los campos
   formSubmitted = false;
 
-  // Flags de error que se muestran como mensajes en la vista (@if en el HTML)
+  // Errores que se muestran como mensajes en la vista (@if en el HTML)
   errorCredenciales = false;
   errorCuentaBaja = false;
 

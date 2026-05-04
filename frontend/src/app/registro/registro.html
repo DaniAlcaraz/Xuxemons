@@ -12,6 +12,7 @@
         <p id="registro-desc">Únete a la aventura y empieza a capturar Xuxemons</p>
       </div>
 
+      <!-- Muestra un error si se intenta enviar un formulario con campos mal rellenados -->
       @if (formSubmitted && form.invalid) {
       <div role="alert" aria-live="polite" aria-atomic="true" class="form-error-summary">
         <span aria-hidden="true">⚠</span>
@@ -19,6 +20,7 @@
       </div>
       }
 
+      <!-- Muestra errores que devuelve el servidor, por ejemplo email ya en uso -->
       @if (errorRegistro) {
       <div role="alert" aria-live="assertive" class="form-error-summary">
         <span aria-hidden="true">🚫</span>
@@ -29,44 +31,51 @@
       <form [formGroup]="form" class="form" (ngSubmit)="onSubmit()" novalidate aria-describedby="registro-desc"
         role="form">
 
-        <!-- Nombre -->
+        <!-- NOMBRE -->
         <div class="field">
           <label for="nombre" class="field-label">
             Nombre
             <span class="required-mark" aria-hidden="true">*</span>
           </label>
 
+          <!-- Envia y recibe desde el TS las repsuestas a los validadores que hya allí (En este caso si está rellenado o si se ha dejado en blanco) -->
+          <!-- Recoge el error del campo nombre -->
           <div class="input-wrapper" [class.error]="getError('nombre')">
             <input id="nombre" type="text" class="field-input" placeholder="Tu nombre" formControlName="nombre"
               autocomplete="given-name" aria-required="true" [attr.aria-invalid]="getError('nombre') ? 'true' : 'false'"
               aria-describedby="nombre-hint nombre-error" />
           </div>
 
+          <!-- Un breve subtítulo -->
           <p id="nombre-hint" class="field-hint">
             Así te verán los otros entrenadores
           </p>
 
+          <!-- Muestra un circulo rojo y una x delante si salta un error de validacion -->
           @if (getError('nombre')) {
           <p id="nombre-error" class="error-msg" role="alert" aria-live="polite">
             <span class="error-icon" aria-hidden="true">✕</span>
-            {{ getError('nombre') }}
+            <!-- Junto al aspa con fondo rojo, sale el mensaje de error -->
+            {{ getError('nombre') }} 
           </p>
           }
         </div>
 
-        <!-- Apellidos -->
+        <!-- APELLIDOS -->
         <div class="field">
           <label for="apellidos" class="field-label">
             Apellidos
             <span class="required-mark" aria-hidden="true">*</span>
           </label>
 
+          <!-- Validador de errores de apellidos -->
           <div class="input-wrapper" [class.error]="getError('apellidos')">
             <input id="apellidos" type="text" class="field-input" placeholder="Tus apellidos"
               formControlName="apellidos" autocomplete="family-name" aria-required="true"
               [attr.aria-invalid]="getError('apellidos') ? 'true' : 'false'" aria-describedby="apellidos-error" />
           </div>
 
+          <!-- Muestra mensaje de error de apellidos -->
           @if (getError('apellidos')) {
           <p id="apellidos-error" class="error-msg" role="alert" aria-live="polite">
             <span class="error-icon" aria-hidden="true">✕</span>
@@ -75,23 +84,26 @@
           }
         </div>
 
-        <!-- Correo -->
+        <!-- CORREO -->
         <div class="field">
           <label for="correo" class="field-label">
             Correo electrónico
             <span class="required-mark" aria-hidden="true">*</span>
           </label>
 
+          <!-- Validador de errores de correo -->
           <div class="input-wrapper" [class.error]="getError('correo')">
             <input id="correo" type="email" class="field-input" placeholder="entrenador@xuxemons.com"
               formControlName="correo" autocomplete="email" aria-required="true"
               [attr.aria-invalid]="getError('correo') ? 'true' : 'false'" aria-describedby="correo-hint correo-error" />
           </div>
 
+          <!-- Breve subtítulo-->
           <p id="correo-hint" class="field-hint">
             Usaremos este correo para notificaciones
           </p>
 
+          <!-- Muestra mensaje de error de correo -->
           @if (getError('correo')) {
           <p id="correo-error" class="error-msg" role="alert" aria-live="polite">
             <span class="error-icon" aria-hidden="true">✕</span>
