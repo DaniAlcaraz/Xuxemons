@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up', // Endpoint de salud para verificar que el servidor funciona
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Aquí se registran middlewares globales o de grupo
+        // Aquí se registran middlewares globales o de grupo    
         // Por ejemplo: autenticación JWT, CORS, throttle, etc.
     })
     ->withExceptions(function (Exceptions $exceptions): void {
