@@ -11,7 +11,7 @@ use App\Http\Controllers\AmistadController;
 
 // ── RUTAS PÚBLICAS 
 // Estas rutas son accesibles sin necesidad de token (invitados).
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register']); 
 Route::post('/login',    [AuthController::class, 'login']);
 Route::get('/items',     [MochilaController::class, 'catalogoItems']); // El catálogo es visible para todos
 
@@ -23,8 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me',      [AuthController::class, 'me']); // Devuelve los datos del usuario logueado
 
     // Gestión del perfil propio
-    Route::put('/usuario',        [UsuarioController::class, 'update']);
-    Route::post('/usuario/baja',  [AuthController::class, 'baja']);
+    Route::put('/usuario',        [UsuarioController::class, 'update']); //Reemplazar/Actualizar un recurso completo.
+    Route::post('/usuario/baja',  [AuthController::class, 'baja']); //Crear un nuevo recurso.
 
     // --- MOCHILA ---
     Route::get('/mochila',         [MochilaController::class, 'index']);      // Ver mi mochila
