@@ -277,128 +277,113 @@
 
 /* ============ KEYFRAMES ============ */
 
-@keyframes dboard-spin-cw { to { transform: rotate(360deg); } }
+/* Gira el elemento 360° en sentido horario de forma continua.
+   Se usa en el anillo orbital interior (8s). */
+@keyframes dboard-spin-cw { 
+  to { transform: rotate(360deg); } 
+}
 
+/* Gira el elemento 360° en sentido antihorario de forma continua.
+   Se usa en el anillo orbital exterior (14s). */
+@keyframes dboard-spin-ccw { 
+  to { transform: rotate(-360deg); } 
+}
+
+/* Contrarotación horaria para los emojis dentro del anillo que gira antihorario.
+   Compensa el giro del contenedor para que los emojis no se vean volcados. */
+@keyframes dboard-cnt-cw { 
+  to { transform: rotate(-360deg); } 
+}
+
+/* Contrarotación antihoraria para los emojis dentro del anillo que gira horario.
+   Igual que el anterior pero en sentido contrario. */
+@keyframes dboard-cnt-ccw { 
+  to { transform: rotate(360deg); } 
+}
+
+/* Entrada suave por opacidad: el elemento pasa de invisible a visible.
+   Se usa en el header, footer y emojis orbitales con retardo variable (--fd). */
+@keyframes dboard-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Entrada combinada: el elemento aparece y sube 28px desde abajo.
+   Se usa en la sección de bienvenida para una entrada más dinámica. */
 @keyframes dboard-fade-up {
   from {
     opacity: 0;
     transform: translateY(28px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes dboard-fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
+/* Movimiento flotante lento en tres posiciones distintas (X e Y).
+   Definido pero reservado para uso futuro; no está asignado a ningún selector activo. */
 @keyframes dboard-float-slow {
-
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-
-  33% {
-    transform: translate(25px, -30px);
-  }
-
-  66% {
-    transform: translate(-18px, 18px);
-  }
+  0%,  100% { transform: translate(0, 0);        }
+  33%        { transform: translate(25px, -30px); }
+  66%        { transform: translate(-18px, 18px); }
 }
 
+/* El Xuxemon héroe sube 18px y se inclina ±3°.
+   Simula un movimiento de vuelo o levitación con personalidad. */
 @keyframes dboard-creature-bob {
-
-  0%,
-  100% {
-    transform: translateY(0) rotate(-3deg);
-  }
-
-  50% {
-    transform: translateY(-18px) rotate(3deg);
-  }
+  0%, 100% { transform: translateY(0)    rotate(-3deg); }
+  50%       { transform: translateY(-18px) rotate(3deg);  }
 }
 
+/* El halo de luz detrás del héroe pulsa en opacidad y tamaño.
+   Se sincroniza visualmente con creature-bob para reforzar el efecto de vuelo. */
 @keyframes dboard-creature-glow {
-
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.9;
-    transform: scale(1.15);
-  }
+  0%, 100% { opacity: 0.5; transform: scale(1);    }
+  50%       { opacity: 0.9; transform: scale(1.15); }
 }
 
+/* La sombra bajo el héroe se encoge cuando el personaje sube.
+   Simula perspectiva real: a más altura, sombra más pequeña y tenue. */
 @keyframes dboard-shadow-pulse {
-
-  0%,
-  100% {
-    transform: scaleX(1);
-    opacity: 0.25;
-  }
-
-  50% {
-    transform: scaleX(0.7);
-    opacity: 0.15;
-  }
+  0%, 100% { transform: scaleX(1);   opacity: 0.25; }
+  50%       { transform: scaleX(0.7); opacity: 0.15; }
 }
 
+/* Las estrellas decorativas (✦ ✧) aparecen, crecen y giran hasta el 50%,
+   luego desaparecen. Cada una tiene animation-delay distinto para no sincronizarse. */
 @keyframes dboard-sparkle {
-
-  0%,
-  100% {
-    opacity: 0;
-    transform: scale(0.4) rotate(0deg);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.3) rotate(180deg);
-  }
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg);   }
+  50%       { opacity: 1; transform: scale(1.3) rotate(180deg); }
 }
 
+/* Desplaza la posición del degradado del texto "Xuxemons" de izquierda a derecha.
+   Necesita background-size: 200% para que el movimiento del color sea visible. */
 @keyframes dboard-gradient-shift {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
+  0%, 100% { background-position: 0%   50%; }
+  50%       { background-position: 100% 50%; }
 }
 
-@keyframes dboard-spin-ccw { to { transform: rotate(-360deg); } }
-@keyframes dboard-cnt-cw   { to { transform: rotate(-360deg); } }
-@keyframes dboard-cnt-ccw  { to { transform: rotate(360deg);  } }
-
+/* Flotación suave: sube/baja con leve rotación.
+   Movimiento tranquilo, ideal para emojis en segundo plano. */
 @keyframes dboard-float-gentle {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  40%       { transform: translateY(-14px) rotate(6deg); }
-  70%       { transform: translateY(7px) rotate(-4deg); }
+  0%, 100% { transform: translateY(0)    rotate(0deg);  }
+  40%       { transform: translateY(-14px) rotate(6deg);  }
+  70%       { transform: translateY(7px)   rotate(-4deg); }
 }
+
+/* Flotación dinámica: se mueve en diagonal (X e Y) con rotación más pronunciada.
+   Da sensación de movimiento libre e impredecible. */
 @keyframes dboard-float-sway {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  30%       { transform: translate(18px, -12px) rotate(9deg); }
-  70%       { transform: translate(-12px, 8px) rotate(-6deg); }
+  0%, 100% { transform: translate(0, 0)        rotate(0deg);  }
+  30%       { transform: translate(18px, -12px) rotate(9deg);  }
+  70%       { transform: translate(-12px, 8px)  rotate(-6deg); }
 }
+
+/* Flotación con deriva diagonal y leve cambio de escala.
+   El emoji parece alejarse y acercarse ligeramente mientras flota. */
 @keyframes dboard-float-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
+  0%, 100% { transform: translate(0, 0)       scale(1);    }
   50%       { transform: translate(-8px, -18px) scale(1.05); }
 }
 
